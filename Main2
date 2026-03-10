@@ -1,0 +1,448 @@
+
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /Verse.org/Random }
+using { /UnrealEngine.com/Temporary/SpatialMath }
+using {PawnMInstance}
+
+CamerasTip<localizes>:message = "Cameras"
+InputTip<localizes>:message = "Inputs"
+RedPawnTip<localizes>:message = "Red Pawns"
+GreenPawnTip<localizes>:message = "Green Pawns" 
+BluePawnTip<localizes>:message = "Blue Pawns"
+YellowPawnTip<localizes>:message = "Yellow Pawns"
+
+PathProps<localizes>:message = "Paths For Each"
+
+LudoManager := class(creative_device):
+
+    @editable {Categories := array{CamerasTip}}
+    RedCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
+    @editable {Categories := array{CamerasTip}}
+    GreenCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
+    @editable {Categories := array{CamerasTip}}
+    BlueCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
+    @editable {Categories := array{CamerasTip}}
+    YellowCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
+    @editable {Categories := array{CamerasTip}} RedButton : button_device = button_device{}
+    @editable {Categories := array{CamerasTip}} GreenButton : button_device = button_device{}
+    @editable {Categories := array{CamerasTip}} BlueButton : button_device = button_device{}
+    @editable {Categories := array{CamerasTip}} YellowButton : button_device = button_device{}
+
+    @editable {Categories := array{InputTip}}
+    ConfirmInput : input_trigger_device = input_trigger_device{}
+    @editable {Categories := array{InputTip}}
+    SelectZero : input_trigger_device = input_trigger_device{}
+    @editable {Categories := array{InputTip}}
+    SelectOne : input_trigger_device = input_trigger_device{}
+    @editable {Categories := array{InputTip}}
+    SelectTwo : input_trigger_device = input_trigger_device{}
+    @editable {Categories := array{InputTip}}
+    SelectThree : input_trigger_device = input_trigger_device{}
+
+    @editable {Categories := array{RedPawnTip}} RedPawn : creative_prop = creative_prop{}
+    @editable {Categories := array{RedPawnTip}} RedPawnOne : creative_prop = creative_prop{}
+    @editable {Categories := array{RedPawnTip}} RedPawnTwo : creative_prop = creative_prop{}
+    @editable {Categories := array{RedPawnTip}} RedPawnThree : creative_prop = creative_prop{}
+
+    @editable {Categories := array{GreenPawnTip}} GreenPawn : creative_prop = creative_prop{}
+    @editable {Categories := array{GreenPawnTip}} GreenPawnOne : creative_prop = creative_prop{}
+    @editable {Categories := array{GreenPawnTip}} GreenPawnTwo : creative_prop = creative_prop{}
+    @editable {Categories := array{GreenPawnTip}} GreenPawnThree : creative_prop = creative_prop{}
+
+    @editable {Categories := array{BluePawnTip}} BluePawn : creative_prop = creative_prop{}
+    @editable {Categories := array{BluePawnTip}} BluePawnOne : creative_prop = creative_prop{}
+    @editable {Categories := array{BluePawnTip}} BluePawnTwo : creative_prop = creative_prop{}
+    @editable {Categories := array{BluePawnTip}} BluePawnThree : creative_prop = creative_prop{}
+    
+    @editable {Categories := array{YellowPawnTip}} YellowPawn : creative_prop = creative_prop{}
+    @editable {Categories := array{YellowPawnTip}} YellowPawnOne : creative_prop = creative_prop{}
+    @editable {Categories := array{YellowPawnTip}} YellowPawnTwo : creative_prop = creative_prop{}
+    @editable {Categories := array{YellowPawnTip}} YellowPawnThree : creative_prop = creative_prop{}
+
+    @editable { Categories := array{PathProps}} RedPaths : []creative_prop = array{}
+    @editable { Categories := array{PathProps}} GreenPaths : []creative_prop = array{}
+    @editable { Categories := array{PathProps}} BluePaths : []creative_prop = array{}
+    @editable { Categories := array{PathProps}} YellowPaths : []creative_prop = array{}
+
+    var RedZeroHighlight : MI_RedPawn = MI_RedPawn{}
+    var RedOneHighlight : MI_RedPawn1 = MI_RedPawn1{}
+    var RedTwoHighlight : MI_RedPawn2 = MI_RedPawn2{}
+    var RedThreeHighlight : MI_RedPawn3 = MI_RedPawn3{}
+
+    var GreenZeroHighlight : MI_GreenPawn = MI_GreenPawn{}
+    var GreenOneHighlight : MI_GreenPawn1 = MI_GreenPawn1{}
+    var GreenTwoHighlight : MI_GreenPawn2 = MI_GreenPawn2{}
+    var GreenThreeHighlight : MI_GreenPawn3 = MI_GreenPawn3{}
+
+    var BlueZeroHighlight : MI_BluePawn = MI_BluePawn{}
+    var BlueOneHighlight : MI_BluePawn1 = MI_BluePawn1{}
+    var BlueTwoHighlight : MI_BluePawn2 = MI_BluePawn2{}
+    var BlueThreeHighlight : MI_BluePawn3 = MI_BluePawn3{}
+
+    var YellowZeroHighlight : MI_YellowPawn = MI_YellowPawn{}
+    var YellowOneHighlight : MI_YellowPawn1 = MI_YellowPawn1{}
+    var YellowTwoHighlight : MI_YellowPawn2 = MI_YellowPawn2{}
+    var YellowThreeHighlight : MI_YellowPawn3 = MI_YellowPawn3{}
+
+    @editable DiceRoll : input_trigger_device = input_trigger_device{}
+
+    var  DiceRollValue : int = 0
+    var GameStarted:logic = false 
+    var AllPlayersPawns : []creative_prop = array{}
+
+    var AllRedPawn : []creative_prop = array{}
+    var AllBluePawn : []creative_prop = array{}
+    var AllYellowPawn : []creative_prop = array{}
+    var AllGreenPawn : []creative_prop = array{}
+
+    # Track current path index for each pawn
+    var RedPawnIndex : int = -1 #-1 indicates the pawn is not yet on the path
+    var RedPawnOneIndex : int = -1
+    var RedPawnTwoIndex : int = -1
+    var RedPawnThreeIndex : int = -1
+
+    var BluePawnIndex : int = -1
+    var BluePawnOneIndex : int = -1
+    var BluePawnTwoIndex : int = -1
+    var BluePawnThreeIndex : int = -1
+
+    var YellowPawnIndex : int = -1
+    var YellowPawnOneIndex : int = -1
+    var YellowPawnTwoIndex : int = -1
+    var YellowPawnThreeIndex : int = -1
+
+    var GreenPawnIndex : int = -1
+    var GreenPawnOneIndex : int = -1
+    var GreenPawnTwoIndex : int = -1
+    var GreenPawnThreeIndex : int = -1
+
+    # Store initial transforms for respawn
+    var RedPawnInitialTransform : transform = transform{}
+    var RedPawnOneInitialTransform : transform = transform{}
+    var RedPawnTwoInitialTransform : transform = transform{}
+    var RedPawnThreeInitialTransform : transform = transform{}
+
+    var RedPlayer : ?agent = false
+    var GreenPlayer : ?agent = false
+    var BluePlayer : ?agent = false
+    var YellowPlayer : ?agent = false
+
+    # Runs when the device is started in a running game
+    OnBegin<override>()<suspends>:void=(
+
+        set RedPawnInitialTransform = RedPawn.GetTransform()
+        set RedPawnOneInitialTransform = RedPawnOne.GetTransform()
+        set RedPawnTwoInitialTransform = RedPawnTwo.GetTransform()
+        set RedPawnThreeInitialTransform = RedPawnThree.GetTransform()
+
+        set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+        for(PlayerPawn : AllPlayersPawns):
+            PlayerPawn.Hide()
+        RedButton.InteractedWithEvent.Subscribe(RedOneJoined)
+        BlueButton.InteractedWithEvent.Subscribe(BlueOneJoined)
+        GreenButton.InteractedWithEvent.Subscribe(GreenOneJoined)
+        YellowButton.InteractedWithEvent.Subscribe(YellowOneJoined)
+
+        SelectZero.PressedEvent.Subscribe(SelectZeroPressed)
+        SelectOne.PressedEvent.Subscribe(SelectOnePressed)
+        SelectTwo.PressedEvent.Subscribe(SelectTwoPressed)
+        SelectThree.PressedEvent.Subscribe(SelectThreePressed)
+        ConfirmInput.PressedEvent.Subscribe(ConfirmInputPressed)
+        DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
+    )
+
+    DiceRollPressed(Agent:agent):void=(
+        RollValue := GetRandomInt(1,6)
+        set DiceRollValue = RollValue
+        Print("Dice Rolled: {RollValue} ")
+    )
+
+    RedOneJoined(Agent : agent) : void = (
+        #RedCamera.AddTo(Agent)   #just to check hash
+        set RedPlayer = option{Agent}
+        if(GameStarted = false):
+            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+            for(RedPawnForRedJoined : AllRedPawn):
+                RedPawnForRedJoined.Show()
+                set GameStarted = true
+        else if(GameStarted = true):
+            Print("Game has already started. You cannot join now.")
+    )
+
+    BlueOneJoined(Agent : agent) : void = (
+        set BluePlayer = option{Agent}
+        if(GameStarted = false):
+            set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
+            for(BluePawnForBlueJoined : AllBluePawn):
+                BluePawnForBlueJoined.Show()
+                set GameStarted = true
+        else if(GameStarted = true):
+            Print("Game has already started. You cannot join now.")
+    )
+
+    GreenOneJoined(Agent : agent) : void = (
+        set GreenPlayer = option{Agent}
+        if(GameStarted = false):
+            set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
+            for(GreenPawnForGreenJoined : AllGreenPawn):
+                GreenPawnForGreenJoined.Show()
+                set GameStarted = true
+        else if(GameStarted = true):
+            Print("Game has already started. You cannot join now.")
+    )
+
+    YellowOneJoined(Agent : agent) : void = (
+        set YellowPlayer = option{Agent}
+        if(GameStarted = false):
+            set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+            for(YellowPawnForYellowJoined : AllYellowPawn):
+                YellowPawnForYellowJoined.Show()
+                set GameStarted = true
+        else if(GameStarted = true):
+            Print("Game has already started. You cannot join now.")
+    )
+
+    ResetAllHighlights(Agent:agent):void=(
+        if(RedPlayer = option{Agent}):
+            set RedZeroHighlight.HIghlightIntensity = 0.0
+            RedPawn.SetMaterial(RedZeroHighlight)
+            set RedOneHighlight.HIghlightIntensity = 0.0
+            RedPawnOne.SetMaterial(RedOneHighlight)
+            set RedTwoHighlight.HIghlightIntensity = 0.0
+            RedPawnTwo.SetMaterial(RedTwoHighlight)
+            set RedThreeHighlight.HIghlightIntensity = 0.0
+            RedPawnThree.SetMaterial(RedThreeHighlight)
+        if(BluePlayer = option{Agent}):
+            set BlueZeroHighlight.HIghlightIntensity = 0.0
+            BluePawn.SetMaterial(BlueZeroHighlight)
+            set BlueOneHighlight.HIghlightIntensity = 0.0
+            BluePawnOne.SetMaterial(BlueOneHighlight)
+            set BlueTwoHighlight.HIghlightIntensity = 0.0
+            BluePawnTwo.SetMaterial(BlueTwoHighlight)
+            set BlueThreeHighlight.HIghlightIntensity = 0.0
+            BluePawnThree.SetMaterial(BlueThreeHighlight)
+        if(GreenPlayer = option{Agent}):
+            set GreenZeroHighlight.HIghlightIntensity = 0.0
+            GreenPawn.SetMaterial(GreenZeroHighlight)
+            set GreenOneHighlight.HIghlightIntensity = 0.0
+            GreenPawnOne.SetMaterial(GreenOneHighlight)
+            set GreenTwoHighlight.HIghlightIntensity = 0.0
+            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
+            set GreenThreeHighlight.HIghlightIntensity = 0.0
+            GreenPawnThree.SetMaterial(GreenThreeHighlight)
+        if(YellowPlayer = option{Agent}):
+            set YellowZeroHighlight.HIghlightIntensity = 0.0
+            YellowPawn.SetMaterial(YellowZeroHighlight)
+            set YellowOneHighlight.HIghlightIntensity = 0.0
+            YellowPawnOne.SetMaterial(YellowOneHighlight)
+            set YellowTwoHighlight.HIghlightIntensity = 0.0
+            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
+            set YellowThreeHighlight.HIghlightIntensity = 0.0
+            YellowPawnThree.SetMaterial(YellowThreeHighlight)
+    )
+
+    SelectZeroPressed(Agent : agent) : void = ( 
+        if (RedPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set RedZeroHighlight.HIghlightIntensity = 20.0
+            RedPawn.SetMaterial(RedZeroHighlight)
+            Print("Higlidhting Red Pawn 0")
+        if(BluePlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set BlueZeroHighlight.HIghlightIntensity = 20.0
+            BluePawn.SetMaterial(BlueZeroHighlight)
+        if(YellowPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set YellowZeroHighlight.HIghlightIntensity = 20.0
+            YellowPawn.SetMaterial(YellowZeroHighlight)
+        if(GreenPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set GreenZeroHighlight.HIghlightIntensity = 20.0
+            GreenPawn.SetMaterial(GreenZeroHighlight)
+    )
+    SelectOnePressed(Agent : agent) : void = ( 
+        if (RedPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set RedOneHighlight.HIghlightIntensity = 20.0
+            RedPawnOne.SetMaterial(RedOneHighlight)
+        if(BluePlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set BlueOneHighlight.HIghlightIntensity = 20.0
+            BluePawnOne.SetMaterial(BlueOneHighlight)
+        if(YellowPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set YellowOneHighlight.HIghlightIntensity = 20.0
+            YellowPawnOne.SetMaterial(YellowOneHighlight)
+        if(GreenPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set GreenOneHighlight.HIghlightIntensity = 20.0
+            GreenPawnOne.SetMaterial(GreenOneHighlight)
+    )
+    SelectTwoPressed(Agent : agent) : void = ( 
+        if (RedPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set RedTwoHighlight.HIghlightIntensity = 20.0
+            RedPawnTwo.SetMaterial(RedTwoHighlight)
+        if(BluePlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set BlueTwoHighlight.HIghlightIntensity = 20.0
+            BluePawnTwo.SetMaterial(BlueTwoHighlight)
+        if(YellowPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set YellowTwoHighlight.HIghlightIntensity = 20.0
+            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
+        if(GreenPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set GreenTwoHighlight.HIghlightIntensity = 20.0
+            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
+    )
+    SelectThreePressed(Agent : agent) : void = ( 
+        if (RedPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set RedThreeHighlight.HIghlightIntensity = 2.0
+            RedPawnThree.SetMaterial(RedThreeHighlight)
+        if(BluePlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set BlueThreeHighlight.HIghlightIntensity = 20.0
+            BluePawnThree.SetMaterial(BlueThreeHighlight)
+        if(YellowPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set YellowThreeHighlight.HIghlightIntensity = 20.0
+            YellowPawnThree.SetMaterial(YellowThreeHighlight)
+        if(GreenPlayer = option{Agent}):
+            ResetAllHighlights(Agent)
+            set GreenThreeHighlight.HIghlightIntensity = 20.0
+            GreenPawnThree.SetMaterial(GreenThreeHighlight)
+    )
+    ConfirmInputPressed(Agent:agent):void= (
+        if(RedPlayer = option{Agent}):
+            if (RedZeroHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnRed(RedPawn, RedPawnIndex, Agent)}
+            else if (RedOneHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnRed(RedPawnOne, RedPawnOneIndex, Agent)}
+            else if (RedTwoHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
+            else if (RedThreeHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
+        if(BluePlayer = option{Agent}):
+            if (BlueZeroHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
+            else if (BlueOneHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnBlue(BluePawnOne, BluePawnOneIndex, Agent)}
+            else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnBlue(BluePawnTwo, BluePawnTwoIndex, Agent)}
+            else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnBlue(BluePawnThree, BluePawnThreeIndex, Agent)}
+        if(YellowPlayer = option{Agent}):
+            if (YellowZeroHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnYellow(YellowPawn, YellowPawnIndex, Agent)}
+            else if (YellowOneHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnYellow(YellowPawnOne, YellowPawnOneIndex, Agent)}
+            else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, Agent)}
+            else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, Agent)}
+        if(GreenPlayer = option{Agent}):
+            if (GreenZeroHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnGreen(GreenPawn, GreenPawnIndex, Agent)}
+            else if (GreenOneHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnGreen(GreenPawnOne, GreenPawnOneIndex, Agent)}
+            else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex, Agent)}
+            else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
+                spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
+    )
+
+    MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void= (
+        var CurrentIndex : int = Index
+        PawnTransform := Pawn.GetTransform()
+        PawnZ := PawnTransform.Translation.Z
+        
+        if(CurrentIndex = -1 and DiceRollValue = 6):
+            if(Path := RedPaths[0]):
+                PathTransform:= Path.GetTransform()
+                PathTranslation:= PathTransform.Translation
+                NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                    set CurrentIndex = 0
+                    set DiceRollValue = 0
+
+        else if(CurrentIndex >= 0):
+            Print("Stepwise movement, starting at index {CurrentIndex}")
+            TargetIndex := CurrentIndex + DiceRollValue
+            if(TargetIndex < RedPaths.Length):
+                for (Step := 1..DiceRollValue):
+                    NextIndex := CurrentIndex + 1
+                    Print("Step {Step}: NextIndex = {NextIndex}")
+                    if(Path := RedPaths[NextIndex]):
+                        PathTransform := Path.GetTransform()
+                        PathTranslation := PathTransform.Translation
+                        NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                        if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                            set CurrentIndex = NextIndex
+                            set DiceRollValue = 0
+                            Sleep(0.2)
+
+        if (RedZeroHighlight.HIghlightIntensity = 20.0):
+            set RedPawnIndex = CurrentIndex
+        else if (RedOneHighlight.HIghlightIntensity = 20.0):
+            set RedPawnOneIndex = CurrentIndex
+        else if (RedTwoHighlight.HIghlightIntensity = 20.0):
+            set RedPawnTwoIndex = CurrentIndex
+        else if (RedThreeHighlight.HIghlightIntensity = 20.0):
+            set RedPawnThreeIndex = CurrentIndex
+
+        ResetAllHighlights(Agent)     
+    )
+
+    MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+        var CurrentIndex : int = Index
+        PawnTransform := Pawn.GetTransform()
+        PawnZ := PawnTransform.Translation.Z
+
+        if(CurrentIndex = -1 and DiceRollValue = 6):
+            if(Path := BluePaths[0]):
+                PathTransform := Path.GetTransform()
+                PathTranslation := PathTransform.Translation
+                NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                    set CurrentIndex = 0
+                    set DiceRollValue = 0
+        else if(CurrentIndex >= 0):
+            Print("Stepwise movement, starting at index {CurrentIndex}")
+            TargetIndex := CurrentIndex + DiceRollValue
+            if(TargetIndex < BluePaths.Length):
+                for (Step := 1..DiceRollValue):
+                    NextIndex := CurrentIndex + 1
+                    Print("Step {Step}: NextIndex = {NextIndex}")
+                    if(Path := BluePaths[NextIndex]):
+                        PathTransform := Path.GetTransform()
+                        PathTranslation := PathTransform.Translation
+                        NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                        if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                            set CurrentIndex = NextIndex
+                            set DiceRollValue = 0
+                            Sleep(0.2)
+
+        if (BlueZeroHighlight.HIghlightIntensity = 20.0):
+            set BluePawnIndex = CurrentIndex
+        else if (BlueOneHighlight.HIghlightIntensity = 20.0):
+            set BluePawnOneIndex = CurrentIndex
+        else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
+            set BluePawnTwoIndex = CurrentIndex
+        else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
+            set BluePawnThreeIndex = CurrentIndex
+        ResetAllHighlights(Agent)
+    )
+
+    MovePawnYellow(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+
+    )
+
+    MovePawnGreen(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+        
+    )
+        
+
