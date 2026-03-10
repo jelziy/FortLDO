@@ -372,18 +372,22 @@ LudoManager := class(creative_device):
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
             TargetIndex := CurrentIndex + DiceRollValue
-            if(TargetIndex < RedPaths.Length):
-                for (Step := 1..DiceRollValue):
-                    NextIndex := CurrentIndex + 1
-                    Print("Step {Step}: NextIndex = {NextIndex}")
-                    if(Path := RedPaths[NextIndex]):
-                        PathTransform := Path.GetTransform()
-                        PathTranslation := PathTransform.Translation
-                        NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                        if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                            set CurrentIndex = NextIndex
-                            set DiceRollValue = 0
-                            Sleep(0.2)
+            RemainingPaths := RedPaths.Length - CurrentIndex - 1
+            if(DiceRollValue <= RemainingPaths):
+                if(TargetIndex < RedPaths.Length):
+                    for (Step := 1..DiceRollValue):
+                        NextIndex := CurrentIndex + 1
+                        Print("Step {Step}: NextIndex = {NextIndex}")
+                        if(Path := RedPaths[NextIndex]):
+                            PathTransform := Path.GetTransform()
+                            PathTranslation := PathTransform.Translation
+                            NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                                set CurrentIndex = NextIndex
+                                set DiceRollValue = 0
+                                Sleep(0.4)
+            else:
+                Print("Not enough remaining path for the dice roll. Move is invalid.")
 
         if (RedZeroHighlight.HIghlightIntensity = 20.0):
             set RedPawnIndex = CurrentIndex
@@ -413,18 +417,22 @@ LudoManager := class(creative_device):
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
             TargetIndex := CurrentIndex + DiceRollValue
-            if(TargetIndex < BluePaths.Length):
-                for (Step := 1..DiceRollValue):
-                    NextIndex := CurrentIndex + 1
-                    Print("Step {Step}: NextIndex = {NextIndex}")
-                    if(Path := BluePaths[NextIndex]):
-                        PathTransform := Path.GetTransform()
-                        PathTranslation := PathTransform.Translation
-                        NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                        if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                            set CurrentIndex = NextIndex
-                            set DiceRollValue = 0
-                            Sleep(0.2)
+            RemainingPaths := BluePaths.Length - CurrentIndex - 1
+            if(DiceRollValue <= RemainingPaths):
+                if(TargetIndex < BluePaths.Length):
+                    for (Step := 1..DiceRollValue):
+                        NextIndex := CurrentIndex + 1
+                        Print("Step {Step}: NextIndex = {NextIndex}")
+                        if(Path := BluePaths[NextIndex]):
+                            PathTransform := Path.GetTransform()
+                            PathTranslation := PathTransform.Translation
+                            NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                                set CurrentIndex = NextIndex
+                                set DiceRollValue = 0
+                                Sleep(0.4)
+            else:
+                Print("Not enough remaining path for the dice roll. Move is invalid.")
 
         if (BlueZeroHighlight.HIghlightIntensity = 20.0):
             set BluePawnIndex = CurrentIndex
@@ -453,18 +461,22 @@ LudoManager := class(creative_device):
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
             TargetIndex := CurrentIndex + DiceRollValue
-            if(TargetIndex < YellowPaths.Length):
-                for (Step := 1..DiceRollValue):
-                    NextIndex := CurrentIndex + 1
-                    Print("Step {Step}: NextIndex = {NextIndex}")
-                    if(Path := YellowPaths[NextIndex]):
-                        PathTransform := Path.GetTransform()
-                        PathTranslation := PathTransform.Translation
-                        NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                        if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                            set CurrentIndex = NextIndex
-                            set DiceRollValue = 0
-                            Sleep(0.2)
+            RemainingPaths := YellowPaths.Length - CurrentIndex - 1
+            if(DiceRollValue <= RemainingPaths):
+                if(TargetIndex < YellowPaths.Length):
+                    for (Step := 1..DiceRollValue):
+                        NextIndex := CurrentIndex + 1
+                        Print("Step {Step}: NextIndex = {NextIndex}")
+                        if(Path := YellowPaths[NextIndex]):
+                            PathTransform := Path.GetTransform()
+                            PathTranslation := PathTransform.Translation
+                            NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                                set CurrentIndex = NextIndex
+                                set DiceRollValue = 0
+                                Sleep(0.4)
+            else:
+                Print("Not enough remaining path for the dice roll. Move is invalid.")
 
         if (YellowZeroHighlight.HIghlightIntensity = 20.0):
             set YellowPawnIndex = CurrentIndex
@@ -494,18 +506,22 @@ LudoManager := class(creative_device):
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
             TargetIndex := CurrentIndex + DiceRollValue
-            if(TargetIndex < GreenPaths.Length):
-                for (Step := 1..DiceRollValue):
-                    NextIndex := CurrentIndex + 1
-                    Print("Step {Step}: NextIndex = {NextIndex}")
-                    if(Path := GreenPaths[NextIndex]):
-                        PathTransform := Path.GetTransform()
-                        PathTranslation := PathTransform.Translation
-                        NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                        if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                            set CurrentIndex = NextIndex
-                            set DiceRollValue = 0
-                            Sleep(0.2)
+            RemainingPaths := GreenPaths.Length - CurrentIndex - 1
+            if(DiceRollValue <= RemainingPaths):
+                if(TargetIndex < GreenPaths.Length):
+                    for (Step := 1..DiceRollValue):
+                        NextIndex := CurrentIndex + 1
+                        Print("Step {Step}: NextIndex = {NextIndex}")
+                        if(Path := GreenPaths[NextIndex]):
+                            PathTransform := Path.GetTransform()
+                            PathTranslation := PathTransform.Translation
+                            NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                                set CurrentIndex = NextIndex
+                                set DiceRollValue = 0
+                                Sleep(0.4)
+            else:
+                Print("Not enough remaining path for the dice roll. Move is invalid.")
 
         if (GreenZeroHighlight.HIghlightIntensity = 20.0):
             set GreenPawnIndex = CurrentIndex
@@ -519,4 +535,6 @@ LudoManager := class(creative_device):
         ResetAllHighlights(Agent)    
     )
         
+
+
 
