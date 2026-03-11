@@ -88,7 +88,11 @@ LudoManager := class(creative_device):
 
     @editable DiceRoll : input_trigger_device = input_trigger_device{}
 
-    var  DiceRollValue : int = 0
+    var RedDiceRollValue : int = 0
+    var BlueDiceRollValue : int = 0
+    var GreenDiceRollValue : int = 0
+    var YellowDiceRollValue : int = 0
+
     var GameStarted:logic = false 
     var AllPlayersPawns : []creative_prop = array{}
 
@@ -131,13 +135,15 @@ LudoManager := class(creative_device):
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=(
-
+        
         set RedPawnInitialTransform = RedPawn.GetTransform()
         set RedPawnOneInitialTransform = RedPawnOne.GetTransform()
         set RedPawnTwoInitialTransform = RedPawnTwo.GetTransform()
         set RedPawnThreeInitialTransform = RedPawnThree.GetTransform()
 
-        set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+        set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree, BluePawn, BluePawnOne,
+                                    BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
+                                    YellowPawnOne, YellowPawnTwo, YellowPawnThree}
         for(PlayerPawn : AllPlayersPawns):
             PlayerPawn.Hide()
         RedButton.InteractedWithEvent.Subscribe(RedOneJoined)
@@ -154,9 +160,19 @@ LudoManager := class(creative_device):
     )
 
     DiceRollPressed(Agent:agent):void=(
-        RollValue := GetRandomInt(1,6)
-        set DiceRollValue = RollValue
-        Print("Dice Rolled: {RollValue} ")
+        if(RedPlayer = option{Agent}):
+            RollValue := GetRandomInt(1,6)
+            set RedDiceRollValue = RollValue
+            Print("Dice Rolled: {RollValue} ")
+        else if(BluePlayer = option{Agent}):
+            RollValue := GetRandomInt(1,6)
+            set BlueDiceRollValue = RollValue
+        else if(GreenPlayer = option{Agent}):
+            RollValue := GetRandomInt(1,6)
+            set GreenDiceRollValue = RollValue
+        else if(YellowPlayer = option{Agent}):
+            RollValue := GetRandomInt(1,6)
+            set YellowDiceRollValue = RollValue
     )
 
     RedOneJoined(Agent : agent) : void = (
@@ -360,22 +376,22 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
         
-        if(CurrentIndex = -1 and DiceRollValue = 6):
+        if(CurrentIndex = -1 and RedDiceRollValue = 6):
             if(Path := RedPaths[0]):
                 PathTransform:= Path.GetTransform()
                 PathTranslation:= PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set DiceRollValue = 0
+                    set RedDiceRollValue = 0
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + DiceRollValue
+            TargetIndex := CurrentIndex + RedDiceRollValue
             RemainingPaths := RedPaths.Length - CurrentIndex - 1
-            if(DiceRollValue <= RemainingPaths):
+            if(RedDiceRollValue <= RemainingPaths):
                 if(TargetIndex < RedPaths.Length):
-                    for (Step := 1..DiceRollValue):
+                    for (Step := 1..RedDiceRollValue):
                         NextIndex := CurrentIndex + 1
                         Print("Step {Step}: NextIndex = {NextIndex}")
                         if(Path := RedPaths[NextIndex]):
@@ -384,7 +400,7 @@ LudoManager := class(creative_device):
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 set CurrentIndex = NextIndex
-                                set DiceRollValue = 0
+                                set RedDiceRollValue = 0
                                 Sleep(0.4)
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -406,21 +422,21 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
 
-        if(CurrentIndex = -1 and DiceRollValue = 6):
+        if(CurrentIndex = -1 and BlueDiceRollValue = 6):
             if(Path := BluePaths[0]):
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set DiceRollValue = 0
+                    set BlueDiceRollValue = 0
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + DiceRollValue
+            TargetIndex := CurrentIndex + BlueDiceRollValue
             RemainingPaths := BluePaths.Length - CurrentIndex - 1
-            if(DiceRollValue <= RemainingPaths):
+            if(BlueDiceRollValue <= RemainingPaths):
                 if(TargetIndex < BluePaths.Length):
-                    for (Step := 1..DiceRollValue):
+                    for (Step := 1..BlueDiceRollValue):
                         NextIndex := CurrentIndex + 1
                         Print("Step {Step}: NextIndex = {NextIndex}")
                         if(Path := BluePaths[NextIndex]):
@@ -429,7 +445,7 @@ LudoManager := class(creative_device):
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 set CurrentIndex = NextIndex
-                                set DiceRollValue = 0
+                                set BlueDiceRollValue = 0
                                 Sleep(0.4)
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -450,21 +466,21 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
 
-        if(CurrentIndex = -1 and DiceRollValue = 6):
+        if(CurrentIndex = -1 and YellowDiceRollValue = 6):
             if(Path := YellowPaths[0]):
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set DiceRollValue = 0
+                    set YellowDiceRollValue = 0
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + DiceRollValue
+            TargetIndex := CurrentIndex + YellowDiceRollValue
             RemainingPaths := YellowPaths.Length - CurrentIndex - 1
-            if(DiceRollValue <= RemainingPaths):
+            if(YellowDiceRollValue <= RemainingPaths):
                 if(TargetIndex < YellowPaths.Length):
-                    for (Step := 1..DiceRollValue):
+                    for (Step := 1..YellowDiceRollValue):
                         NextIndex := CurrentIndex + 1
                         Print("Step {Step}: NextIndex = {NextIndex}")
                         if(Path := YellowPaths[NextIndex]):
@@ -473,7 +489,7 @@ LudoManager := class(creative_device):
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 set CurrentIndex = NextIndex
-                                set DiceRollValue = 0
+                                set YellowDiceRollValue = 0
                                 Sleep(0.4)
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -495,21 +511,21 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
 
-        if(CurrentIndex = -1 and DiceRollValue = 6):
+        if(CurrentIndex = -1 and GreenDiceRollValue = 6):
             if(Path := GreenPaths[0]):
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set DiceRollValue = 0
+                    set GreenDiceRollValue = 0
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + DiceRollValue
+            TargetIndex := CurrentIndex + GreenDiceRollValue
             RemainingPaths := GreenPaths.Length - CurrentIndex - 1
-            if(DiceRollValue <= RemainingPaths):
+            if(GreenDiceRollValue <= RemainingPaths):
                 if(TargetIndex < GreenPaths.Length):
-                    for (Step := 1..DiceRollValue):
+                    for (Step := 1..GreenDiceRollValue):
                         NextIndex := CurrentIndex + 1
                         Print("Step {Step}: NextIndex = {NextIndex}")
                         if(Path := GreenPaths[NextIndex]):
@@ -518,7 +534,7 @@ LudoManager := class(creative_device):
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 set CurrentIndex = NextIndex
-                                set DiceRollValue = 0
+                                set GreenDiceRollValue = 0
                                 Sleep(0.4)
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -535,6 +551,8 @@ LudoManager := class(creative_device):
         ResetAllHighlights(Agent)    
     )
         
+
+
 
 
 
