@@ -5,6 +5,7 @@ using { /UnrealEngine.com/Temporary/Diagnostics }
 using { /Verse.org/Random }
 using { /UnrealEngine.com/Temporary/SpatialMath }
 using {PawnMInstance}
+using {Pawn2MInstance}
 
 CamerasTip<localizes>:message = "Cameras"
 InputTip<localizes>:message = "Inputs"
@@ -18,6 +19,8 @@ PlayerSwitchTip<localizes>:message = "Players Switch"
 PathProps<localizes>:message = "Paths For Each"
 
 LudoManager := class(creative_device):
+    
+    @editable  var CoolDownTime : float = 17.0
 
     @editable {Categories := array{CamerasTip}}
     RedCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
@@ -35,6 +38,7 @@ LudoManager := class(creative_device):
     @editable {Categories := array{PlayerSwitchTip}} TwoPlayerSwitch : switch_device = switch_device{}
     @editable {Categories := array{PlayerSwitchTip}} ThreePlayerSwitch : switch_device = switch_device{}
     @editable {Categories := array{PlayerSwitchTip}} FourPlayerSwitch : switch_device = switch_device{}
+    @editable {Categories := array{PlayerSwitchTip}} OnePlayerSwitch : switch_device = switch_device{}
 
     @editable {Categories := array{InputTip}}
     ConfirmInput : input_trigger_device = input_trigger_device{}
@@ -104,6 +108,14 @@ LudoManager := class(creative_device):
     var Dice4Value : MI_DiceValue4 = MI_DiceValue4{}
     var Dice5Value : MI_DiceValue5 = MI_DiceValue5{}
     var Dice6Value : MI_DiceValue6 = MI_DiceValue6{}
+    var MiRedNorm : MI_NormRed = MI_NormRed{}
+    var MiGreenNorm : MI_NormGreen = MI_NormGreen{}
+    var MiBlueNorm : MI_NormBlue = MI_NormBlue{}
+    var MiYellowNorm : MI_NormYellow = MI_NormYellow{}
+    var MiRedDrainer : MI_DrainerRed = MI_DrainerRed{}
+    var MiGreenDrainer : MI_DrainerGreen = MI_DrainerGreen{}
+    var MiBlueDrainer : MI_DrainerBlue = MI_DrainerBlue{}
+    var MiYellowDrainer : MI_DrainerYellow = MI_DrainerYellow{}
 
     @editable DiceRoll : input_trigger_device = input_trigger_device{}
 
@@ -198,7 +210,11 @@ LudoManager := class(creative_device):
             set PlayerCount += 1
         if(GreenPlayer?):
             set PlayerCount += 1
-
+        
+        if(OnePlayerSwitch.GetCurrentState[]):
+            if(PlayerCount = 1):
+                set GameStarted = true
+                set RedPlayerTurn = true
         if(TwoPlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 2):
                 set GameStarted = true
@@ -250,8 +266,45 @@ LudoManager := class(creative_device):
                 Print("Dice Rolled: {RollValue} ")
     )
 
-    HelperPlayerTurn()<suspends>:void=(
+    HelperPlayerTurns()<suspends>:void=(
+        var CoolDownCounter : float = 0.0
+        if(RedPlayerTurn = true):
 
+    )
+
+    HelperPlayerProfileTurn()<suspends>:void=(
+        if(RedPlayerTurn = true):
+            if(RedPropProfile := RedDiceProp[1]):
+                ResetPlayerDrainerProfile()
+                RedPropProfile.SetMaterial(MiRedDrainer)
+                spawn{HelperPlayerTurns()}
+            Print("Red Player's Turn")
+        else if(BluePlayerTurn = true):
+            if(BluePropProfile := BlueDiceProp[1]):
+                ResetPlayerDrainerProfile()
+                BluePropProfile.SetMaterial(MiBlueDrainer)
+            Print("Blue Player's Turn")
+        else if(GreenPlayerTurn = true):
+            if(GreenPropProfile := GreenDiceProp[1]):
+                ResetPlayerDrainerProfile()
+                GreenPropProfile.SetMaterial(MiGreenDrainer)
+            Print("Green Player's Turn")
+        else if(YellowPlayerTurn = true):
+            if(YellowPropProfile := YellowDiceProp[1]):
+                ResetPlayerDrainerProfile()
+                YellowPropProfile.SetMaterial(MiYellowDrainer)
+            Print("Yellow Player's Turn")
+    )
+
+    ResetPlayerDrainerProfile():void=(
+        if(RedPropProfile := RedDiceProp[1]):
+            RedPropProfile.SetMaterial(MiRedNorm)
+        if(BluePropProfile := BlueDiceProp[1]):
+            BluePropProfile.SetMaterial(MiBlueNorm)
+        if(GreenPropProfile := GreenDiceProp[1]):
+            GreenPropProfile.SetMaterial(MiGreenNorm)
+        if(YellowPropProfile := YellowDiceProp[1]):
+            YellowPropProfile.SetMaterial(MiYellowNorm)
     )
 
     HelperDiceRoll(Agent:agent)<suspends>:void=(
@@ -352,7 +405,7 @@ LudoManager := class(creative_device):
             set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
             for(RedPawnForRedJoined : AllRedPawn):
                 RedPawnForRedJoined.Show()
-                set GameStarted = true
+                GameStartInitiator()
         else if(GameStarted = true):
             Print("Game has already started. You cannot join now.")
     )
@@ -363,6 +416,7 @@ LudoManager := class(creative_device):
             set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
             for(BluePawnForBlueJoined : AllBluePawn):
                 BluePawnForBlueJoined.Show()
+                GameStartInitiator()
         else if(GameStarted = true):
             Print("Game has already started. You cannot join now.")
     )
@@ -373,7 +427,7 @@ LudoManager := class(creative_device):
             set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
             for(GreenPawnForGreenJoined : AllGreenPawn):
                 GreenPawnForGreenJoined.Show()
-                set GameStarted = true
+                GameStartInitiator()
         else if(GameStarted = true):
             Print("Game has already started. You cannot join now.")
     )
@@ -384,7 +438,7 @@ LudoManager := class(creative_device):
             set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
             for(YellowPawnForYellowJoined : AllYellowPawn):
                 YellowPawnForYellowJoined.Show()
-                set GameStarted = true
+                GameStartInitiator()
         else if(GameStarted = true):
             Print("Game has already started. You cannot join now.")
     )
@@ -541,6 +595,10 @@ LudoManager := class(creative_device):
                 spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
     )
 
+    PossibleMoveChecker(Agent:agent):void=(
+        # after a dice roll, for perticular player check if the player can make a move with any of its pawn, if not then switch the turm to the next player
+    )
+
     MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void= (
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
@@ -615,7 +673,7 @@ LudoManager := class(creative_device):
         else if (RedThreeHighlight.HIghlightIntensity = 20.0):
             set RedPawnThreeIndex = CurrentIndex
 
-        spawn{HelperPlayerTurn()}
+        spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)     
     )
 
@@ -689,7 +747,7 @@ LudoManager := class(creative_device):
         else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
             set BluePawnThreeIndex = CurrentIndex
 
-        spawn{HelperPlayerTurn()}
+        spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
     )
 
@@ -763,7 +821,7 @@ LudoManager := class(creative_device):
         else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
             set YellowPawnThreeIndex = CurrentIndex
         
-        spawn{HelperPlayerTurn()}
+        spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
     )
 
@@ -838,14 +896,8 @@ LudoManager := class(creative_device):
         else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
             set GreenPawnThreeIndex = CurrentIndex
 
-        spawn{HelperPlayerTurn()}
+        spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)    
     )
         
-
-
-
-
-
-
 
