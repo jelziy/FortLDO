@@ -248,6 +248,7 @@ LudoManager := class(creative_device):
                 if(DiceProp := BlueDiceProp[0]):
                     DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
+                    spawn{PossibleMoveChecker(Agent)}
                 Print("Dice Rolled: {RollValue} ")
         else if(GreenPlayer = option{Agent}):
             if(GreenPlayerTurn = true):
@@ -256,6 +257,7 @@ LudoManager := class(creative_device):
                 if(DiceProp := GreenDiceProp[0]):
                     DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
+                    spawn{PossibleMoveChecker(Agent)}
                 Print("Dice Rolled: {RollValue} ")
         else if(YellowPlayer = option{Agent}):
             if(YellowPlayerTurn = true):
@@ -264,6 +266,7 @@ LudoManager := class(creative_device):
                 if(DiceProp := YellowDiceProp[0]):
                     DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
+                    spawn{PossibleMoveChecker(Agent)}
                 Print("Dice Rolled: {RollValue} ")
     )
 
@@ -275,6 +278,7 @@ LudoManager := class(creative_device):
             if(RedPlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
+            Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set RedPlayerTurn = false
@@ -292,6 +296,7 @@ LudoManager := class(creative_device):
             if(BluePlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
+            Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set BluePlayerTurn = false
@@ -308,6 +313,7 @@ LudoManager := class(creative_device):
             if(GreenPlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
+            Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set GreenPlayerTurn = false
@@ -324,6 +330,7 @@ LudoManager := class(creative_device):
             if(YellowPlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
+            Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set YellowPlayerTurn = false
@@ -451,7 +458,7 @@ LudoManager := class(creative_device):
     )
 
     RedOneJoined(Agent : agent) : void = (
-        #RedCamera.AddTo(Agent)   #just to check hash
+        RedCamera.AddTo(Agent)   #just to check hash
         set RedPlayer = option{Agent}
         if(GameStarted = false):
             set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
@@ -1032,4 +1039,6 @@ LudoManager := class(creative_device):
         spawn{CheckTimerForRed()}    
     )
         
+
+
 
