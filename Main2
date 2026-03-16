@@ -239,6 +239,7 @@ LudoManager := class(creative_device):
                 if(DiceProp := RedDiceProp[0]):
                     DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
+                    spawn{PossibleMoveChecker(Agent)}
                 Print("Dice Rolled: {RollValue} ")
         else if(BluePlayer = option{Agent}):
             if(BluePlayerTurn = true):
@@ -557,7 +558,7 @@ LudoManager := class(creative_device):
     )
 
     ConfirmInputPressed(Agent:agent):void= (
-        if(RedPlayer = option{Agent}):
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
             if (RedZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnRed(RedPawn, RedPawnIndex, Agent)}
             else if (RedOneHighlight.HIghlightIntensity = 20.0):
@@ -566,7 +567,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
-        if(BluePlayer = option{Agent}):
+        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
             if (BlueZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
             else if (BlueOneHighlight.HIghlightIntensity = 20.0):
@@ -575,7 +576,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnBlue(BluePawnTwo, BluePawnTwoIndex, Agent)}
             else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawnThree, BluePawnThreeIndex, Agent)}
-        if(YellowPlayer = option{Agent}):
+        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
             if (YellowZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawn, YellowPawnIndex, Agent)}
             else if (YellowOneHighlight.HIghlightIntensity = 20.0):
@@ -584,7 +585,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, Agent)}
             else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, Agent)}
-        if(GreenPlayer = option{Agent}):
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
             if (GreenZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawn, GreenPawnIndex, Agent)}
             else if (GreenOneHighlight.HIghlightIntensity = 20.0):
@@ -595,8 +596,72 @@ LudoManager := class(creative_device):
                 spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
     )
 
-    PossibleMoveChecker(Agent:agent):void=(
-        # after a dice roll, for perticular player check if the player can make a move with any of its pawn, if not then switch the turm to the next player
+    PossibleMoveChecker(Agent:agent)<suspends>:void=(
+        ###after a dice roll, for perticular player check if the player can make a move with any of its pawn, 
+        ##if not then switch the turm to the next player###
+        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
+        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
+        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
+        var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
+        var CanMove : logic = false
+        PathLenght := RedPaths.Length #same number for each
+        
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
+            for(PawnIdx : RedPawnIndices):
+                if(PawnIdx = -1 and RedDiceRollValue = 6):
+                    set CanMove = true
+                else if(PawnIdx >= 0 and PawnIdx + RedDiceRollValue < PathLenght):
+                    set CanMove = true
+                
+            if(CanMove = true):
+                Print("nothing to do stay as it is")
+            else:
+                set RedPlayerTurn = false
+                set BluePlayerTurn = true
+                Print("False cant move")
+
+        else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
+            for(PawnIdx : BluePawnIndices):
+                if(PawnIdx = -1 and BlueDiceRollValue = 6):
+                    set CanMove = true
+                else if(PawnIdx >= 0 and PawnIdx + BlueDiceRollValue < PathLenght):
+                    set CanMove = true
+
+            if(CanMove = true):
+                Print("nothing to do stay as it is")
+            else:
+                set BluePlayerTurn = false
+                set YellowPlayerTurn = true
+                Print("False cant move")
+
+        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
+            for(PawnIdx : YellowPawnIndices):
+                if(PawnIdx = -1 and YellowDiceRollValue = 6):
+                    set CanMove = true
+                else if(PawnIdx >= 0 and PawnIdx + YellowDiceRollValue < PathLenght):
+                    set CanMove = true
+
+            if(CanMove = true):
+                Print("nothing to do stay as it is")
+            else:
+                set YellowPlayerTurn = false
+                set GreenPlayerTurn = true
+                Print("False cant move")
+
+        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
+            for(PawnIdx : GreenPawnIndices):
+                if(PawnIdx = -1 and GreenDiceRollValue = 6):
+                    set CanMove = true
+                else if(PawnIdx >= 0 and PawnIdx + GreenDiceRollValue < PathLenght):
+                    set CanMove = true
+
+            if(CanMove = true):
+                Print("nothing to do stay as it is")
+            else:
+                set GreenPlayerTurn = false
+                set RedPlayerTurn = true
+                Print("False cant move")
+        
     )
 
     MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void= (
