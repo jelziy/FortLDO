@@ -271,7 +271,7 @@ LudoManager := class(creative_device):
         
         var StartTime: float = GetSimulationElapsedTime()
         loop:
-            Sleep(0.1)
+            Sleep(0.2)
             if(RedPlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
@@ -280,13 +280,15 @@ LudoManager := class(creative_device):
                 set RedPlayerTurn = false
                 set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForBlue()}
+
                 return
     )
 
     CheckTimerForBlue()<suspends>:void=(
         var StartTime: float = GetSimulationElapsedTime()
         loop:
-            Sleep(0.1)
+            Sleep(0.2)
             if(BluePlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
@@ -295,13 +297,14 @@ LudoManager := class(creative_device):
                 set BluePlayerTurn = false
                 set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForYellow()}
                 return
     )
 
     CheckTimerForGreen()<suspends>:void=(
         var StartTime: float = GetSimulationElapsedTime()
         loop:
-            Sleep(0.1)
+            Sleep(0.2)
             if(GreenPlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
@@ -310,13 +313,14 @@ LudoManager := class(creative_device):
                 set GreenPlayerTurn = false
                 set RedPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForRed()}
                 return
     )
 
     CheckTimerForYellow()<suspends>:void=(
         var StartTime: float = GetSimulationElapsedTime()
         loop:
-            Sleep(0.1)
+            Sleep(0.2)
             if(YellowPlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
@@ -325,6 +329,7 @@ LudoManager := class(creative_device):
                 set YellowPlayerTurn = false
                 set GreenPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForGreen()}
                 return
     )
 
@@ -364,8 +369,6 @@ LudoManager := class(creative_device):
 
     HelperDiceRoll(Agent:agent)<suspends>:void=(
         if(RedPlayer = option{Agent}):
-            if(RedDiceRollValue <= 5):
-                set RedPlayerTurn = false
             Sleep(2.0)
             if(RedDiceRollValue = 1):
                 if(DiceProp := RedDiceProp[0]):
@@ -386,8 +389,6 @@ LudoManager := class(creative_device):
                 if(DiceProp := RedDiceProp[0]):
                     DiceProp.SetMaterial(Dice6Value)
         if(BluePlayer = option{Agent}):
-            if(BlueDiceRollValue <= 5):
-                set BluePlayerTurn = false
             Sleep(2.0)
             if(BlueDiceRollValue = 1):
                 if(DiceProp := BlueDiceProp[0]):
@@ -408,8 +409,6 @@ LudoManager := class(creative_device):
                 if(DiceProp := BlueDiceProp[0]):
                     DiceProp.SetMaterial(Dice6Value)
         if(GreenPlayer = option{Agent}):
-            if(GreenDiceRollValue <= 5):
-                set GreenPlayerTurn = false
             Sleep(2.0)
             if(GreenDiceRollValue = 1):
                 if(DiceProp := GreenDiceProp[0]):
@@ -430,8 +429,6 @@ LudoManager := class(creative_device):
                 if(DiceProp := GreenDiceProp[0]):
                     DiceProp.SetMaterial(Dice6Value)
         if(YellowPlayer = option{Agent}):
-            if(YellowDiceRollValue <= 5):
-                set YellowPlayerTurn = false
             Sleep(2.0)
             if(YellowDiceRollValue = 1):
                 if(DiceProp := YellowDiceProp[0]):
@@ -538,81 +535,81 @@ LudoManager := class(creative_device):
     )
 
     SelectZeroPressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent}):
+        if (RedPlayer = option{Agent} and RedPlayerTurn = true):
             ResetAllHighlights(Agent)
             set RedZeroHighlight.HIghlightIntensity = 20.0
             RedPawn.SetMaterial(RedZeroHighlight)
             Print("Higlidhting Red Pawn 0")
-        if(BluePlayer = option{Agent}):
+        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
             ResetAllHighlights(Agent)
             set BlueZeroHighlight.HIghlightIntensity = 20.0
             BluePawn.SetMaterial(BlueZeroHighlight)
-        if(YellowPlayer = option{Agent}):
+        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
             ResetAllHighlights(Agent)
             set YellowZeroHighlight.HIghlightIntensity = 20.0
             YellowPawn.SetMaterial(YellowZeroHighlight)
-        if(GreenPlayer = option{Agent}):
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
             ResetAllHighlights(Agent)
             set GreenZeroHighlight.HIghlightIntensity = 20.0
             GreenPawn.SetMaterial(GreenZeroHighlight)
     )
     SelectOnePressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent}):
+        if (RedPlayer = option{Agent} and RedPlayerTurn = true):
             ResetAllHighlights(Agent)
             set RedOneHighlight.HIghlightIntensity = 20.0
             RedPawnOne.SetMaterial(RedOneHighlight)
-        if(BluePlayer = option{Agent}):
+        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
             ResetAllHighlights(Agent)
             set BlueOneHighlight.HIghlightIntensity = 20.0
             BluePawnOne.SetMaterial(BlueOneHighlight)
-        if(YellowPlayer = option{Agent}):
+        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
             ResetAllHighlights(Agent)
             set YellowOneHighlight.HIghlightIntensity = 20.0
             YellowPawnOne.SetMaterial(YellowOneHighlight)
-        if(GreenPlayer = option{Agent}):
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
             ResetAllHighlights(Agent)
             set GreenOneHighlight.HIghlightIntensity = 20.0
             GreenPawnOne.SetMaterial(GreenOneHighlight)
     )
     SelectTwoPressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent}):
+        if (RedPlayer = option{Agent} and RedPlayerTurn = true):
             ResetAllHighlights(Agent)
             set RedTwoHighlight.HIghlightIntensity = 20.0
             RedPawnTwo.SetMaterial(RedTwoHighlight)
-        if(BluePlayer = option{Agent}):
+        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
             ResetAllHighlights(Agent)
             set BlueTwoHighlight.HIghlightIntensity = 20.0
             BluePawnTwo.SetMaterial(BlueTwoHighlight)
-        if(YellowPlayer = option{Agent}):
+        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
             ResetAllHighlights(Agent)
             set YellowTwoHighlight.HIghlightIntensity = 20.0
             YellowPawnTwo.SetMaterial(YellowTwoHighlight)
-        if(GreenPlayer = option{Agent}):
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
             ResetAllHighlights(Agent)
             set GreenTwoHighlight.HIghlightIntensity = 20.0
             GreenPawnTwo.SetMaterial(GreenTwoHighlight)
     )
     SelectThreePressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent}):
+        if (RedPlayer = option{Agent} and RedPlayerTurn = true):
             ResetAllHighlights(Agent)
             set RedThreeHighlight.HIghlightIntensity = 2.0
             RedPawnThree.SetMaterial(RedThreeHighlight)
-        if(BluePlayer = option{Agent}):
+        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
             ResetAllHighlights(Agent)
             set BlueThreeHighlight.HIghlightIntensity = 20.0
             BluePawnThree.SetMaterial(BlueThreeHighlight)
-        if(YellowPlayer = option{Agent}):
+        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
             ResetAllHighlights(Agent)
             set YellowThreeHighlight.HIghlightIntensity = 20.0
             YellowPawnThree.SetMaterial(YellowThreeHighlight)
-        if(GreenPlayer = option{Agent}):
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
             ResetAllHighlights(Agent)
             set GreenThreeHighlight.HIghlightIntensity = 20.0
             GreenPawnThree.SetMaterial(GreenThreeHighlight)
     )
 
     ConfirmInputPressed(Agent:agent):void= (
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true and RedDiceRollValue > 0):
             if (RedZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnRed(RedPawn, RedPawnIndex, Agent)}
             else if (RedOneHighlight.HIghlightIntensity = 20.0):
@@ -621,7 +618,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
+        if(BluePlayer = option{Agent} and BluePlayerTurn = true and BlueDiceRollValue > 0):
             if (BlueZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
             else if (BlueOneHighlight.HIghlightIntensity = 20.0):
@@ -630,7 +627,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnBlue(BluePawnTwo, BluePawnTwoIndex, Agent)}
             else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawnThree, BluePawnThreeIndex, Agent)}
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
+        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and YellowDiceRollValue > 0):
             if (YellowZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawn, YellowPawnIndex, Agent)}
             else if (YellowOneHighlight.HIghlightIntensity = 20.0):
@@ -639,7 +636,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, Agent)}
             else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, Agent)}
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and GreenDiceRollValue > 0):
             if (GreenZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawn, GreenPawnIndex, Agent)}
             else if (GreenOneHighlight.HIghlightIntensity = 20.0):
@@ -670,9 +667,11 @@ LudoManager := class(creative_device):
             if(CanMove = true):
                 Print("nothing to do stay as it is")
             else:
+                Sleep(1.8)
                 set RedPlayerTurn = false
                 set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForBlue()}
                 Print("False cant move")
 
         else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
@@ -685,9 +684,11 @@ LudoManager := class(creative_device):
             if(CanMove = true):
                 Print("nothing to do stay as it is")
             else:
+                Sleep(1.8)
                 set BluePlayerTurn = false
                 set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForYellow()}
                 Print("False cant move")
 
         else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
@@ -700,9 +701,11 @@ LudoManager := class(creative_device):
             if(CanMove = true):
                 Print("nothing to do stay as it is")
             else:
+                Sleep(1.8)
                 set YellowPlayerTurn = false
                 set GreenPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForGreen()}
                 Print("False cant move")
 
         else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
@@ -715,1039 +718,11 @@ LudoManager := class(creative_device):
             if(CanMove = true):
                 Print("nothing to do stay as it is")
             else:
+                Sleep(1.8)
                 set GreenPlayerTurn = false
                 set RedPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                Print("False cant move")
-        
-    )
-
-    MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void= (
-        var CurrentIndex : int = Index
-        PawnTransform := Pawn.GetTransform()
-        PawnZ := PawnTransform.Translation.Z
-    
-        if(CurrentIndex = -1 and RedDiceRollValue = 6):
-            if(Path := RedPaths[0]):
-                PathTransform:= Path.GetTransform()
-                PathTranslation:= PathTransform.Translation
-                NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                    if(RedDiceRollValue = 6):
-                        set RedConsecutiveSixes += 1
-                        if(RedConsecutiveSixes >= 3):
-                            # Switch to Blue turn, reset counter
-                            set RedPlayerTurn = false
-                            set BluePlayerTurn = true
-                            set RedConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set RedPlayerTurn = true
-                    else:
-                        set RedPlayerTurn = false
-                        set BluePlayerTurn = true
-
-                    set CurrentIndex = 0
-                    set RedDiceRollValue = 0
-
-
-        else if(CurrentIndex >= 0):
-            Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + RedDiceRollValue
-            RemainingPaths := RedPaths.Length - CurrentIndex - 1
-            if(RedDiceRollValue <= RemainingPaths):
-                if(TargetIndex < RedPaths.Length):
-                    for (Step := 1..RedDiceRollValue):
-                        NextIndex := CurrentIndex + 1
-                        Print("Step {Step}: NextIndex = {NextIndex}")
-                        if(Path := RedPaths[NextIndex]):
-                            PathTransform := Path.GetTransform()
-                            PathTranslation := PathTransform.Translation
-                            NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                                if(RedDiceRollValue = 6):
-                                    set RedConsecutiveSixes += 1
-                                    if(RedConsecutiveSixes >= 3):
-                                        # Switch to Blue turn, reset counter
-                                        set RedPlayerTurn = false
-                                        set BluePlayerTurn = true
-                                        set RedConsecutiveSixes = 0
-                                    else:
-                                        # Keep turn
-                                        set RedPlayerTurn = true
-                                else:
-                                    set RedPlayerTurn = false
-                                    set BluePlayerTurn = true
-
-                                set CurrentIndex = NextIndex
-                                set RedDiceRollValue = 0
-                                Sleep(0.4)
-            else:
-                Print("Not enough remaining path for the dice roll. Move is invalid.")
-
-        
-
-        if (RedZeroHighlight.HIghlightIntensity = 20.0):
-            set RedPawnIndex = CurrentIndex
-        else if (RedOneHighlight.HIghlightIntensity = 20.0):
-            set RedPawnOneIndex = CurrentIndex
-        else if (RedTwoHighlight.HIghlightIntensity = 20.0):
-            set RedPawnTwoIndex = CurrentIndex
-        else if (RedThreeHighlight.HIghlightIntensity = 20.0):
-            set RedPawnThreeIndex = CurrentIndex
-
-        spawn{HelperPlayerProfileTurn()}
-        ResetAllHighlights(Agent)
-        spawn{CheckTimerForBlue()}     
-    )
-
-    MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
-        var CurrentIndex : int = Index
-        PawnTransform := Pawn.GetTransform()
-        PawnZ := PawnTransform.Translation.Z
-        
-        if(CurrentIndex = -1 and BlueDiceRollValue = 6):
-            if(Path := BluePaths[0]):
-                PathTransform := Path.GetTransform()
-                PathTranslation := PathTransform.Translation
-                NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                    if(BlueDiceRollValue = 6):
-                        set BlueConsecutiveSixes += 1
-                        if(BlueConsecutiveSixes >= 3):
-                            # Switch to Green turn, reset counter
-                            set BluePlayerTurn = false
-                            set YellowPlayerTurn = true
-                            set BlueConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set BluePlayerTurn = true
-                    else:
-                        set BluePlayerTurn = false
-                        set YellowPlayerTurn = true
-
-                    set CurrentIndex = 0
-                    set BlueDiceRollValue = 0
-
-        else if(CurrentIndex >= 0):
-            Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + BlueDiceRollValue
-            RemainingPaths := BluePaths.Length - CurrentIndex - 1
-            if(BlueDiceRollValue <= RemainingPaths):
-                if(TargetIndex < BluePaths.Length):
-                    for (Step := 1..BlueDiceRollValue):
-                        NextIndex := CurrentIndex + 1
-                        Print("Step {Step}: NextIndex = {NextIndex}")
-                        if(Path := BluePaths[NextIndex]):
-                            PathTransform := Path.GetTransform()
-                            PathTranslation := PathTransform.Translation
-                            NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                                if(BlueDiceRollValue = 6):
-                                    set BlueConsecutiveSixes += 1
-                                    if(BlueConsecutiveSixes >= 3):
-                                        # Switch to Green turn, reset counter
-                                        set BluePlayerTurn = false
-                                        set YellowPlayerTurn = true
-                                        set BlueConsecutiveSixes = 0
-                                    else:
-                                        # Keep turn
-                                        set BluePlayerTurn = true
-                                else:
-                                    set BluePlayerTurn = false
-                                    set YellowPlayerTurn = true
-                                set CurrentIndex = NextIndex
-                                set BlueDiceRollValue = 0
-                                Sleep(0.4)
-            else:
-                Print("Not enough remaining path for the dice roll. Move is invalid.")
-
-        if (BlueZeroHighlight.HIghlightIntensity = 20.0):
-            set BluePawnIndex = CurrentIndex
-        else if (BlueOneHighlight.HIghlightIntensity = 20.0):
-            set BluePawnOneIndex = CurrentIndex
-        else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
-            set BluePawnTwoIndex = CurrentIndex
-        else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
-            set BluePawnThreeIndex = CurrentIndex
-
-        spawn{HelperPlayerProfileTurn()}
-        ResetAllHighlights(Agent)
-        spawn{CheckTimerForYellow()}
-    )
-
-    MovePawnYellow(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
-        var CurrentIndex : int = Index
-        PawnTransform := Pawn.GetTransform()
-        PawnZ := PawnTransform.Translation.Z
-
-        if(CurrentIndex = -1 and YellowDiceRollValue = 6):
-            if(Path := YellowPaths[0]):
-                PathTransform := Path.GetTransform()
-                PathTranslation := PathTransform.Translation
-                NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                    if(YellowDiceRollValue = 6):
-                        set YellowConsecutiveSixes += 1
-                        if(YellowConsecutiveSixes >= 3):
-                            # Switch to Red turn, reset counter
-                            set YellowPlayerTurn = false
-                            set GreenPlayerTurn = true
-                            set YellowConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set YellowPlayerTurn = true
-                    else:
-                        set YellowPlayerTurn = false
-                        set GreenPlayerTurn = true
-                    set CurrentIndex = 0
-                    set YellowDiceRollValue = 0
-
-        else if(CurrentIndex >= 0):
-            Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + YellowDiceRollValue
-            RemainingPaths := YellowPaths.Length - CurrentIndex - 1
-            if(YellowDiceRollValue <= RemainingPaths):
-                if(TargetIndex < YellowPaths.Length):
-                    for (Step := 1..YellowDiceRollValue):
-                        NextIndex := CurrentIndex + 1
-                        Print("Step {Step}: NextIndex = {NextIndex}")
-                        if(Path := YellowPaths[NextIndex]):
-                            PathTransform := Path.GetTransform()
-                            PathTranslation := PathTransform.Translation
-                            NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                                if(YellowDiceRollValue = 6):
-                                    set YellowConsecutiveSixes += 1
-                                    if(YellowConsecutiveSixes >= 3):
-                                        # Switch to Red turn, reset counter
-                                        set GreenPlayerTurn = false
-                                        set RedPlayerTurn = true
-                                        set YellowConsecutiveSixes = 0
-                                    else:
-                                        # Keep turn
-                                        set YellowPlayerTurn = true
-                                else:
-                                    set YellowPlayerTurn = false
-                                    set GreenPlayerTurn = true
-
-                                set CurrentIndex = NextIndex
-                                set YellowDiceRollValue = 0
-                                Sleep(0.4)
-            else:
-                Print("Not enough remaining path for the dice roll. Move is invalid.")
-
-        if (YellowZeroHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnIndex = CurrentIndex
-        else if (YellowOneHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnOneIndex = CurrentIndex
-        else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnTwoIndex = CurrentIndex
-        else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnThreeIndex = CurrentIndex
-        
-        spawn{HelperPlayerProfileTurn()}
-        ResetAllHighlights(Agent)
-        spawn{CheckTimerForGreen()}
-    )
-
-    MovePawnGreen(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
-        var CurrentIndex : int = Index
-        PawnTransform := Pawn.GetTransform()
-        PawnZ := PawnTransform.Translation.Z
-
-        if(CurrentIndex = -1 and GreenDiceRollValue = 6):
-            if(Path := GreenPaths[0]):
-                PathTransform := Path.GetTransform()
-                PathTranslation := PathTransform.Translation
-                NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                    if(GreenDiceRollValue = 6):
-                        set GreenConsecutiveSixes += 1
-                        if(GreenConsecutiveSixes >= 3):
-                            # Switch to Yellow turn, reset counter
-                            set GreenPlayerTurn = false
-                            set RedPlayerTurn = true
-                            set GreenConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set GreenPlayerTurn = true
-                    else:
-                        set GreenPlayerTurn = false
-                        set RedPlayerTurn = true
-                    set CurrentIndex = 0
-                    set GreenDiceRollValue = 0
-
-
-        else if(CurrentIndex >= 0):
-            Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + GreenDiceRollValue
-            RemainingPaths := GreenPaths.Length - CurrentIndex - 1
-            if(GreenDiceRollValue <= RemainingPaths):
-                if(TargetIndex < GreenPaths.Length):
-                    for (Step := 1..GreenDiceRollValue):
-                        NextIndex := CurrentIndex + 1
-                        Print("Step {Step}: NextIndex = {NextIndex}")
-                        if(Path := GreenPaths[NextIndex]):
-                            PathTransform := Path.GetTransform()
-                            PathTranslation := PathTransform.Translation
-                            NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                                if(GreenDiceRollValue = 6):
-                                    set GreenConsecutiveSixes += 1
-                                    if(GreenConsecutiveSixes >= 3):
-                                        # Switch to Yellow turn, reset counter
-                                        set GreenPlayerTurn = false
-                                        set RedPlayerTurn = true
-                                        set GreenConsecutiveSixes = 0
-                                    else:
-                                        # Keep turn
-                                        set GreenPlayerTurn = true
-                                else:
-                                    set GreenPlayerTurn = false
-                                    set RedPlayerTurn = true
-
-                                set CurrentIndex = NextIndex
-                                set GreenDiceRollValue = 0
-                                Sleep(0.4)
-            else:
-                Print("Not enough remaining path for the dice roll. Move is invalid.")
-
-        if (GreenZeroHighlight.HIghlightIntensity = 20.0):
-            set GreenPawnIndex = CurrentIndex
-        else if (GreenOneHighlight.HIghlightIntensity = 20.0):
-            set GreenPawnOneIndex = CurrentIndex
-        else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
-            set GreenPawnTwoIndex = CurrentIndex
-        else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
-            set GreenPawnThreeIndex = CurrentIndex
-
-        spawn{HelperPlayerProfileTurn()}
-        ResetAllHighlights(Agent)
-        spawn{CheckTimerForRed()}    
-    )
-        
-
-
-using { /Fortnite.com/Devices }
-using { /Verse.org/Simulation }
-using { /UnrealEngine.com/Temporary/Diagnostics }
-using { /Verse.org/Random }
-using { /UnrealEngine.com/Temporary/SpatialMath }
-using {PawnMInstance}
-using {Pawn2MInstance}
-
-CamerasTip<localizes>:message = "Cameras"
-InputTip<localizes>:message = "Inputs"
-RedPawnTip<localizes>:message = "Red Pawns"
-GreenPawnTip<localizes>:message = "Green Pawns" 
-BluePawnTip<localizes>:message = "Blue Pawns"
-YellowPawnTip<localizes>:message = "Yellow Pawns"
-DicesRollTip<localizes>:message = "Dices Prop & Frames"
-PlayerSwitchTip<localizes>:message = "Players Switch"
-
-PathProps<localizes>:message = "Paths For Each"
-
-LudoManager := class(creative_device):
-    
-    @editable  var CoolDownTime : float = 17.0
-
-    @editable {Categories := array{CamerasTip}}
-    RedCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
-    @editable {Categories := array{CamerasTip}}
-    GreenCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
-    @editable {Categories := array{CamerasTip}}
-    BlueCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
-    @editable {Categories := array{CamerasTip}}
-    YellowCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
-    @editable {Categories := array{CamerasTip}} RedButton : button_device = button_device{}
-    @editable {Categories := array{CamerasTip}} GreenButton : button_device = button_device{}
-    @editable {Categories := array{CamerasTip}} BlueButton : button_device = button_device{}
-    @editable {Categories := array{CamerasTip}} YellowButton : button_device = button_device{}
-
-    @editable {Categories := array{PlayerSwitchTip}} TwoPlayerSwitch : switch_device = switch_device{}
-    @editable {Categories := array{PlayerSwitchTip}} ThreePlayerSwitch : switch_device = switch_device{}
-    @editable {Categories := array{PlayerSwitchTip}} FourPlayerSwitch : switch_device = switch_device{}
-    @editable {Categories := array{PlayerSwitchTip}} OnePlayerSwitch : switch_device = switch_device{}
-
-    @editable {Categories := array{InputTip}}
-    ConfirmInput : input_trigger_device = input_trigger_device{}
-    @editable {Categories := array{InputTip}}
-    SelectZero : input_trigger_device = input_trigger_device{}
-    @editable {Categories := array{InputTip}}
-    SelectOne : input_trigger_device = input_trigger_device{}
-    @editable {Categories := array{InputTip}}
-    SelectTwo : input_trigger_device = input_trigger_device{}
-    @editable {Categories := array{InputTip}}
-    SelectThree : input_trigger_device = input_trigger_device{}
-
-    @editable {Categories := array{RedPawnTip}} RedPawn : creative_prop = creative_prop{}
-    @editable {Categories := array{RedPawnTip}} RedPawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{RedPawnTip}} RedPawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{RedPawnTip}} RedPawnThree : creative_prop = creative_prop{}
-
-    @editable {Categories := array{GreenPawnTip}} GreenPawn : creative_prop = creative_prop{}
-    @editable {Categories := array{GreenPawnTip}} GreenPawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{GreenPawnTip}} GreenPawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{GreenPawnTip}} GreenPawnThree : creative_prop = creative_prop{}
-
-    @editable {Categories := array{BluePawnTip}} BluePawn : creative_prop = creative_prop{}
-    @editable {Categories := array{BluePawnTip}} BluePawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{BluePawnTip}} BluePawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{BluePawnTip}} BluePawnThree : creative_prop = creative_prop{}
-    
-    @editable {Categories := array{YellowPawnTip}} YellowPawn : creative_prop = creative_prop{}
-    @editable {Categories := array{YellowPawnTip}} YellowPawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{YellowPawnTip}} YellowPawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{YellowPawnTip}} YellowPawnThree : creative_prop = creative_prop{}
-
-    @editable { Categories := array{PathProps}} RedPaths : []creative_prop = array{}
-    @editable { Categories := array{PathProps}} GreenPaths : []creative_prop = array{}
-    @editable { Categories := array{PathProps}} BluePaths : []creative_prop = array{}
-    @editable { Categories := array{PathProps}} YellowPaths : []creative_prop = array{}
-
-    @editable {Categories := array{DicesRollTip}} RedDiceProp : []creative_prop = array{}
-    @editable {Categories := array{DicesRollTip}} GreenDiceProp : []creative_prop = array{}
-    @editable {Categories := array{DicesRollTip}} BlueDiceProp : []creative_prop = array{}
-    @editable {Categories := array{DicesRollTip}} YellowDiceProp : []creative_prop = array{}
-
-    var RedZeroHighlight : MI_RedPawn = MI_RedPawn{}
-    var RedOneHighlight : MI_RedPawn1 = MI_RedPawn1{}
-    var RedTwoHighlight : MI_RedPawn2 = MI_RedPawn2{}
-    var RedThreeHighlight : MI_RedPawn3 = MI_RedPawn3{}
-
-    var GreenZeroHighlight : MI_GreenPawn = MI_GreenPawn{}
-    var GreenOneHighlight : MI_GreenPawn1 = MI_GreenPawn1{}
-    var GreenTwoHighlight : MI_GreenPawn2 = MI_GreenPawn2{}
-    var GreenThreeHighlight : MI_GreenPawn3 = MI_GreenPawn3{}
-
-    var BlueZeroHighlight : MI_BluePawn = MI_BluePawn{}
-    var BlueOneHighlight : MI_BluePawn1 = MI_BluePawn1{}
-    var BlueTwoHighlight : MI_BluePawn2 = MI_BluePawn2{}
-    var BlueThreeHighlight : MI_BluePawn3 = MI_BluePawn3{}
-
-    var YellowZeroHighlight : MI_YellowPawn = MI_YellowPawn{}
-    var YellowOneHighlight : MI_YellowPawn1 = MI_YellowPawn1{}
-    var YellowTwoHighlight : MI_YellowPawn2 = MI_YellowPawn2{}
-    var YellowThreeHighlight : MI_YellowPawn3 = MI_YellowPawn3{}
-
-    var RollingDice : MI_DiceRolls = MI_DiceRolls{}
-    var Dice1Value : MI_DiceValue1 = MI_DiceValue1{}
-    var Dice2Value : MI_DiceValue2 = MI_DiceValue2{}
-    var Dice3Value : MI_DiceValue3 = MI_DiceValue3{}
-    var Dice4Value : MI_DiceValue4 = MI_DiceValue4{}
-    var Dice5Value : MI_DiceValue5 = MI_DiceValue5{}
-    var Dice6Value : MI_DiceValue6 = MI_DiceValue6{}
-    var MiRedNorm : MI_NormRed = MI_NormRed{}
-    var MiGreenNorm : MI_NormGreen = MI_NormGreen{}
-    var MiBlueNorm : MI_NormBlue = MI_NormBlue{}
-    var MiYellowNorm : MI_NormYellow = MI_NormYellow{}
-    var MiRedDrainer : MI_DrainerRed = MI_DrainerRed{}
-    var MiGreenDrainer : MI_DrainerGreen = MI_DrainerGreen{}
-    var MiBlueDrainer : MI_DrainerBlue = MI_DrainerBlue{}
-    var MiYellowDrainer : MI_DrainerYellow = MI_DrainerYellow{}
-
-    @editable DiceRoll : input_trigger_device = input_trigger_device{}
-
-    var RedDiceRollValue : int = 0
-    var BlueDiceRollValue : int = 0
-    var GreenDiceRollValue : int = 0
-    var YellowDiceRollValue : int = 0
-
-    var GameStarted:logic = false 
-    var AllPlayersPawns : []creative_prop = array{}
-
-    var AllRedPawn : []creative_prop = array{}
-    var AllBluePawn : []creative_prop = array{}
-    var AllYellowPawn : []creative_prop = array{}
-    var AllGreenPawn : []creative_prop = array{}
-
-    # Track current path index for each pawn
-    var RedPawnIndex : int = -1 #-1 indicates the pawn is not yet on the path
-    var RedPawnOneIndex : int = -1
-    var RedPawnTwoIndex : int = -1
-    var RedPawnThreeIndex : int = -1
-
-    var BluePawnIndex : int = -1
-    var BluePawnOneIndex : int = -1
-    var BluePawnTwoIndex : int = -1
-    var BluePawnThreeIndex : int = -1
-
-    var YellowPawnIndex : int = -1
-    var YellowPawnOneIndex : int = -1
-    var YellowPawnTwoIndex : int = -1
-    var YellowPawnThreeIndex : int = -1
-
-    var GreenPawnIndex : int = -1
-    var GreenPawnOneIndex : int = -1
-    var GreenPawnTwoIndex : int = -1
-    var GreenPawnThreeIndex : int = -1
-
-    # Store initial transforms for respawn
-    var RedPawnInitialTransform : transform = transform{}
-    var RedPawnOneInitialTransform : transform = transform{}
-    var RedPawnTwoInitialTransform : transform = transform{}
-    var RedPawnThreeInitialTransform : transform = transform{}
-
-    var RedConsecutiveSixes : int = 0       
-    var GreenConsecutiveSixes : int = 0
-    var BlueConsecutiveSixes : int = 0
-    var YellowConsecutiveSixes : int = 0
-
-    var RedPlayer : ?agent = false
-    var GreenPlayer : ?agent = false
-    var BluePlayer : ?agent = false
-    var YellowPlayer : ?agent = false
-
-    var RedPlayerTurn : logic = false
-    var GreenPlayerTurn : logic = false
-    var BluePlayerTurn : logic = false
-    var YellowPlayerTurn : logic = false
-
-    # Runs when the device is started in a running game
-    OnBegin<override>()<suspends>:void=(
-        
-        set RedPawnInitialTransform = RedPawn.GetTransform()
-        set RedPawnOneInitialTransform = RedPawnOne.GetTransform()
-        set RedPawnTwoInitialTransform = RedPawnTwo.GetTransform()
-        set RedPawnThreeInitialTransform = RedPawnThree.GetTransform()
-
-        set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree, BluePawn, BluePawnOne,
-                                    BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
-                                    YellowPawnOne, YellowPawnTwo, YellowPawnThree}
-        for(PlayerPawn : AllPlayersPawns):
-            PlayerPawn.Hide()
-        RedButton.InteractedWithEvent.Subscribe(RedOneJoined)
-        BlueButton.InteractedWithEvent.Subscribe(BlueOneJoined)
-        GreenButton.InteractedWithEvent.Subscribe(GreenOneJoined)
-        YellowButton.InteractedWithEvent.Subscribe(YellowOneJoined)
-
-        SelectZero.PressedEvent.Subscribe(SelectZeroPressed)
-        SelectOne.PressedEvent.Subscribe(SelectOnePressed)
-        SelectTwo.PressedEvent.Subscribe(SelectTwoPressed)
-        SelectThree.PressedEvent.Subscribe(SelectThreePressed)
-        ConfirmInput.PressedEvent.Subscribe(ConfirmInputPressed)
-        DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
-    )
-
-    GameStartInitiator():void=(
-        var PlayerCount : int = 0
-        if(RedPlayer?):
-            set PlayerCount += 1
-        if(BluePlayer?):
-            set PlayerCount += 1
-        if(YellowPlayer?):
-            set PlayerCount += 1
-        if(GreenPlayer?):
-            set PlayerCount += 1
-        
-        if(OnePlayerSwitch.GetCurrentState[]):
-            if(PlayerCount = 1):
-                set GameStarted = true
-                set RedPlayerTurn = true
-        if(TwoPlayerSwitch.GetCurrentState[]):
-            if(PlayerCount = 2):
-                set GameStarted = true
-                set RedPlayerTurn = true
-
-        else if(ThreePlayerSwitch.GetCurrentState[]):
-            if(PlayerCount = 3):
-                set GameStarted = true
-                set RedPlayerTurn = true
-
-        else if(FourPlayerSwitch.GetCurrentState[]):
-            if(PlayerCount = 4):
-                set GameStarted = true
-                set RedPlayerTurn = true
-    )       
-
-    DiceRollPressed(Agent:agent):void=(
-        if(RedPlayer = option{Agent}):
-            if(RedPlayerTurn = true):
-                RollValue := GetRandomInt(1,6)
-                set RedDiceRollValue = RollValue
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
-                    spawn{HelperDiceRoll(Agent)}
-                    spawn{PossibleMoveChecker(Agent)}
-                Print("Dice Rolled: {RollValue} ")
-        else if(BluePlayer = option{Agent}):
-            if(BluePlayerTurn = true):
-                RollValue := GetRandomInt(1,6)
-                set BlueDiceRollValue = RollValue
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
-                    spawn{HelperDiceRoll(Agent)}
-                Print("Dice Rolled: {RollValue} ")
-        else if(GreenPlayer = option{Agent}):
-            if(GreenPlayerTurn = true):
-                RollValue := GetRandomInt(1,6)
-                set GreenDiceRollValue = RollValue
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
-                    spawn{HelperDiceRoll(Agent)}
-                Print("Dice Rolled: {RollValue} ")
-        else if(YellowPlayer = option{Agent}):
-            if(YellowPlayerTurn = true):
-                RollValue := GetRandomInt(1,6)
-                set YellowDiceRollValue = RollValue
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
-                    spawn{HelperDiceRoll(Agent)}
-                Print("Dice Rolled: {RollValue} ")
-    )
-
-    CheckTimerForRed()<suspends>:void=(
-        
-        var StartTime: float = GetSimulationElapsedTime()
-        loop:
-            Sleep(0.1)
-            if(RedPlayerTurn = false):
-                return
-            var Elapsed : float = GetSimulationElapsedTime() - StartTime
-            if(Elapsed >= CoolDownTime):
-                Print("Time Out! Moving to next player.")
-                set RedPlayerTurn = false
-                set BluePlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
-                return
-    )
-
-    CheckTimerForBlue()<suspends>:void=(
-        var StartTime: float = GetSimulationElapsedTime()
-        loop:
-            Sleep(0.1)
-            if(BluePlayerTurn = false):
-                return
-            var Elapsed : float = GetSimulationElapsedTime() - StartTime
-            if(Elapsed >= CoolDownTime):
-                Print("Time Out! Moving to next player.")
-                set BluePlayerTurn = false
-                set YellowPlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
-                return
-    )
-
-    CheckTimerForGreen()<suspends>:void=(
-        var StartTime: float = GetSimulationElapsedTime()
-        loop:
-            Sleep(0.1)
-            if(GreenPlayerTurn = false):
-                return
-            var Elapsed : float = GetSimulationElapsedTime() - StartTime
-            if(Elapsed >= CoolDownTime):
-                Print("Time Out! Moving to next player.")
-                set GreenPlayerTurn = false
-                set RedPlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
-                return
-    )
-
-    CheckTimerForYellow()<suspends>:void=(
-        var StartTime: float = GetSimulationElapsedTime()
-        loop:
-            Sleep(0.1)
-            if(YellowPlayerTurn = false):
-                return
-            var Elapsed : float = GetSimulationElapsedTime() - StartTime
-            if(Elapsed >= CoolDownTime):
-                Print("Time Out! Moving to next player.")
-                set YellowPlayerTurn = false
-                set GreenPlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
-                return
-    )
-
-    HelperPlayerProfileTurn()<suspends>:void=(
-        if(RedPlayerTurn = true):
-            if(RedPropProfile := RedDiceProp[1]):
-                ResetPlayerDrainerProfile()
-                RedPropProfile.SetMaterial(MiRedDrainer)
-            Print("Red Player's Turn")
-        else if(BluePlayerTurn = true):
-            if(BluePropProfile := BlueDiceProp[1]):
-                ResetPlayerDrainerProfile()
-                BluePropProfile.SetMaterial(MiBlueDrainer)
-            Print("Blue Player's Turn")
-        else if(GreenPlayerTurn = true):
-            if(GreenPropProfile := GreenDiceProp[1]):
-                ResetPlayerDrainerProfile()
-                GreenPropProfile.SetMaterial(MiGreenDrainer)
-            Print("Green Player's Turn")
-        else if(YellowPlayerTurn = true):
-            if(YellowPropProfile := YellowDiceProp[1]):
-                ResetPlayerDrainerProfile()
-                YellowPropProfile.SetMaterial(MiYellowDrainer)
-            Print("Yellow Player's Turn")
-    )
-
-    ResetPlayerDrainerProfile():void=(
-        if(RedPropProfile := RedDiceProp[1]):
-            RedPropProfile.SetMaterial(MiRedNorm)
-        if(BluePropProfile := BlueDiceProp[1]):
-            BluePropProfile.SetMaterial(MiBlueNorm)
-        if(GreenPropProfile := GreenDiceProp[1]):
-            GreenPropProfile.SetMaterial(MiGreenNorm)
-        if(YellowPropProfile := YellowDiceProp[1]):
-            YellowPropProfile.SetMaterial(MiYellowNorm)
-    )
-
-    HelperDiceRoll(Agent:agent)<suspends>:void=(
-        if(RedPlayer = option{Agent}):
-            if(RedDiceRollValue <= 5):
-                set RedPlayerTurn = false
-            Sleep(2.0)
-            if(RedDiceRollValue = 1):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice1Value)
-            else if(RedDiceRollValue = 2):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice2Value)
-            else if(RedDiceRollValue = 3):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice3Value)
-            else if(RedDiceRollValue = 4):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice4Value)
-            else if(RedDiceRollValue = 5):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice5Value)
-            else if(RedDiceRollValue = 6):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice6Value)
-        if(BluePlayer = option{Agent}):
-            if(BlueDiceRollValue <= 5):
-                set BluePlayerTurn = false
-            Sleep(2.0)
-            if(BlueDiceRollValue = 1):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice1Value)
-            else if(BlueDiceRollValue = 2):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice2Value)
-            else if(BlueDiceRollValue = 3):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice3Value)
-            else if(BlueDiceRollValue = 4):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice4Value)
-            else if(BlueDiceRollValue = 5):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice5Value)
-            else if(BlueDiceRollValue = 6):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice6Value)
-        if(GreenPlayer = option{Agent}):
-            if(GreenDiceRollValue <= 5):
-                set GreenPlayerTurn = false
-            Sleep(2.0)
-            if(GreenDiceRollValue = 1):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice1Value)
-            else if(GreenDiceRollValue = 2):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice2Value)
-            else if(GreenDiceRollValue = 3):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice3Value)
-            else if(GreenDiceRollValue = 4):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice4Value)
-            else if(GreenDiceRollValue = 5):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice5Value)
-            else if(GreenDiceRollValue = 6):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice6Value)
-        if(YellowPlayer = option{Agent}):
-            if(YellowDiceRollValue <= 5):
-                set YellowPlayerTurn = false
-            Sleep(2.0)
-            if(YellowDiceRollValue = 1):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice1Value)
-            else if(YellowDiceRollValue = 2):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice2Value)
-            else if(YellowDiceRollValue = 3):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice3Value)
-            else if(YellowDiceRollValue = 4):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice4Value)
-            else if(YellowDiceRollValue = 5):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice5Value)
-            else if(YellowDiceRollValue = 6):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice6Value)
-    )
-
-    RedOneJoined(Agent : agent) : void = (
-        #RedCamera.AddTo(Agent)   #just to check hash
-        set RedPlayer = option{Agent}
-        if(GameStarted = false):
-            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
-            for(RedPawnForRedJoined : AllRedPawn):
-                RedPawnForRedJoined.Show()
-                GameStartInitiator()
-        else if(GameStarted = true):
-            Print("Game has already started. You cannot join now.")
-    )
-
-    BlueOneJoined(Agent : agent) : void = (
-        set BluePlayer = option{Agent}
-        if(GameStarted = false):
-            set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
-            for(BluePawnForBlueJoined : AllBluePawn):
-                BluePawnForBlueJoined.Show()
-                GameStartInitiator()
-        else if(GameStarted = true):
-            Print("Game has already started. You cannot join now.")
-    )
-
-    GreenOneJoined(Agent : agent) : void = (
-        set GreenPlayer = option{Agent}
-        if(GameStarted = false):
-            set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
-            for(GreenPawnForGreenJoined : AllGreenPawn):
-                GreenPawnForGreenJoined.Show()
-                GameStartInitiator()
-        else if(GameStarted = true):
-            Print("Game has already started. You cannot join now.")
-    )
-
-    YellowOneJoined(Agent : agent) : void = (
-        set YellowPlayer = option{Agent}
-        if(GameStarted = false):
-            set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
-            for(YellowPawnForYellowJoined : AllYellowPawn):
-                YellowPawnForYellowJoined.Show()
-                GameStartInitiator()
-        else if(GameStarted = true):
-            Print("Game has already started. You cannot join now.")
-    )
-
-    ResetAllHighlights(Agent:agent):void=(
-        if(RedPlayer = option{Agent}):
-            set RedZeroHighlight.HIghlightIntensity = 0.0
-            RedPawn.SetMaterial(RedZeroHighlight)
-            set RedOneHighlight.HIghlightIntensity = 0.0
-            RedPawnOne.SetMaterial(RedOneHighlight)
-            set RedTwoHighlight.HIghlightIntensity = 0.0
-            RedPawnTwo.SetMaterial(RedTwoHighlight)
-            set RedThreeHighlight.HIghlightIntensity = 0.0
-            RedPawnThree.SetMaterial(RedThreeHighlight)
-        if(BluePlayer = option{Agent}):
-            set BlueZeroHighlight.HIghlightIntensity = 0.0
-            BluePawn.SetMaterial(BlueZeroHighlight)
-            set BlueOneHighlight.HIghlightIntensity = 0.0
-            BluePawnOne.SetMaterial(BlueOneHighlight)
-            set BlueTwoHighlight.HIghlightIntensity = 0.0
-            BluePawnTwo.SetMaterial(BlueTwoHighlight)
-            set BlueThreeHighlight.HIghlightIntensity = 0.0
-            BluePawnThree.SetMaterial(BlueThreeHighlight)
-        if(GreenPlayer = option{Agent}):
-            set GreenZeroHighlight.HIghlightIntensity = 0.0
-            GreenPawn.SetMaterial(GreenZeroHighlight)
-            set GreenOneHighlight.HIghlightIntensity = 0.0
-            GreenPawnOne.SetMaterial(GreenOneHighlight)
-            set GreenTwoHighlight.HIghlightIntensity = 0.0
-            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
-            set GreenThreeHighlight.HIghlightIntensity = 0.0
-            GreenPawnThree.SetMaterial(GreenThreeHighlight)
-        if(YellowPlayer = option{Agent}):
-            set YellowZeroHighlight.HIghlightIntensity = 0.0
-            YellowPawn.SetMaterial(YellowZeroHighlight)
-            set YellowOneHighlight.HIghlightIntensity = 0.0
-            YellowPawnOne.SetMaterial(YellowOneHighlight)
-            set YellowTwoHighlight.HIghlightIntensity = 0.0
-            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
-            set YellowThreeHighlight.HIghlightIntensity = 0.0
-            YellowPawnThree.SetMaterial(YellowThreeHighlight)
-    )
-
-    SelectZeroPressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set RedZeroHighlight.HIghlightIntensity = 20.0
-            RedPawn.SetMaterial(RedZeroHighlight)
-            Print("Higlidhting Red Pawn 0")
-        if(BluePlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set BlueZeroHighlight.HIghlightIntensity = 20.0
-            BluePawn.SetMaterial(BlueZeroHighlight)
-        if(YellowPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set YellowZeroHighlight.HIghlightIntensity = 20.0
-            YellowPawn.SetMaterial(YellowZeroHighlight)
-        if(GreenPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set GreenZeroHighlight.HIghlightIntensity = 20.0
-            GreenPawn.SetMaterial(GreenZeroHighlight)
-    )
-    SelectOnePressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set RedOneHighlight.HIghlightIntensity = 20.0
-            RedPawnOne.SetMaterial(RedOneHighlight)
-        if(BluePlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set BlueOneHighlight.HIghlightIntensity = 20.0
-            BluePawnOne.SetMaterial(BlueOneHighlight)
-        if(YellowPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set YellowOneHighlight.HIghlightIntensity = 20.0
-            YellowPawnOne.SetMaterial(YellowOneHighlight)
-        if(GreenPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set GreenOneHighlight.HIghlightIntensity = 20.0
-            GreenPawnOne.SetMaterial(GreenOneHighlight)
-    )
-    SelectTwoPressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set RedTwoHighlight.HIghlightIntensity = 20.0
-            RedPawnTwo.SetMaterial(RedTwoHighlight)
-        if(BluePlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set BlueTwoHighlight.HIghlightIntensity = 20.0
-            BluePawnTwo.SetMaterial(BlueTwoHighlight)
-        if(YellowPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set YellowTwoHighlight.HIghlightIntensity = 20.0
-            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
-        if(GreenPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set GreenTwoHighlight.HIghlightIntensity = 20.0
-            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
-    )
-    SelectThreePressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set RedThreeHighlight.HIghlightIntensity = 2.0
-            RedPawnThree.SetMaterial(RedThreeHighlight)
-        if(BluePlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set BlueThreeHighlight.HIghlightIntensity = 20.0
-            BluePawnThree.SetMaterial(BlueThreeHighlight)
-        if(YellowPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set YellowThreeHighlight.HIghlightIntensity = 20.0
-            YellowPawnThree.SetMaterial(YellowThreeHighlight)
-        if(GreenPlayer = option{Agent}):
-            ResetAllHighlights(Agent)
-            set GreenThreeHighlight.HIghlightIntensity = 20.0
-            GreenPawnThree.SetMaterial(GreenThreeHighlight)
-    )
-
-    ConfirmInputPressed(Agent:agent):void= (
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
-            if (RedZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawn, RedPawnIndex, Agent)}
-            else if (RedOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawnOne, RedPawnOneIndex, Agent)}
-            else if (RedTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
-            else if (RedThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
-            if (BlueZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
-            else if (BlueOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawnOne, BluePawnOneIndex, Agent)}
-            else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawnTwo, BluePawnTwoIndex, Agent)}
-            else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawnThree, BluePawnThreeIndex, Agent)}
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
-            if (YellowZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawn, YellowPawnIndex, Agent)}
-            else if (YellowOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawnOne, YellowPawnOneIndex, Agent)}
-            else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, Agent)}
-            else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, Agent)}
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
-            if (GreenZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawn, GreenPawnIndex, Agent)}
-            else if (GreenOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawnOne, GreenPawnOneIndex, Agent)}
-            else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex, Agent)}
-            else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
-    )
-
-    PossibleMoveChecker(Agent:agent)<suspends>:void=(
-        ###after a dice roll, for perticular player check if the player can make a move with any of its pawn, 
-        ##if not then switch the turm to the next player###
-        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
-        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
-        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
-        var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
-        var CanMove : logic = false
-        PathLenght := RedPaths.Length #same number for each
-        
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
-            for(PawnIdx : RedPawnIndices):
-                if(PawnIdx = -1 and RedDiceRollValue = 6):
-                    set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + RedDiceRollValue < PathLenght):
-                    set CanMove = true
-                
-            if(CanMove = true):
-                Print("nothing to do stay as it is")
-            else:
-                set RedPlayerTurn = false
-                set BluePlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
-                Print("False cant move")
-
-        else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
-            for(PawnIdx : BluePawnIndices):
-                if(PawnIdx = -1 and BlueDiceRollValue = 6):
-                    set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + BlueDiceRollValue < PathLenght):
-                    set CanMove = true
-
-            if(CanMove = true):
-                Print("nothing to do stay as it is")
-            else:
-                set BluePlayerTurn = false
-                set YellowPlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
-                Print("False cant move")
-
-        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
-            for(PawnIdx : YellowPawnIndices):
-                if(PawnIdx = -1 and YellowDiceRollValue = 6):
-                    set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + YellowDiceRollValue < PathLenght):
-                    set CanMove = true
-
-            if(CanMove = true):
-                Print("nothing to do stay as it is")
-            else:
-                set YellowPlayerTurn = false
-                set GreenPlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
-                Print("False cant move")
-
-        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
-            for(PawnIdx : GreenPawnIndices):
-                if(PawnIdx = -1 and GreenDiceRollValue = 6):
-                    set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + GreenDiceRollValue < PathLenght):
-                    set CanMove = true
-
-            if(CanMove = true):
-                Print("nothing to do stay as it is")
-            else:
-                set GreenPlayerTurn = false
-                set RedPlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForRed()}
                 Print("False cant move")
         
     )
