@@ -159,6 +159,22 @@ LudoManager := class(creative_device):
     var RedPawnTwoInitialTransform : transform = transform{}
     var RedPawnThreeInitialTransform : transform = transform{}
 
+    var BluePawnInitialTransform : transform = transform{}
+    var BluePawnOneInitialTransform : transform = transform{}
+    var BluePawnTwoInitialTransform : transform = transform{}
+    var BluePawnThreeInitialTransform : transform = transform{}
+
+    var YellowPawnInitialTransform : transform = transform{}
+    var YellowPawnOneInitialTransform : transform = transform{}
+    var YellowPawnTwoInitialTransform : transform = transform{}
+    var YellowPawnThreeInitialTransform : transform = transform{}
+    
+    var GreenPawnInitialTransform : transform = transform{}
+    var GreenPawnOneInitialTransform : transform = transform{}
+    var GreenPawnTwoInitialTransform : transform = transform{}
+    var GreenPawnThreeInitialTransform : transform = transform{}
+    
+
     var RedConsecutiveSixes : int = 0       
     var GreenConsecutiveSixes : int = 0
     var BlueConsecutiveSixes : int = 0
@@ -181,6 +197,18 @@ LudoManager := class(creative_device):
         set RedPawnOneInitialTransform = RedPawnOne.GetTransform()
         set RedPawnTwoInitialTransform = RedPawnTwo.GetTransform()
         set RedPawnThreeInitialTransform = RedPawnThree.GetTransform()
+        set BluePawnInitialTransform = BluePawn.GetTransform()
+        set BluePawnOneInitialTransform = BluePawnOne.GetTransform()
+        set BluePawnTwoInitialTransform = BluePawnTwo.GetTransform()
+        set BluePawnThreeInitialTransform = BluePawnThree.GetTransform()
+        set YellowPawnInitialTransform = YellowPawn.GetTransform()
+        set YellowPawnOneInitialTransform = YellowPawnOne.GetTransform()
+        set YellowPawnTwoInitialTransform = YellowPawnTwo.GetTransform()
+        set YellowPawnThreeInitialTransform = YellowPawnThree.GetTransform()
+        set GreenPawnInitialTransform = GreenPawn.GetTransform()
+        set GreenPawnOneInitialTransform = GreenPawnOne.GetTransform()
+        set GreenPawnTwoInitialTransform = GreenPawnTwo.GetTransform()
+        set GreenPawnThreeInitialTransform = GreenPawnThree.GetTransform()
 
         set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree, BluePawn, BluePawnOne,
                                     BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
@@ -807,7 +835,8 @@ LudoManager := class(creative_device):
             set RedPawnTwoIndex = CurrentIndex
         else if (RedThreeHighlight.HIghlightIntensity = 20.0):
             set RedPawnThreeIndex = CurrentIndex
-
+        
+        spawn{PossibleElimCheckerForRed()}
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         spawn{CheckTimerForBlue()}     
@@ -1038,7 +1067,98 @@ LudoManager := class(creative_device):
         ResetAllHighlights(Agent)
         spawn{CheckTimerForRed()}    
     )
+
+    PossibleElimCheckerForRed()<suspends>:void=(
+        #im jus gonna use if/else for eliminating for now as it'll be easy to understand and keep track of what is going in the code
+        #also it would eliminate all the Pawn which we do not want 
+        var IsRedEliminating : logic = false
         
+        BluePawns : []creative_prop = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
+        YellowPawns : []creative_prop = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+        GreenPawns : []creative_prop = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
+        RedPawns    : []creative_prop = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
 
+        var BlueLocations : []vector3 = array{}
+        var YellowLocations : []vector3 = array{}
+        var GreenLocations : []vector3 = array{}
+        var RedLocations : []vector3 = array{}
 
+        for(Pawn : BluePawns):
+            set BlueLocations += array{Pawn.GetTransform().Translation}
+        for(Pawn : YellowPawns):
+            set YellowLocations += array{Pawn.GetTransform().Translation}
+        for(Pawn : GreenPawns):
+            set GreenLocations += array{Pawn.GetTransform().Translation}
+        for(Pawn:RedPawns):
+            set RedLocations += array{Pawn.GetTransform().Translation}
+
+        for(RedIdx := 0..RedLocations.Length - 1):
+            if(RedLoc := RedLocations[RedIdx]):
+                for(BlueIdx := 0..BlueLocations.Length - 1):
+                    if(BlueLoc := BlueLocations[BlueIdx], RedLoc = BlueLoc):
+                        Print("Red Pawn Eliminated Blue Pawn {BlueIdx}!")
+                        if(BlueIdx = 0):
+                            if(BluePawn.TeleportTo[BluePawnInitialTransform]):
+                                set BluePawnIndex = -1
+                        else if(BlueIdx = 1):
+                            if(BluePawn.TeleportTo[BluePawnOneInitialTransform]):
+                                set BluePawnOneIndex = -1
+                        else if(BlueIdx = 2):                            
+                            if(BluePawn.TeleportTo[BluePawnTwoInitialTransform]):
+                                set BluePawnTwoIndex = -1
+                        else if(BlueIdx = 3):
+                            if(BluePawn.TeleportTo[BluePawnThreeInitialTransform]):
+                                set BluePawnThreeIndex = -1
+                        set IsRedEliminating = true
+                        return
+
+                for(YellowIdx := 0..YellowLocations.Length - 1):
+                    if(YellowLoc := YellowLocations[YellowIdx], YellowLoc = RedLoc):
+                        Print("Red Pawn Eliminated YellowPawn {YellowIdx}!")
+                        if(YellowIdx = 0):
+                            if(YellowPawn.TeleportTo[YellowPawnInitialTransform]):
+                                set YellowPawnIndex = -1
+                        else if(YellowIdx = 1):
+                            if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]):
+                                set YellowPawnOneIndex = -1
+                        else if(YellowIdx = 2):
+                            if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]):
+                                set YellowPawnTwoIndex = -1
+                        else if(YellowIdx = 3):
+                            if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
+                                set YellowPawnThreeIndex = -1
+                        set IsRedEliminating = true
+                        return
+
+                for(GreenIdx := 0..GreenLocations.Length - 1):
+                    if(GreenLoc := GreenLocations[GreenIdx], RedLoc = GreenLoc):
+                        Print("Red Pawn Eliminated Green Pawn {GreenIdx}!")
+                        if(GreenIdx = 0):
+                            if(GreenPawn.TeleportTo[GreenPawnInitialTransform]):
+                                set GreenPawnIndex = -1
+                        else if(GreenIdx = 1):
+                            if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]):
+                                set GreenPawnOneIndex = -1
+                        else if(GreenIdx = 2):
+                            if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]):
+                                set GreenPawnTwoIndex = -1
+                        else if(GreenIdx = 3):
+                            if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
+                                set GreenPawnThreeIndex = -1
+                        set IsRedEliminating = true
+                        return
+
+        if(IsRedEliminating = true):
+            Print("ELim Retooth")
+            set RedPlayerTurn = true
+            set BluePlayerTurn = false
+            set YellowPlayerTurn = false
+            set GreenPlayerTurn = false
+            spawn{CheckTimerForRed()}
+            spawn{HelperPlayerProfileTurn()}
+        else:
+            #blash
+
+    )
+        
 
