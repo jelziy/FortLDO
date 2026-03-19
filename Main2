@@ -1083,6 +1083,11 @@ LudoManager := class(creative_device):
         var GreenLocations : []vector3 = array{}
         var RedLocations : []vector3 = array{}
 
+        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
+
+        SafeSpots : []int = array{0, 8, 13, 21, 26, 34, 39, 47}
+        var Offset : vector3 = vector3{}
+        
         for(Pawn : BluePawns):
             set BlueLocations += array{Pawn.GetTransform().Translation}
         for(Pawn : YellowPawns):
@@ -1091,7 +1096,23 @@ LudoManager := class(creative_device):
             set GreenLocations += array{Pawn.GetTransform().Translation}
         for(Pawn:RedPawns):
             set RedLocations += array{Pawn.GetTransform().Translation}
-
+        
+        for(PawnIdx := 0..RedPawnIndices.Length -1):
+            if(CurrentIndex := RedPawnIndices[PawnIdx]):
+                if(Pawn := RedPawns[PawnIdx]):
+                    Loc := Pawn.GetTransform().Translation
+                    if(CurrentIndex >= 0):
+                        for(SafeSpot:SafeSpots):
+                            if(CurrentIndex = SafeSpot):
+                                if(CurrentIndex = 0 or CurrentIndex = 47 or CurrentIndex = 21 or CurrentIndex = 26):
+                                    set Offset = vector3{X := -10.0, Y := 0.0, Z := 0.0}
+                                else:
+                                    set Offset = vector3{X := 0.0, Y := -10.0, Z := 0.0}
+                                NewLoc := Loc + Offset
+                                if (Pawn.TeleportTo[NewLoc, IdentityRotation()]):
+                                    Print("RedPawn {PawnIdx} location updated with offset")
+                                    return
+                    
         for(RedIdx := 0..RedLocations.Length - 1):
             if(RedLoc := RedLocations[RedIdx]):
                 for(BlueIdx := 0..BlueLocations.Length - 1):
@@ -1110,7 +1131,6 @@ LudoManager := class(creative_device):
                             if(BluePawn.TeleportTo[BluePawnThreeInitialTransform]):
                                 set BluePawnThreeIndex = -1
                         set IsRedEliminating = true
-                        return
 
                 for(YellowIdx := 0..YellowLocations.Length - 1):
                     if(YellowLoc := YellowLocations[YellowIdx], YellowLoc = RedLoc):
@@ -1128,10 +1148,9 @@ LudoManager := class(creative_device):
                             if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
                                 set YellowPawnThreeIndex = -1
                         set IsRedEliminating = true
-                        return
 
                 for(GreenIdx := 0..GreenLocations.Length - 1):
-                    if(GreenLoc := GreenLocations[GreenIdx], RedLoc = GreenLoc):
+                    if(GreenLoc := GreenLocations[GreenIdx], Distance(RedLoc , GreenLoc) <= 0.01):
                         Print("Red Pawn Eliminated Green Pawn {GreenIdx}!")
                         if(GreenIdx = 0):
                             if(GreenPawn.TeleportTo[GreenPawnInitialTransform]):
@@ -1146,7 +1165,6 @@ LudoManager := class(creative_device):
                             if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
                                 set GreenPawnThreeIndex = -1
                         set IsRedEliminating = true
-                        return
 
         if(IsRedEliminating = true):
             Print("ELim Retooth")
@@ -1160,5 +1178,3 @@ LudoManager := class(creative_device):
             #blash
 
     )
-        
-
