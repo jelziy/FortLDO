@@ -190,6 +190,8 @@ LudoManager := class(creative_device):
     var BluePlayerTurn : logic = false
     var YellowPlayerTurn : logic = false
 
+    var WhichColorElim : int = -1 #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green. 
+
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=(
         
@@ -766,7 +768,8 @@ LudoManager := class(creative_device):
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
-    
+        var WhichPawn : int = -1
+
         if(CurrentIndex = -1 and RedDiceRollValue = 6):
             if(Path := RedPaths[0]):
                 PathTransform:= Path.GetTransform()
@@ -826,9 +829,11 @@ LudoManager := class(creative_device):
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
         
-
+        set WhichColorElim = 0
         if (RedZeroHighlight.HIghlightIntensity = 20.0):
             set RedPawnIndex = CurrentIndex
+            set WhichPawn = 0
+            spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, WhichColorElim)}
         else if (RedOneHighlight.HIghlightIntensity = 20.0):
             set RedPawnOneIndex = CurrentIndex
         else if (RedTwoHighlight.HIghlightIntensity = 20.0):
@@ -1068,6 +1073,80 @@ LudoManager := class(creative_device):
         spawn{CheckTimerForRed()}    
     )
 
+    PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int)<suspends>:void=(
+        #1 -- color. 2 -- which pawn index. 3. Position that pawns position index. All int Yes.
+        #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
+        
+        RedPawns : []creative_prop = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+        BluePawns : []creative_prop = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
+        YellowPawns : []creative_prop = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+        GreenPawns : []creative_prop = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
+
+        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
+        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
+        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
+        var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
+        
+        RedPawnTransforms : []transform = array{RedPawnInitialTransform, RedPawnOneInitialTransform, RedPawnTwoInitialTransform, RedPawnThreeInitialTransform}
+        BluePawnTransforms : []transform = array{BluePawnInitialTransform, BluePawnOneInitialTransform, BluePawnTwoInitialTransform, BluePawnThreeInitialTransform}
+        YellowPawnTransforms : []transform = array{YellowPawnInitialTransform, YellowPawnOneInitialTransform, YellowPawnTwoInitialTransform, YellowPawnThreeInitialTransform}
+        GreenPawnTransforms : []transform = array{GreenPawnInitialTransform, GreenPawnOneInitialTransform, GreenPawnTwoInitialTransform, GreenPawnThreeInitialTransform}
+
+        SafeSpots : []int = array{0, 8, 13, 21, 26, 34, 39, 47}
+
+        var DynamicOffset : []int = array{}
+
+        OffsetResToRed :[]int = array{0, 13, 26, 39} # 1 - Red , 2 - Blue , 3, - Yellow, 4 - Green. Positions
+        OffsetResToBlue :[]int = array{39, 0, 13, 26}
+        OffsetResToYellow :[]int = array{26, 39, 0, 13}
+        OffsetResToGreen :[]int = array{13, 26, 39, 0}
+
+        if(Color = 0): # red
+            set DynamicOffset = OffsetResToRed
+        else if(Color = 1): # Blue
+            set DynamicOffset = OffsetResToBlue
+        else if(Color = 2): #Yellow
+            set DynamicOffset = OffsetResToYellow
+        else if(Color = 3): # Green
+            set DynamicOffset = OffsetResToGreen
+        
+        #Will optimize later for target offset relative to each other. if possible # could we do FInd for searching idk.
+        #Formula newIndex=(index−targetOffset+52)mod52
+        #for ELim
+        #there could be that it eliminate all pawn so account for that
+        if(Color = 1 or Color = 2 or Color = 3): # for red
+            if(X := Mod[(PawnPosition - DynamicOffset[0] + 52), 52]):
+                for(PawnIdx := 0..RedPawnIndices.Length -1):
+                    if(X = RedPawnIndices[PawnIdx]):
+                        if(RedPawns[PawnIdx].TeleportTo[RedPawnTransforms[PawnIdx]]):
+                            if( set RedPawnIndices[PawnIdx] = -1):
+                                Print("Red ELiminated by someone")
+                                
+        if(Color = 0 or Color = 2 or Color = 3 and not SafeSpots.Find[PawnPosition]): # for blue
+            if(X := Mod[(PawnPosition - DynamicOffset[1] + 52), 52]):
+                for(PawnIdx := 0..BluePawnIndices.Length - 1):
+                    if(X = BluePawnIndices[PawnIdx]):
+                        if(BluePawns[PawnIdx].TeleportTo[BluePawnTransforms[PawnIdx]]):
+                            if(set BluePawnIndices[PawnIdx] = -1):
+                            Print("Blue Eliminated by someone")
+
+        if(Color = 0 or Color = 1 or Color = 3): # for Yellow
+            if(X := Mod[(PawnPosition - DynamicOffset[2] + 52), 52]):
+                for(PawnIdx := 0..YellowPawnIndices.Length -1):
+                    if(X = YellowPawnIndices[PawnIdx]):
+                        if(RedPawns[PawnIdx].TeleportTo[YellowPawnTransforms[PawnIdx]]):
+                            if(set YellowPawnIndices[PawnIdx] = -1):
+                                Print("Yellow Eliminated")
+            
+        if(Color = 0 or Color = 1 or Color = 2): # for Green
+            if(X := Mod[(PawnPosition - DynamicOffset[3] + 52), 52]):
+                for(PawnIdx := 0..GreenPawnIndices.Length - 1):
+                    if(X = GreenPawnIndices[PawnIdx]):
+                        if(GreenPawns[PawnIdx].TeleportTo[GreenPawnTransforms[PawnIdx]]):
+                            if(set GreenPawnIndices[PawnIdx] = -1):
+                                Print("Green Eliminated")
+    )
+
     PossibleElimCheckerForRed()<suspends>:void=(
         #im jus gonna use if/else for eliminating for now as it'll be easy to understand and keep track of what is going in the code
         #also it would eliminate all the Pawn which we do not want 
@@ -1178,3 +1257,5 @@ LudoManager := class(creative_device):
             #blash
 
     )
+        
+
