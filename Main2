@@ -190,7 +190,13 @@ LudoManager := class(creative_device):
     var BluePlayerTurn : logic = false
     var YellowPlayerTurn : logic = false
 
-    var WhichColorElim : int = -1 #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green. 
+    var WhichColorElim : int = -1 #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
+
+    var RollerForRed : int = 0
+    var RollerForBlue : int = 0
+    var RollerForYellow : int = 0
+    var RollerForGreen : int = 0
+
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=(
@@ -223,9 +229,6 @@ LudoManager := class(creative_device):
         YellowButton.InteractedWithEvent.Subscribe(YellowOneJoined)
 
         SelectZero.PressedEvent.Subscribe(SelectZeroPressed)
-        SelectOne.PressedEvent.Subscribe(SelectOnePressed)
-        SelectTwo.PressedEvent.Subscribe(SelectTwoPressed)
-        SelectThree.PressedEvent.Subscribe(SelectThreePressed)
         ConfirmInput.PressedEvent.Subscribe(ConfirmInputPressed)
         DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
     )
@@ -571,80 +574,93 @@ LudoManager := class(creative_device):
             YellowPawnThree.SetMaterial(YellowThreeHighlight)
     )
 
-    SelectZeroPressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent} and RedPlayerTurn = true):
+    SelectZeroPressed(Agent : agent) : void = (
+        if (RedPlayer = option{Agent} and RedPlayerTurn = true and RollerForRed = 0):
             ResetAllHighlights(Agent)
             set RedZeroHighlight.HIghlightIntensity = 20.0
             RedPawn.SetMaterial(RedZeroHighlight)
+            set RollerForRed += 1
             Print("Higlidhting Red Pawn 0")
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
-            ResetAllHighlights(Agent)
-            set BlueZeroHighlight.HIghlightIntensity = 20.0
-            BluePawn.SetMaterial(BlueZeroHighlight)
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
-            ResetAllHighlights(Agent)
-            set YellowZeroHighlight.HIghlightIntensity = 20.0
-            YellowPawn.SetMaterial(YellowZeroHighlight)
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
-            ResetAllHighlights(Agent)
-            set GreenZeroHighlight.HIghlightIntensity = 20.0
-            GreenPawn.SetMaterial(GreenZeroHighlight)
-    )
-    SelectOnePressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent} and RedPlayerTurn = true):
+        else if (RedPlayer = option{Agent} and RedPlayerTurn = true and RollerForRed = 1):
             ResetAllHighlights(Agent)
             set RedOneHighlight.HIghlightIntensity = 20.0
             RedPawnOne.SetMaterial(RedOneHighlight)
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
-            ResetAllHighlights(Agent)
-            set BlueOneHighlight.HIghlightIntensity = 20.0
-            BluePawnOne.SetMaterial(BlueOneHighlight)
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
-            ResetAllHighlights(Agent)
-            set YellowOneHighlight.HIghlightIntensity = 20.0
-            YellowPawnOne.SetMaterial(YellowOneHighlight)
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
-            ResetAllHighlights(Agent)
-            set GreenOneHighlight.HIghlightIntensity = 20.0
-            GreenPawnOne.SetMaterial(GreenOneHighlight)
-    )
-    SelectTwoPressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent} and RedPlayerTurn = true):
+            set RollerForRed += 1
+        else if (RedPlayer = option{Agent} and RedPlayerTurn = true and RollerForRed = 2):
             ResetAllHighlights(Agent)
             set RedTwoHighlight.HIghlightIntensity = 20.0
             RedPawnTwo.SetMaterial(RedTwoHighlight)
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
-            ResetAllHighlights(Agent)
-            set BlueTwoHighlight.HIghlightIntensity = 20.0
-            BluePawnTwo.SetMaterial(BlueTwoHighlight)
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
-            ResetAllHighlights(Agent)
-            set YellowTwoHighlight.HIghlightIntensity = 20.0
-            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
-            ResetAllHighlights(Agent)
-            set GreenTwoHighlight.HIghlightIntensity = 20.0
-            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
-    )
-    SelectThreePressed(Agent : agent) : void = ( 
-        if (RedPlayer = option{Agent} and RedPlayerTurn = true):
+            set RollerForRed += 1
+        else if (RedPlayer = option{Agent} and RedPlayerTurn = true and RollerForRed = 3):
             ResetAllHighlights(Agent)
             set RedThreeHighlight.HIghlightIntensity = 2.0
             RedPawnThree.SetMaterial(RedThreeHighlight)
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
+            set RollerForRed = 0
+
+        if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = 0):
+            ResetAllHighlights(Agent)
+            set BlueZeroHighlight.HIghlightIntensity = 20.0
+            BluePawn.SetMaterial(BlueZeroHighlight)
+            set RollerForBlue += 1
+        else if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = 1):
+            ResetAllHighlights(Agent)
+            set BlueOneHighlight.HIghlightIntensity = 20.0
+            BluePawnOne.SetMaterial(BlueOneHighlight)
+            set RollerForBlue += 1
+        else if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = 2):
+            ResetAllHighlights(Agent)
+            set BlueTwoHighlight.HIghlightIntensity = 20.0
+            BluePawnTwo.SetMaterial(BlueTwoHighlight)
+            set RollerForBlue += 1
+        else if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = true):
             ResetAllHighlights(Agent)
             set BlueThreeHighlight.HIghlightIntensity = 20.0
             BluePawnThree.SetMaterial(BlueThreeHighlight)
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
+            set RollerForBlue = 0
+
+        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and RollerForYellow = 0):
+            ResetAllHighlights(Agent)
+            set YellowZeroHighlight.HIghlightIntensity = 20.0
+            YellowPawn.SetMaterial(YellowZeroHighlight)
+            set RollerForYellow += 1
+        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and RollerForYellow = 1):
+            ResetAllHighlights(Agent)
+            set YellowOneHighlight.HIghlightIntensity = 20.0
+            YellowPawnOne.SetMaterial(YellowOneHighlight)
+            set RollerForYellow += 1
+        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and RollerForYellow = 2):
+            ResetAllHighlights(Agent)
+            set YellowTwoHighlight.HIghlightIntensity = 20.0
+            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
+            set RollerForYellow += 1
+        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and RollerForYellow = 3):
             ResetAllHighlights(Agent)
             set YellowThreeHighlight.HIghlightIntensity = 20.0
             YellowPawnThree.SetMaterial(YellowThreeHighlight)
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
+            set RollerForYellow = 0
+
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and RollerForGreen = 0):
+            ResetAllHighlights(Agent)
+            set GreenZeroHighlight.HIghlightIntensity = 20.0
+            GreenPawn.SetMaterial(GreenZeroHighlight)
+            set RollerForGreen += 1
+        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and RollerForGreen = 1):
+            ResetAllHighlights(Agent)
+            set GreenOneHighlight.HIghlightIntensity = 20.0
+            GreenPawnOne.SetMaterial(GreenOneHighlight)
+            set RollerForGreen += 1
+        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and RollerForGreen = 2):
+            ResetAllHighlights(Agent)
+            set GreenTwoHighlight.HIghlightIntensity = 20.0
+            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
+            set RollerForGreen += 1
+        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and RollerForGreen = 3):
             ResetAllHighlights(Agent)
             set GreenThreeHighlight.HIghlightIntensity = 20.0
             GreenPawnThree.SetMaterial(GreenThreeHighlight)
+            set RollerForGreen = 0
     )
-
+   
     ConfirmInputPressed(Agent:agent):void= (
         if(RedPlayer = option{Agent} and RedPlayerTurn = true and RedDiceRollValue > 0):
             if (RedZeroHighlight.HIghlightIntensity = 20.0):
@@ -682,6 +698,20 @@ LudoManager := class(creative_device):
                 spawn{MovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex, Agent)}
             else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
+    )
+
+    FalsingPlayerTurn():void=(
+        set RedPlayerTurn = false
+        set BluePlayerTurn= false
+        set GreenPlayerTurn = false
+        set YellowPlayerTurn = false
+    )
+
+    TimerCheckerHelper():void=(
+        spawn{CheckTimerForBlue()}
+        spawn{CheckTimerForGreen()}
+        spawn{CheckTimerForRed()}
+        spawn{CheckTimerForYellow()}
     )
 
     PossibleMoveChecker(Agent:agent)<suspends>:void=(
@@ -835,13 +865,18 @@ LudoManager := class(creative_device):
             set WhichPawn = 0
             spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, WhichColorElim)}
         else if (RedOneHighlight.HIghlightIntensity = 20.0):
+            set WhichPawn = 1
+            spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, WhichColorElim)}
             set RedPawnOneIndex = CurrentIndex
         else if (RedTwoHighlight.HIghlightIntensity = 20.0):
             set RedPawnTwoIndex = CurrentIndex
+            set WhichPawn = 2
+            spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, WhichColorElim)}
         else if (RedThreeHighlight.HIghlightIntensity = 20.0):
             set RedPawnThreeIndex = CurrentIndex
+            set WhichPawn = 3
+            spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, WhichColorElim)}
         
-        spawn{PossibleElimCheckerForRed()}
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         spawn{CheckTimerForBlue()}     
@@ -851,6 +886,7 @@ LudoManager := class(creative_device):
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
+        var WhichPawn : int = -1
         
         if(CurrentIndex = -1 and BlueDiceRollValue = 6):
             if(Path := BluePaths[0]):
@@ -907,15 +943,24 @@ LudoManager := class(creative_device):
                                 Sleep(0.4)
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
-
+        
+        set WhichColorElim = 1
         if (BlueZeroHighlight.HIghlightIntensity = 20.0):
             set BluePawnIndex = CurrentIndex
+            set WhichPawn = 0
+            spawn{PossibleElimChecker(BluePawnIndex, WhichPawn, WhichColorElim)}
         else if (BlueOneHighlight.HIghlightIntensity = 20.0):
             set BluePawnOneIndex = CurrentIndex
+            set WhichPawn = 1
+            spawn{PossibleElimChecker(BluePawnOneIndex, WhichPawn, WhichColorElim)}
         else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
             set BluePawnTwoIndex = CurrentIndex
+            set WhichPawn = 2
+            spawn{PossibleElimChecker(BluePawnTwoIndex, WhichPawn, WhichColorElim)}
         else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
             set BluePawnThreeIndex = CurrentIndex
+            set WhichPawn = 3
+            spawn{PossibleElimChecker(BluePawnThreeIndex, WhichPawn, WhichColorElim)}
 
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
@@ -926,6 +971,7 @@ LudoManager := class(creative_device):
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
+        var WhichPawn : int = -1
 
         if(CurrentIndex = -1 and YellowDiceRollValue = 6):
             if(Path := YellowPaths[0]):
@@ -982,15 +1028,24 @@ LudoManager := class(creative_device):
                                 Sleep(0.4)
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
-
+        
+        set WhichColorElim = 2
         if (YellowZeroHighlight.HIghlightIntensity = 20.0):
             set YellowPawnIndex = CurrentIndex
+            set WhichPawn = 0
+            spawn{PossibleElimChecker(YellowPawnIndex, WhichPawn, WhichColorElim)}
         else if (YellowOneHighlight.HIghlightIntensity = 20.0):
             set YellowPawnOneIndex = CurrentIndex
+            set WhichPawn = 1
+            spawn{PossibleElimChecker(YellowPawnTwoIndex, WhichPawn, WhichColorElim)}
         else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
             set YellowPawnTwoIndex = CurrentIndex
+            set WhichPawn = 2
+            spawn{PossibleElimChecker(YellowPawnTwoIndex, WhichPawn, WhichColorElim)}
         else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
             set YellowPawnThreeIndex = CurrentIndex
+            set WhichPawn = 3
+            spawn{PossibleElimChecker(YellowPawnThreeIndex, WhichPawn, WhichColorElim)}
         
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
@@ -1001,6 +1056,7 @@ LudoManager := class(creative_device):
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
+        var WhichPawn :int = -1
 
         if(CurrentIndex = -1 and GreenDiceRollValue = 6):
             if(Path := GreenPaths[0]):
@@ -1058,15 +1114,24 @@ LudoManager := class(creative_device):
                                 Sleep(0.4)
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
-
+        
+        set WhichColorElim = 3
         if (GreenZeroHighlight.HIghlightIntensity = 20.0):
             set GreenPawnIndex = CurrentIndex
+            set WhichPawn = 0
+            spawn{PossibleElimChecker(GreenPawnOneIndex, WhichPawn, WhichColorElim)}
         else if (GreenOneHighlight.HIghlightIntensity = 20.0):
             set GreenPawnOneIndex = CurrentIndex
+            set WhichPawn = 1
+            spawn{PossibleElimChecker(GreenPawnOneIndex, WhichPawn, WhichColorElim)}
         else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
             set GreenPawnTwoIndex = CurrentIndex
+            set WhichPawn = 2
+            spawn{PossibleElimChecker(GreenPawnTwoIndex, WhichPawn, WhichColorElim)}
         else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
             set GreenPawnThreeIndex = CurrentIndex
+            set WhichPawn = 3
+            spawn{PossibleElimChecker(GreenPawnThreeIndex, WhichPawn, WhichColorElim)}
 
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
@@ -1101,6 +1166,8 @@ LudoManager := class(creative_device):
         OffsetResToYellow :[]int = array{26, 39, 0, 13}
         OffsetResToGreen :[]int = array{13, 26, 39, 0}
 
+        var EliminationOccured :logic = false
+
         if(Color = 0): # red
             set DynamicOffset = OffsetResToRed
         else if(Color = 1): # Blue
@@ -1114,148 +1181,55 @@ LudoManager := class(creative_device):
         #Formula newIndex=(index−targetOffset+52)mod52
         #for ELim
         #there could be that it eliminate all pawn so account for that
-        if(Color = 1 or Color = 2 or Color = 3): # for red
+        if(Color = 1 or Color = 2 or Color = 3 and not SafeSpots.Find[PawnPosition]): # for red
             if(X := Mod[(PawnPosition - DynamicOffset[0] + 52), 52]):
                 for(PawnIdx := 0..RedPawnIndices.Length -1):
-                    if(X = RedPawnIndices[PawnIdx]):
+                    if(X = RedPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(RedPawns[PawnIdx].TeleportTo[RedPawnTransforms[PawnIdx]]):
                             if( set RedPawnIndices[PawnIdx] = -1):
+                                set EliminationOccured = true
                                 Print("Red ELiminated by someone")
                                 
         if(Color = 0 or Color = 2 or Color = 3 and not SafeSpots.Find[PawnPosition]): # for blue
             if(X := Mod[(PawnPosition - DynamicOffset[1] + 52), 52]):
                 for(PawnIdx := 0..BluePawnIndices.Length - 1):
-                    if(X = BluePawnIndices[PawnIdx]):
+                    if(X = BluePawnIndices[PawnIdx] and EliminationOccured = false):
                         if(BluePawns[PawnIdx].TeleportTo[BluePawnTransforms[PawnIdx]]):
                             if(set BluePawnIndices[PawnIdx] = -1):
+                                set EliminationOccured = true
                             Print("Blue Eliminated by someone")
 
-        if(Color = 0 or Color = 1 or Color = 3): # for Yellow
+        if(Color = 0 or Color = 1 or Color = 3 and not SafeSpots.Find[PawnPosition]): # for Yellow
             if(X := Mod[(PawnPosition - DynamicOffset[2] + 52), 52]):
                 for(PawnIdx := 0..YellowPawnIndices.Length -1):
-                    if(X = YellowPawnIndices[PawnIdx]):
+                    if(X = YellowPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(RedPawns[PawnIdx].TeleportTo[YellowPawnTransforms[PawnIdx]]):
                             if(set YellowPawnIndices[PawnIdx] = -1):
+                                set EliminationOccured = true
                                 Print("Yellow Eliminated")
             
-        if(Color = 0 or Color = 1 or Color = 2): # for Green
+        if(Color = 0 or Color = 1 or Color = 2 and not SafeSpots.Find[PawnPosition]): # for Green
             if(X := Mod[(PawnPosition - DynamicOffset[3] + 52), 52]):
                 for(PawnIdx := 0..GreenPawnIndices.Length - 1):
-                    if(X = GreenPawnIndices[PawnIdx]):
+                    if(X = GreenPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(GreenPawns[PawnIdx].TeleportTo[GreenPawnTransforms[PawnIdx]]):
                             if(set GreenPawnIndices[PawnIdx] = -1):
+                                set EliminationOccured = true
                                 Print("Green Eliminated")
-    )
 
-    PossibleElimCheckerForRed()<suspends>:void=(
-        #im jus gonna use if/else for eliminating for now as it'll be easy to understand and keep track of what is going in the code
-        #also it would eliminate all the Pawn which we do not want 
-        var IsRedEliminating : logic = false
-        
-        BluePawns : []creative_prop = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
-        YellowPawns : []creative_prop = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
-        GreenPawns : []creative_prop = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
-        RedPawns    : []creative_prop = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
-
-        var BlueLocations : []vector3 = array{}
-        var YellowLocations : []vector3 = array{}
-        var GreenLocations : []vector3 = array{}
-        var RedLocations : []vector3 = array{}
-
-        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
-
-        SafeSpots : []int = array{0, 8, 13, 21, 26, 34, 39, 47}
-        var Offset : vector3 = vector3{}
-        
-        for(Pawn : BluePawns):
-            set BlueLocations += array{Pawn.GetTransform().Translation}
-        for(Pawn : YellowPawns):
-            set YellowLocations += array{Pawn.GetTransform().Translation}
-        for(Pawn : GreenPawns):
-            set GreenLocations += array{Pawn.GetTransform().Translation}
-        for(Pawn:RedPawns):
-            set RedLocations += array{Pawn.GetTransform().Translation}
-        
-        for(PawnIdx := 0..RedPawnIndices.Length -1):
-            if(CurrentIndex := RedPawnIndices[PawnIdx]):
-                if(Pawn := RedPawns[PawnIdx]):
-                    Loc := Pawn.GetTransform().Translation
-                    if(CurrentIndex >= 0):
-                        for(SafeSpot:SafeSpots):
-                            if(CurrentIndex = SafeSpot):
-                                if(CurrentIndex = 0 or CurrentIndex = 47 or CurrentIndex = 21 or CurrentIndex = 26):
-                                    set Offset = vector3{X := -10.0, Y := 0.0, Z := 0.0}
-                                else:
-                                    set Offset = vector3{X := 0.0, Y := -10.0, Z := 0.0}
-                                NewLoc := Loc + Offset
-                                if (Pawn.TeleportTo[NewLoc, IdentityRotation()]):
-                                    Print("RedPawn {PawnIdx} location updated with offset")
-                                    return
-                    
-        for(RedIdx := 0..RedLocations.Length - 1):
-            if(RedLoc := RedLocations[RedIdx]):
-                for(BlueIdx := 0..BlueLocations.Length - 1):
-                    if(BlueLoc := BlueLocations[BlueIdx], RedLoc = BlueLoc):
-                        Print("Red Pawn Eliminated Blue Pawn {BlueIdx}!")
-                        if(BlueIdx = 0):
-                            if(BluePawn.TeleportTo[BluePawnInitialTransform]):
-                                set BluePawnIndex = -1
-                        else if(BlueIdx = 1):
-                            if(BluePawn.TeleportTo[BluePawnOneInitialTransform]):
-                                set BluePawnOneIndex = -1
-                        else if(BlueIdx = 2):                            
-                            if(BluePawn.TeleportTo[BluePawnTwoInitialTransform]):
-                                set BluePawnTwoIndex = -1
-                        else if(BlueIdx = 3):
-                            if(BluePawn.TeleportTo[BluePawnThreeInitialTransform]):
-                                set BluePawnThreeIndex = -1
-                        set IsRedEliminating = true
-
-                for(YellowIdx := 0..YellowLocations.Length - 1):
-                    if(YellowLoc := YellowLocations[YellowIdx], YellowLoc = RedLoc):
-                        Print("Red Pawn Eliminated YellowPawn {YellowIdx}!")
-                        if(YellowIdx = 0):
-                            if(YellowPawn.TeleportTo[YellowPawnInitialTransform]):
-                                set YellowPawnIndex = -1
-                        else if(YellowIdx = 1):
-                            if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]):
-                                set YellowPawnOneIndex = -1
-                        else if(YellowIdx = 2):
-                            if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]):
-                                set YellowPawnTwoIndex = -1
-                        else if(YellowIdx = 3):
-                            if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
-                                set YellowPawnThreeIndex = -1
-                        set IsRedEliminating = true
-
-                for(GreenIdx := 0..GreenLocations.Length - 1):
-                    if(GreenLoc := GreenLocations[GreenIdx], Distance(RedLoc , GreenLoc) <= 0.01):
-                        Print("Red Pawn Eliminated Green Pawn {GreenIdx}!")
-                        if(GreenIdx = 0):
-                            if(GreenPawn.TeleportTo[GreenPawnInitialTransform]):
-                                set GreenPawnIndex = -1
-                        else if(GreenIdx = 1):
-                            if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]):
-                                set GreenPawnOneIndex = -1
-                        else if(GreenIdx = 2):
-                            if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]):
-                                set GreenPawnTwoIndex = -1
-                        else if(GreenIdx = 3):
-                            if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
-                                set GreenPawnThreeIndex = -1
-                        set IsRedEliminating = true
-
-        if(IsRedEliminating = true):
-            Print("ELim Retooth")
-            set RedPlayerTurn = true
-            set BluePlayerTurn = false
-            set YellowPlayerTurn = false
-            set GreenPlayerTurn = false
-            spawn{CheckTimerForRed()}
-            spawn{HelperPlayerProfileTurn()}
+        if(EliminationOccured = true):
+            FalsingPlayerTurn()
+            if(Color = 0):
+                set RedPlayerTurn = true
+            else if(Color = 1):
+                set BluePlayerTurn = true
+            else if(Color = 2):
+                set YellowPlayerTurn = true
+            else if(Color = 3):
+                set GreenPlayerTurn = true
+            HelperPlayerProfileTurn()
+            TimerCheckerHelper()
         else:
-            #blash
-
+            Print("Blahhhh")
     )
-        
 
