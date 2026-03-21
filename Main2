@@ -15,13 +15,14 @@ BluePawnTip<localizes>:message = "Blue Pawns"
 YellowPawnTip<localizes>:message = "Yellow Pawns"
 DicesRollTip<localizes>:message = "Dices Prop & Frames"
 PlayerSwitchTip<localizes>:message = "Players Switch"
+NotifiersTip<localizes>:message = "Notifier Tip"
 
 PathProps<localizes>:message = "Paths For Each"
 
 LudoManager := class(creative_device):
     
     @editable  var CoolDownTime : float = 17.0
-
+    
     @editable {Categories := array{CamerasTip}}
     RedCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
     @editable {Categories := array{CamerasTip}}
@@ -80,6 +81,10 @@ LudoManager := class(creative_device):
     @editable {Categories := array{DicesRollTip}} GreenDiceProp : []creative_prop = array{}
     @editable {Categories := array{DicesRollTip}} BlueDiceProp : []creative_prop = array{}
     @editable {Categories := array{DicesRollTip}} YellowDiceProp : []creative_prop = array{}
+
+    @editable {Categories := array{NotifiersTip}} TwoNotifiers :[]creative_prop = array{} 
+    @editable {Categories := array{NotifiersTip}} ThreeNotifiers :[]creative_prop = array{}
+    @editable {Categories := array{NotifiersTip}} FourNotifiers :[]creative_prop = array{}
 
     var RedZeroHighlight : MI_RedPawn = MI_RedPawn{}
     var RedOneHighlight : MI_RedPawn1 = MI_RedPawn1{}
@@ -223,6 +228,12 @@ LudoManager := class(creative_device):
                                     YellowPawnOne, YellowPawnTwo, YellowPawnThree}
         for(PlayerPawn : AllPlayersPawns):
             PlayerPawn.Hide()
+        for(notifiers : TwoNotifiers):
+            notifiers.Hide()
+        for(notifiers : ThreeNotifiers):
+            notifiers.Hide()
+        for(notifiers : FourNotifiers):
+            notifiers.Hide()
         RedButton.InteractedWithEvent.Subscribe(RedOneJoined)
         BlueButton.InteractedWithEvent.Subscribe(BlueOneJoined)
         GreenButton.InteractedWithEvent.Subscribe(GreenOneJoined)
@@ -1158,6 +1169,8 @@ LudoManager := class(creative_device):
         GreenPawnTransforms : []transform = array{GreenPawnInitialTransform, GreenPawnOneInitialTransform, GreenPawnTwoInitialTransform, GreenPawnThreeInitialTransform}
 
         SafeSpots : []int = array{0, 8, 13, 21, 26, 34, 39, 47}
+        SafeSpotsY :[]int = array{0, 21, 26, 47}
+        SafeSpotsX :[]int = array{8, 13, 34, 39}
 
         var DynamicOffset : []int = array{}
 
@@ -1167,15 +1180,59 @@ LudoManager := class(creative_device):
         OffsetResToGreen :[]int = array{13, 26, 39, 0}
 
         var EliminationOccured :logic = false
-
+    
         if(Color = 0): # red
-            set DynamicOffset = OffsetResToRed
+            set DynamicOffset = OffsetResToRed    
+            var PawnCount :int = 1
+            if(SafeSpotsY.Find[PawnPosition]):
+                if(PawnTranslation := RedPawns[Pawn].GetTransform().Translation):
+                    Offset := vector3{X := 0.0, Y := 20.0, Z := 0.0}
+                    NewLocY := PawnTranslation + Offset
+                        if(RedPawns[Pawn].TeleportTo[NewLocY, IdentityRotation()]):
+            if(SafeSpotsX.Find[PawnPosition]):
+                if(PawnTranslation := RedPawns[Pawn].GetTransform().Translation):
+                    Offset := vector3{X := 20.0, Y := 0.0, Z := 0.0}
+                    NewLocX := PawnTranslation + Offset
+                        if(RedPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):                  
         else if(Color = 1): # Blue
             set DynamicOffset = OffsetResToBlue
+            if(SafeSpotsY.Find[PawnPosition]):
+                if(PawnTranslation := BluePawns[Pawn].GetTransform().Translation):
+                    Offset := vector3{X := 0.0, Y := 10.0, Z := 0.0}
+                    NewLocY := PawnTranslation + Offset
+                        if(BluePawns[Pawn].TeleportTo[NewLocY, IdentityRotation()]):
+            if(SafeSpotsX.Find[PawnPosition]):
+                if(PawnTranslation := BluePawns[Pawn].GetTransform().Translation):
+                    Offset := vector3{X := 10.0, Y := 0.0, Z := 0.0}
+                    NewLocX := PawnTranslation + Offset
+                        if(BluePawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]): 
+
         else if(Color = 2): #Yellow
             set DynamicOffset = OffsetResToYellow
+            if(SafeSpotsY.Find[PawnPosition]):
+                if(PawnTranslation := YellowPawns[Pawn].GetTransform().Translation):
+                    Offset := vector3{X := 0.0, Y := -5.0, Z := 0.0}
+                    NewLocY := PawnTranslation + Offset
+                        if(YellowPawns[Pawn].TeleportTo[NewLocY, IdentityRotation()]):
+            if(SafeSpotsX.Find[PawnPosition]):
+                if(PawnTranslation := YellowPawns[Pawn].GetTransform().Translation):
+                    Offset := vector3{X := -5.0, Y := 0.0, Z := 0.0}
+                    NewLocX := PawnTranslation + Offset
+                        if(YellowPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
+
         else if(Color = 3): # Green
             set DynamicOffset = OffsetResToGreen
+            set DynamicOffset = OffsetResToYellow
+            if(SafeSpotsY.Find[PawnPosition]):
+                if(PawnTranslation := GreenPawns[Pawn].GetTransform().Translation):
+                    Offset := vector3{X := 0.0, Y := -20.0, Z := 0.0}
+                    NewLocY := PawnTranslation + Offset
+                        if(GreenPawns[Pawn].TeleportTo[NewLocY, IdentityRotation()]):
+            if(SafeSpotsX.Find[PawnPosition]):
+                if(PawnTranslation := GreenPawns[Pawn].GetTransform().Translation):
+                    Offset := vector3{X := -20.0, Y := 0.0, Z := 0.0}
+                    NewLocX := PawnTranslation + Offset
+                        if(GreenPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
         
         #Will optimize later for target offset relative to each other. if possible # could we do FInd for searching idk.
         #Formula newIndex=(index−targetOffset+52)mod52
@@ -1216,6 +1273,7 @@ LudoManager := class(creative_device):
                             if(set GreenPawnIndices[PawnIdx] = -1):
                                 set EliminationOccured = true
                                 Print("Green Eliminated")
+
 
         if(EliminationOccured = true):
             FalsingPlayerTurn()
