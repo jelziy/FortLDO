@@ -46,10 +46,7 @@ LudoManager := class(creative_device):
     SelectZero : input_trigger_device = input_trigger_device{}
     @editable {Categories := array{InputTip}}
     SelectOne : input_trigger_device = input_trigger_device{}
-    @editable {Categories := array{InputTip}}
-    SelectTwo : input_trigger_device = input_trigger_device{}
-    @editable {Categories := array{InputTip}}
-    SelectThree : input_trigger_device = input_trigger_device{}
+
 
     @editable {Categories := array{RedPawnTip}} RedPawn : creative_prop = creative_prop{}
     @editable {Categories := array{RedPawnTip}} RedPawnOne : creative_prop = creative_prop{}
@@ -231,6 +228,8 @@ LudoManager := class(creative_device):
         SelectZero.PressedEvent.Subscribe(SelectZeroPressed)
         ConfirmInput.PressedEvent.Subscribe(ConfirmInputPressed)
         DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
+        SelectOne.PressedEvent.Subscribe(ExitingTheArena)
+        GetPlayspace().PlayerRemovedEvent().Subscribe(ExitingTheArena)
     )
 
     GameStartInitiator():void=(
@@ -247,22 +246,137 @@ LudoManager := class(creative_device):
         if(OnePlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 1):
                 set GameStarted = true
-                set RedPlayerTurn = true
+                set RedPlayerTurn = true 
+                spawn{HelperPlayerProfileTurn()}
         if(TwoPlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 2):
                 set GameStarted = true
                 set RedPlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
 
         else if(ThreePlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 3):
                 set GameStarted = true
                 set RedPlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
 
         else if(FourPlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 4):
                 set GameStarted = true
                 set RedPlayerTurn = true
-    )       
+                spawn{HelperPlayerProfileTurn()}
+    )
+
+    RedOneJoined(Agent : agent) : void = (
+        if(RedPlayer = false):
+            RedCamera.AddTo(Agent)   #just to check hash
+            set RedPlayer = option{Agent}
+            if(GameStarted = false):
+                set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+                for(RedPawnForRedJoined : AllRedPawn):
+                    RedPawnForRedJoined.Show()
+                    GameStartInitiator()
+            else if(GameStarted = true):
+                Print("Game has already started. You cannot join now.")
+    )
+
+    BlueOneJoined(Agent : agent) : void = (
+        if(BluePlayer = false):
+            set BluePlayer = option{Agent}
+            BlueCamera.AddTo(Agent)
+            if(GameStarted = false):
+                set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
+                for(BluePawnForBlueJoined : AllBluePawn):
+                    BluePawnForBlueJoined.Show()
+                    GameStartInitiator()
+            else if(GameStarted = true):
+                Print("Game has already started. You cannot join now.")
+    )
+
+    GreenOneJoined(Agent : agent) : void = (
+        if(GreenPlayer = false):
+            set GreenPlayer = option{Agent}
+            GreenCamera.AddTo(Agent)
+            if(GameStarted = false):
+                set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
+                for(GreenPawnForGreenJoined : AllGreenPawn):
+                    GreenPawnForGreenJoined.Show()
+                    GameStartInitiator()
+            else if(GameStarted = true):
+                Print("Game has already started. You cannot join now.")
+    )
+
+    YellowOneJoined(Agent : agent) : void = (
+        if(YellowPlayer = false):
+            set YellowPlayer = option{Agent}
+            YellowCamera.AddTo(Agent)
+            if(GameStarted = false):
+                set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+                for(YellowPawnForYellowJoined : AllYellowPawn):
+                    YellowPawnForYellowJoined.Show()
+                    GameStartInitiator()
+            else if(GameStarted = true):
+                Print("Game has already started. You cannot join now.")
+    )
+
+    ExitingTheArena(Agent:agent):void=(
+        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
+        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
+        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
+        var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
+
+        if(RedPlayer = option{Agent}):
+            set RedPlayer = false
+            RedCamera.RemoveFrom(Agent)
+            if(RedPawn.TeleportTo[RedPawnInitialTransform]):
+            if(RedPawnOne.TeleportTo[RedPawnOneInitialTransform]): 
+            if(RedPawnTwo.TeleportTo[RedPawnTwoInitialTransform]): 
+            if(RedPawnThree.TeleportTo[RedPawnThreeInitialTransform]):
+            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+            for(Pawns : AllRedPawn):
+                Pawns.Hide()
+            for(Index := 0..RedPawnIndices.Length - 1):
+                if(set RedPawnIndices[Index] = -1):
+
+        else if(BluePlayer = option{Agent}):
+            set BluePlayer = false
+            BlueCamera.RemoveFrom(Agent)
+            if(BluePawn.TeleportTo[BluePawnInitialTransform]): 
+            if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]): 
+            if(BluePawnTwo.TeleportTo[BluePawnTwoInitialTransform]): 
+            if(BluePawnThree.TeleportTo[BluePawnThreeInitialTransform]):
+            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+            for(Pawns : AllRedPawn):
+                Pawns.Hide()
+            for(Index := 0..BluePawnIndices.Length - 1):
+                if(set BluePawnIndices[Index] = -1): 
+
+        else if(YellowPlayer = option{Agent}):
+            set YellowPlayer = false
+            YellowCamera.RemoveFrom(Agent)
+            if(YellowPawn.TeleportTo[YellowPawnInitialTransform]): 
+            if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]): 
+            if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]): 
+            if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
+            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+            for(Pawns : AllRedPawn):
+                Pawns.Hide()
+            for(Index := 0..YellowPawnIndices.Length - 1):
+                if(set YellowPawnIndices[Index] = -1):
+
+        else if(GreenPlayer = option{Agent}):
+            set GreenPlayer = false
+            GreenCamera.RemoveFrom(Agent)
+            if(GreenPawn.TeleportTo[GreenPawnInitialTransform]): 
+            if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]): 
+            if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]): 
+            if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
+            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+            for(Pawns : AllRedPawn):
+                Pawns.Hide()
+            for(Index := 0..YellowPawnIndices.Length - 1):
+                if(set YellowPawnIndices[Index] = -1):
+    )
 
     DiceRollPressed(Agent:agent):void=(
         if(RedPlayer = option{Agent}):
@@ -318,6 +432,13 @@ LudoManager := class(creative_device):
                 set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 spawn{CheckTimerForBlue()}
+                return
+
+            else if(RedPlayer = false):
+                set RedPlayerTurn = false
+                set BluePlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForBlue()}
 
                 return
     )
@@ -332,6 +453,12 @@ LudoManager := class(creative_device):
             Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
+                set BluePlayerTurn = false
+                set YellowPlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForYellow()}
+                return
+            else if(BluePlayer = false):
                 set BluePlayerTurn = false
                 set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
@@ -354,6 +481,13 @@ LudoManager := class(creative_device):
                 spawn{HelperPlayerProfileTurn()}
                 spawn{CheckTimerForRed()}
                 return
+
+            else if(GreenPlayer = false):
+                set GreenPlayerTurn = false
+                set RedPlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForRed()}
+                return
     )
 
     CheckTimerForYellow()<suspends>:void=(
@@ -371,6 +505,13 @@ LudoManager := class(creative_device):
                 spawn{HelperPlayerProfileTurn()}
                 spawn{CheckTimerForGreen()}
                 return
+            else if(YellowPlayer = false):
+                set YellowPlayerTurn = false
+                set GreenPlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
+                spawn{CheckTimerForGreen()}
+                return
+
     )
 
     HelperPlayerProfileTurn()<suspends>:void=(
@@ -379,21 +520,25 @@ LudoManager := class(creative_device):
                 ResetPlayerDrainerProfile()
                 RedPropProfile.SetMaterial(MiRedDrainer)
             Print("Red Player's Turn")
+            spawn{CheckTimerForRed()}
         else if(BluePlayerTurn = true):
             if(BluePropProfile := BlueDiceProp[1]):
                 ResetPlayerDrainerProfile()
                 BluePropProfile.SetMaterial(MiBlueDrainer)
             Print("Blue Player's Turn")
+            spawn{CheckTimerForBlue()}
         else if(GreenPlayerTurn = true):
             if(GreenPropProfile := GreenDiceProp[1]):
                 ResetPlayerDrainerProfile()
                 GreenPropProfile.SetMaterial(MiGreenDrainer)
             Print("Green Player's Turn")
+            spawn{CheckTimerForGreen()}
         else if(YellowPlayerTurn = true):
             if(YellowPropProfile := YellowDiceProp[1]):
                 ResetPlayerDrainerProfile()
                 YellowPropProfile.SetMaterial(MiYellowDrainer)
             Print("Yellow Player's Turn")
+            spawn{CheckTimerForYellow()}
     )
 
     ResetPlayerDrainerProfile():void=(
@@ -490,50 +635,7 @@ LudoManager := class(creative_device):
                     DiceProp.SetMaterial(Dice6Value)
     )
 
-    RedOneJoined(Agent : agent) : void = (
-        RedCamera.AddTo(Agent)   #just to check hash
-        set RedPlayer = option{Agent}
-        if(GameStarted = false):
-            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
-            for(RedPawnForRedJoined : AllRedPawn):
-                RedPawnForRedJoined.Show()
-                GameStartInitiator()
-        else if(GameStarted = true):
-            Print("Game has already started. You cannot join now.")
-    )
 
-    BlueOneJoined(Agent : agent) : void = (
-        set BluePlayer = option{Agent}
-        if(GameStarted = false):
-            set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
-            for(BluePawnForBlueJoined : AllBluePawn):
-                BluePawnForBlueJoined.Show()
-                GameStartInitiator()
-        else if(GameStarted = true):
-            Print("Game has already started. You cannot join now.")
-    )
-
-    GreenOneJoined(Agent : agent) : void = (
-        set GreenPlayer = option{Agent}
-        if(GameStarted = false):
-            set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
-            for(GreenPawnForGreenJoined : AllGreenPawn):
-                GreenPawnForGreenJoined.Show()
-                GameStartInitiator()
-        else if(GameStarted = true):
-            Print("Game has already started. You cannot join now.")
-    )
-
-    YellowOneJoined(Agent : agent) : void = (
-        set YellowPlayer = option{Agent}
-        if(GameStarted = false):
-            set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
-            for(YellowPawnForYellowJoined : AllYellowPawn):
-                YellowPawnForYellowJoined.Show()
-                GameStartInitiator()
-        else if(GameStarted = true):
-            Print("Game has already started. You cannot join now.")
-    )
 
     ResetAllHighlights(Agent:agent):void=(
         if(RedPlayer = option{Agent}):
@@ -593,7 +695,7 @@ LudoManager := class(creative_device):
             set RollerForRed += 1
         else if (RedPlayer = option{Agent} and RedPlayerTurn = true and RollerForRed = 3):
             ResetAllHighlights(Agent)
-            set RedThreeHighlight.HIghlightIntensity = 2.0
+            set RedThreeHighlight.HIghlightIntensity = 20.0
             RedPawnThree.SetMaterial(RedThreeHighlight)
             set RollerForRed = 0
 
@@ -612,7 +714,7 @@ LudoManager := class(creative_device):
             set BlueTwoHighlight.HIghlightIntensity = 20.0
             BluePawnTwo.SetMaterial(BlueTwoHighlight)
             set RollerForBlue += 1
-        else if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = true):
+        else if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = 3):
             ResetAllHighlights(Agent)
             set BlueThreeHighlight.HIghlightIntensity = 20.0
             BluePawnThree.SetMaterial(BlueThreeHighlight)
@@ -733,12 +835,13 @@ LudoManager := class(creative_device):
                 
             if(CanMove = true):
                 Print("nothing to do stay as it is")
+                if(RedPlayerTurn = true):
+                    spawn{CheckTimerForRed()}
             else:
                 Sleep(1.8)
                 set RedPlayerTurn = false
                 set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForBlue()}
                 Print("False cant move")
 
         else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
@@ -750,12 +853,13 @@ LudoManager := class(creative_device):
 
             if(CanMove = true):
                 Print("nothing to do stay as it is")
+                if(BluePlayerTurn = true):
+                    spawn{CheckTimerForBlue()}
             else:
                 Sleep(1.8)
                 set BluePlayerTurn = false
                 set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForYellow()}
                 Print("False cant move")
 
         else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
@@ -767,12 +871,13 @@ LudoManager := class(creative_device):
 
             if(CanMove = true):
                 Print("nothing to do stay as it is")
+                if(YellowPlayerTurn = true):
+                    spawn{CheckTimerForYellow()}
             else:
                 Sleep(1.8)
                 set YellowPlayerTurn = false
                 set GreenPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForGreen()}
                 Print("False cant move")
 
         else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
@@ -784,12 +889,13 @@ LudoManager := class(creative_device):
 
             if(CanMove = true):
                 Print("nothing to do stay as it is")
+                if(GreenPlayerTurn = true):
+                    spawn{CheckTimerForGreen()}
             else:
                 Sleep(1.8)
                 set GreenPlayerTurn = false
                 set RedPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForRed()}
                 Print("False cant move")
         
     )
@@ -806,23 +912,14 @@ LudoManager := class(creative_device):
                 PathTranslation:= PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                    if(RedDiceRollValue = 6):
-                        set RedConsecutiveSixes += 1
-                        if(RedConsecutiveSixes >= 3):
-                            # Switch to Blue turn, reset counter
-                            set RedPlayerTurn = false
-                            set BluePlayerTurn = true
-                            set RedConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set RedPlayerTurn = true
-                    else:
+                    set CurrentIndex = 0
+                    set RedConsecutiveSixes += 1
+                    if(RedConsecutiveSixes >= 3):
                         set RedPlayerTurn = false
                         set BluePlayerTurn = true
-
-                    set CurrentIndex = 0
+                        set RedConsecutiveSixes = 0
+                    # else keep turn
                     set RedDiceRollValue = 0
-
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -831,30 +928,27 @@ LudoManager := class(creative_device):
             if(RedDiceRollValue <= RemainingPaths):
                 if(TargetIndex < RedPaths.Length):
                     for (Step := 1..RedDiceRollValue):
-                        NextIndex := CurrentIndex + 1
+                        NextIndex := CurrentIndex + Step
                         Print("Step {Step}: NextIndex = {NextIndex}")
                         if(Path := RedPaths[NextIndex]):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                                if(RedDiceRollValue = 6):
-                                    set RedConsecutiveSixes += 1
-                                    if(RedConsecutiveSixes >= 3):
-                                        # Switch to Blue turn, reset counter
-                                        set RedPlayerTurn = false
-                                        set BluePlayerTurn = true
-                                        set RedConsecutiveSixes = 0
-                                    else:
-                                        # Keep turn
-                                        set RedPlayerTurn = true
-                                else:
-                                    set RedPlayerTurn = false
-                                    set BluePlayerTurn = true
-
-                                set CurrentIndex = NextIndex
-                                set RedDiceRollValue = 0
-                                Sleep(0.4)
+                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]): 
+                            Sleep(0.4)
+                    set CurrentIndex = TargetIndex
+                    if(RedDiceRollValue = 6):
+                        set RedConsecutiveSixes += 1
+                        if(RedConsecutiveSixes >= 3):
+                            set RedPlayerTurn = false
+                            set BluePlayerTurn = true
+                            set RedConsecutiveSixes = 0
+                        # else keep turn
+                    else:
+                        set RedConsecutiveSixes = 0
+                        set RedPlayerTurn = false
+                        set BluePlayerTurn = true
+                    set RedDiceRollValue = 0
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
@@ -878,8 +972,7 @@ LudoManager := class(creative_device):
             spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, WhichColorElim)}
         
         spawn{HelperPlayerProfileTurn()}
-        ResetAllHighlights(Agent)
-        spawn{CheckTimerForBlue()}     
+        ResetAllHighlights(Agent)     
     )
 
     MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1279,4 +1372,5 @@ LudoManager := class(creative_device):
         else:
             Print("Blahhhh")
     )
+
 
