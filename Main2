@@ -15,7 +15,6 @@ BluePawnTip<localizes>:message = "Blue Pawns"
 YellowPawnTip<localizes>:message = "Yellow Pawns"
 DicesRollTip<localizes>:message = "Dices Prop & Frames"
 PlayerSwitchTip<localizes>:message = "Players Switch"
-NotifiersTip<localizes>:message = "Notifier Tip"
 
 PathProps<localizes>:message = "Paths For Each"
 
@@ -81,10 +80,6 @@ LudoManager := class(creative_device):
     @editable {Categories := array{DicesRollTip}} GreenDiceProp : []creative_prop = array{}
     @editable {Categories := array{DicesRollTip}} BlueDiceProp : []creative_prop = array{}
     @editable {Categories := array{DicesRollTip}} YellowDiceProp : []creative_prop = array{}
-
-    @editable {Categories := array{NotifiersTip}} TwoNotifiers :[]creative_prop = array{} 
-    @editable {Categories := array{NotifiersTip}} ThreeNotifiers :[]creative_prop = array{}
-    @editable {Categories := array{NotifiersTip}} FourNotifiers :[]creative_prop = array{}
 
     var RedZeroHighlight : MI_RedPawn = MI_RedPawn{}
     var RedOneHighlight : MI_RedPawn1 = MI_RedPawn1{}
@@ -228,12 +223,6 @@ LudoManager := class(creative_device):
                                     YellowPawnOne, YellowPawnTwo, YellowPawnThree}
         for(PlayerPawn : AllPlayersPawns):
             PlayerPawn.Hide()
-        for(notifiers : TwoNotifiers):
-            notifiers.Hide()
-        for(notifiers : ThreeNotifiers):
-            notifiers.Hide()
-        for(notifiers : FourNotifiers):
-            notifiers.Hide()
         RedButton.InteractedWithEvent.Subscribe(RedOneJoined)
         BlueButton.InteractedWithEvent.Subscribe(BlueOneJoined)
         GreenButton.InteractedWithEvent.Subscribe(GreenOneJoined)
