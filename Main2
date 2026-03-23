@@ -373,8 +373,8 @@ LudoManager := class(creative_device):
             if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]): 
             if(BluePawnTwo.TeleportTo[BluePawnTwoInitialTransform]): 
             if(BluePawnThree.TeleportTo[BluePawnThreeInitialTransform]):
-            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
-            for(Pawns : AllRedPawn):
+            set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
+            for(Pawns : AllBluePawn):
                 Pawns.Hide()
             for(Index := 0..BluePawnIndices.Length - 1):
                 if(set BluePawnIndices[Index] = -1):
@@ -388,8 +388,8 @@ LudoManager := class(creative_device):
             if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]): 
             if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]): 
             if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
-            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
-            for(Pawns : AllRedPawn):
+            set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+            for(Pawns : AllYellowPawn):
                 Pawns.Hide()
             for(Index := 0..YellowPawnIndices.Length - 1):
                 if(set YellowPawnIndices[Index] = -1):
@@ -403,8 +403,8 @@ LudoManager := class(creative_device):
             if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]): 
             if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]): 
             if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
-            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
-            for(Pawns : AllRedPawn):
+            set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
+            for(Pawns : AllGreenPawn):
                 Pawns.Hide()
             for(Index := 0..YellowPawnIndices.Length - 1):
                 if(set YellowPawnIndices[Index] = -1):
@@ -1059,7 +1059,7 @@ LudoManager := class(creative_device):
             if(BlueDiceRollValue <= RemainingPaths):
                 if(TargetIndex < BluePaths.Length):
                     for (Step := 1..BlueDiceRollValue):
-                        NextIndex := CurrentIndex + 1
+                        NextIndex := CurrentIndex + Step
                         Print("Step {Step}: NextIndex = {NextIndex}")
                         if(Path := BluePaths[NextIndex]):
                             PathTransform := Path.GetTransform()
@@ -1143,7 +1143,7 @@ LudoManager := class(creative_device):
             if(YellowDiceRollValue <= RemainingPaths):
                 if(TargetIndex < YellowPaths.Length):
                     for (Step := 1..YellowDiceRollValue):
-                        NextIndex := CurrentIndex + 1
+                        NextIndex := CurrentIndex + Step
                         Print("Step {Step}: NextIndex = {NextIndex}")
                         if(Path := YellowPaths[NextIndex]):
                             PathTransform := Path.GetTransform()
@@ -1178,7 +1178,7 @@ LudoManager := class(creative_device):
         else if (YellowOneHighlight.HIghlightIntensity = 20.0):
             set YellowPawnOneIndex = CurrentIndex
             set WhichPawn = 1
-            spawn{PossibleElimChecker(YellowPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(YellowPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
         else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
             set YellowPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
@@ -1229,7 +1229,7 @@ LudoManager := class(creative_device):
             if(GreenDiceRollValue <= RemainingPaths):
                 if(TargetIndex < GreenPaths.Length):
                     for (Step := 1..GreenDiceRollValue):
-                        NextIndex := CurrentIndex + 1
+                        NextIndex := CurrentIndex + Step
                         Print("Step {Step}: NextIndex = {NextIndex}")
                         if(Path := GreenPaths[NextIndex]):
                             PathTransform := Path.GetTransform()
@@ -1260,7 +1260,7 @@ LudoManager := class(creative_device):
         if (GreenZeroHighlight.HIghlightIntensity = 20.0):
             set GreenPawnIndex = CurrentIndex
             set WhichPawn = 0
-            spawn{PossibleElimChecker(GreenPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(GreenPawnIndex, WhichPawn, WhichColorElim, Agent)}
         else if (GreenOneHighlight.HIghlightIntensity = 20.0):
             set GreenPawnOneIndex = CurrentIndex
             set WhichPawn = 1
@@ -1540,6 +1540,7 @@ LudoManager := class(creative_device):
     )
 
     GameOverReset()<suspends>:void=(
+    Sleep(3.0)
     set GameStarted = false
     set ActivePlayerCount = 0
     set FinishedOrder = array{}
