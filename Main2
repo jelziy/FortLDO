@@ -806,7 +806,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
-            set DoubleRollFlagBlue = false
+            set DoubleRollFlagRed = false
         if(BluePlayer = option{Agent} and BluePlayerTurn = true and BlueDiceRollValue > 0):
             if (BlueZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
