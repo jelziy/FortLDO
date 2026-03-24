@@ -1575,6 +1575,11 @@ LudoManager := class(creative_device):
         set RollerForBlue = 0
         set RollerForYellow = 0
         set RollerForGreen = 0
+        
+        set RedPlayer = false 
+        set BluePlayer = false
+        set GreenPlayer = false
+        set YellowPlayer = false
 
         set DoubleRollFlagRed = false
         set DoubleRollFlagBlue = false
