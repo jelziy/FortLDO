@@ -406,8 +406,8 @@ LudoManager := class(creative_device):
             set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
             for(Pawns : AllGreenPawn):
                 Pawns.Hide()
-            for(Index := 0..YellowPawnIndices.Length - 1):
-                if(set YellowPawnIndices[Index] = -1):
+            for(Index := 0..GreenPawnIndices.Length - 1):
+                if(set GreenPawnIndices[Index] = -1):
             if(not FinishedOrder.Find[3]):
                 set ActivePlayerCount -= 1
     )
@@ -1392,7 +1392,6 @@ LudoManager := class(creative_device):
 
         else if(Color = 3): # Green
             set DynamicOffset = OffsetResToGreen
-            set DynamicOffset = OffsetResToYellow
             if(SafeSpotsY.Find[PawnPosition]):
                 if(PawnTranslation := GreenPawns[Pawn].GetTransform().Translation):
                     Offset := vector3{X := 0.0, Y := -20.0, Z := 0.0}
@@ -1443,7 +1442,7 @@ LudoManager := class(creative_device):
             if(X := Mod[(PawnPosition - DynamicOffset[2] + 52), 52]):
                 for(PawnIdx := 0..YellowPawnIndices.Length -1):
                     if(X = YellowPawnIndices[PawnIdx] and EliminationOccured = false):
-                        if(RedPawns[PawnIdx].TeleportTo[YellowPawnTransforms[PawnIdx]]):
+                        if(YellowPawns[PawnIdx].TeleportTo[YellowPawnTransforms[PawnIdx]]):
                             if(set YellowPawnIndices[PawnIdx] = -1):
                                 set EliminationOccured = true
                                 Print("Yellow Eliminated")
