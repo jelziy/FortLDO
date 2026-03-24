@@ -19,6 +19,7 @@ EndPlanesPropTip<localizes>:message = "End Screen"
 
 PathProps<localizes>:message = "Paths For Each"
 
+
 LudoManager := class(creative_device):
     
     @editable  var CoolDownTime : float = 24.0
@@ -138,6 +139,7 @@ LudoManager := class(creative_device):
     var AllBluePawn : []creative_prop = array{}
     var AllYellowPawn : []creative_prop = array{}
     var AllGreenPawn : []creative_prop = array{}
+
 
     # Track current path index for each pawn
     var RedPawnIndex : int = -1 #-1 indicates the pawn is not yet on the path
@@ -346,10 +348,6 @@ LudoManager := class(creative_device):
     )
 
     ExitingTheArena(Agent:agent):void=(
-        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
-        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
-        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
-        var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
 
         if(RedPlayer = option{Agent}):
             set RedPlayer = false
@@ -361,8 +359,7 @@ LudoManager := class(creative_device):
             set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
             for(Pawns : AllRedPawn):
                 Pawns.Hide()
-            for(Index := 0..RedPawnIndices.Length - 1):
-                if(set RedPawnIndices[Index] = -1):
+            RedIndexInitialSetter()
             if(not FinishedOrder.Find[0]):
                 set ActivePlayerCount -= 1
 
@@ -376,8 +373,7 @@ LudoManager := class(creative_device):
             set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
             for(Pawns : AllBluePawn):
                 Pawns.Hide()
-            for(Index := 0..BluePawnIndices.Length - 1):
-                if(set BluePawnIndices[Index] = -1):
+            BlueIndexInitialSetter()
             if(not FinishedOrder.Find[1]):
                 set ActivePlayerCount -= 1
 
@@ -391,8 +387,7 @@ LudoManager := class(creative_device):
             set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
             for(Pawns : AllYellowPawn):
                 Pawns.Hide()
-            for(Index := 0..YellowPawnIndices.Length - 1):
-                if(set YellowPawnIndices[Index] = -1):
+            YellowIndexInitialSetter()
             if(not FinishedOrder.Find[2]):
                 set ActivePlayerCount -= 1
 
@@ -406,8 +401,7 @@ LudoManager := class(creative_device):
             set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
             for(Pawns : AllGreenPawn):
                 Pawns.Hide()
-            for(Index := 0..GreenPawnIndices.Length - 1):
-                if(set GreenPawnIndices[Index] = -1):
+            GreenIndexInitialSetter()
             if(not FinishedOrder.Find[3]):
                 set ActivePlayerCount -= 1
     )
@@ -845,12 +839,6 @@ LudoManager := class(creative_device):
             set DoubleRollFlagGreen = false
     )
 
-    FalsingPlayerTurn():void=(
-        set RedPlayerTurn = false
-        set BluePlayerTurn= false
-        set GreenPlayerTurn = false
-        set YellowPlayerTurn = false
-    )
 
     TimerCheckerHelper():void=(
         spawn{CheckTimerForBlue()}
@@ -1007,8 +995,8 @@ LudoManager := class(creative_device):
             spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, WhichColorElim, Agent)}
         else if (RedOneHighlight.HIghlightIntensity = 20.0):
             set WhichPawn = 1
-            spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
             set RedPawnOneIndex = CurrentIndex
+            spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
         else if (RedTwoHighlight.HIghlightIntensity = 20.0):
             set RedPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
@@ -1420,41 +1408,69 @@ LudoManager := class(creative_device):
         #Formula newIndex=(index−targetOffset+52)mod52
         #for ELim
         #there could be that it eliminate all pawn so account for that
-        if(Color = 1 or Color = 2 or Color = 3 and not SafeSpots.Find[PawnPosition]): # for red
+        if((Color = 1 or Color = 2 or Color = 3) and not SafeSpots.Find[PawnPosition]): # for red
             if(X := Mod[(PawnPosition - DynamicOffset[0] + 52), 52]):
                 for(PawnIdx := 0..RedPawnIndices.Length -1):
                     if(X = RedPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(RedPawns[PawnIdx].TeleportTo[RedPawnTransforms[PawnIdx]]):
-                            if( set RedPawnIndices[PawnIdx] = -1):
-                                set EliminationOccured = true
-                                Print("Red ELiminated by someone")
+                            if(PawnIdx = 0):
+                                set RedPawnIndex = -1
+                            else if(PawnIdx = 1):
+                                set RedPawnOneIndex = -1
+                            else if(PawnIdx = 2):
+                                set RedPawnTwoIndex = -1
+                            else if(PawnIdx = 3):
+                                set RedPawnThreeIndex = -1
+                            set EliminationOccured = true
+                            Print("Red ELiminated by someone")
                                 
-        if(Color = 0 or Color = 2 or Color = 3 and not SafeSpots.Find[PawnPosition]): # for blue
+        if((Color = 0 or Color = 2 or Color = 3) and not SafeSpots.Find[PawnPosition]): # for blue
             if(X := Mod[(PawnPosition - DynamicOffset[1] + 52), 52]):
                 for(PawnIdx := 0..BluePawnIndices.Length - 1):
                     if(X = BluePawnIndices[PawnIdx] and EliminationOccured = false):
                         if(BluePawns[PawnIdx].TeleportTo[BluePawnTransforms[PawnIdx]]):
-                            if(set BluePawnIndices[PawnIdx] = -1):
-                                set EliminationOccured = true
+                            if(PawnIdx = 0):
+                                set BluePawnIndex = -1
+                            else if(PawnIdx = 1):
+                                set BluePawnOneIndex = -1
+                            else if(PawnIdx = 2):
+                                set BluePawnTwoIndex = -1
+                            else if(PawnIdx = 3):
+                                set BluePawnThreeIndex = -1
+                            set EliminationOccured = true
                             Print("Blue Eliminated by someone")
 
-        if(Color = 0 or Color = 1 or Color = 3 and not SafeSpots.Find[PawnPosition]): # for Yellow
+        if((Color = 0 or Color = 1 or Color = 3) and not SafeSpots.Find[PawnPosition]): # for Yellow
             if(X := Mod[(PawnPosition - DynamicOffset[2] + 52), 52]):
                 for(PawnIdx := 0..YellowPawnIndices.Length -1):
                     if(X = YellowPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(YellowPawns[PawnIdx].TeleportTo[YellowPawnTransforms[PawnIdx]]):
-                            if(set YellowPawnIndices[PawnIdx] = -1):
-                                set EliminationOccured = true
-                                Print("Yellow Eliminated")
+                            if(PawnIdx = 0):
+                                set YellowPawnIndex = -1
+                            else if(PawnIdx = 1):
+                                set YellowPawnOneIndex = -1
+                            else if(PawnIdx = 2):
+                                set YellowPawnTwoIndex = -1
+                            else if(PawnIdx = 3):
+                                set YellowPawnThreeIndex = -1
+                            set EliminationOccured = true
+                            Print("Yellow Eliminated")
             
-        if(Color = 0 or Color = 1 or Color = 2 and not SafeSpots.Find[PawnPosition]): # for Green
+        if((Color = 0 or Color = 1 or Color = 2) and not SafeSpots.Find[PawnPosition]): # for Green
             if(X := Mod[(PawnPosition - DynamicOffset[3] + 52), 52]):
                 for(PawnIdx := 0..GreenPawnIndices.Length - 1):
                     if(X = GreenPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(GreenPawns[PawnIdx].TeleportTo[GreenPawnTransforms[PawnIdx]]):
-                            if(set GreenPawnIndices[PawnIdx] = -1):
-                                set EliminationOccured = true
-                                Print("Green Eliminated")
+                            if(PawnIdx = 0):
+                                set GreenPawnIndex = -1
+                            else if(PawnIdx = 1):
+                                set GreenPawnOneIndex = -1
+                            else if(PawnIdx = 2):
+                                set GreenPawnTwoIndex = -1
+                            else if(PawnIdx = 3):
+                                set GreenPawnThreeIndex = -1
+                            set EliminationOccured = true
+                            Print("Green Eliminated")
 
 
         if(EliminationOccured = true):
@@ -1539,113 +1555,126 @@ LudoManager := class(creative_device):
     )
 
     GameOverReset()<suspends>:void=(
-    Sleep(3.0)
-    set GameStarted = false
-    set ActivePlayerCount = 0
-    set FinishedOrder = array{}
+        Sleep(3.0)
+        set GameStarted = false
+        set ActivePlayerCount = 0
+        set FinishedOrder = array{}
+        FalsingPlayerTurn()
 
-    set RedDiceRollValue = 0
-    set BlueDiceRollValue = 0
-    set YellowDiceRollValue = 0
-    set GreenDiceRollValue = 0
+        set RedDiceRollValue = 0
+        set BlueDiceRollValue = 0
+        set YellowDiceRollValue = 0
+        set GreenDiceRollValue = 0
 
-    set RedConsecutiveSixes = 0
-    set BlueConsecutiveSixes = 0
-    set YellowConsecutiveSixes = 0
-    set GreenConsecutiveSixes = 0
+        set RedConsecutiveSixes = 0
+        set BlueConsecutiveSixes = 0
+        set YellowConsecutiveSixes = 0
+        set GreenConsecutiveSixes = 0
 
-    set RollerForRed = 0
-    set RollerForBlue = 0
-    set RollerForYellow = 0
-    set RollerForGreen = 0
+        set RollerForRed = 0
+        set RollerForBlue = 0
+        set RollerForYellow = 0
+        set RollerForGreen = 0
 
-    set DoubleRollFlagRed = false
-    set DoubleRollFlagBlue = false
-    set DoubleRollFlagYellow = false
-    set DoubleRollFlagGreen = false
+        set DoubleRollFlagRed = false
+        set DoubleRollFlagBlue = false
+        set DoubleRollFlagYellow = false
+        set DoubleRollFlagGreen = false
 
-    set RedEnd = 0
-    set BlueEnd = 0
-    set YellowEnd = 0
-    set GreenEnd = 0
+        set RedEnd = 0
+        set BlueEnd = 0
+        set YellowEnd = 0
+        set GreenEnd = 0
+        
+        RedIndexInitialSetter()
+        BlueIndexInitialSetter()
+        YellowIndexInitialSetter()
+        GreenIndexInitialSetter()
 
-    set RedPawnIndex = -1
-    set RedPawnOneIndex = -1
-    set RedPawnTwoIndex = -1
-    set RedPawnThreeIndex = -1
-
-    set BluePawnIndex = -1
-    set BluePawnOneIndex = -1
-    set BluePawnTwoIndex = -1
-    set BluePawnThreeIndex = -1
-
-    set YellowPawnIndex = -1
-    set YellowPawnOneIndex = -1
-    set YellowPawnTwoIndex = -1
-    set YellowPawnThreeIndex = -1
-
-    set GreenPawnIndex = -1
-    set GreenPawnOneIndex = -1
-    set GreenPawnTwoIndex = -1
-    set GreenPawnThreeIndex = -1
-
-    set RedPlayerTurn = false
-    set BluePlayerTurn = false
-    set YellowPlayerTurn = false
-    set GreenPlayerTurn = false
-
-    set WhichColorElim = -1
+        set WhichColorElim = -1
 
 
-    if(RedPawn.TeleportTo[RedPawnInitialTransform]):
-    if(RedPawnOne.TeleportTo[RedPawnOneInitialTransform]):
-    if(RedPawnTwo.TeleportTo[RedPawnTwoInitialTransform]):
-    if(RedPawnThree.TeleportTo[RedPawnThreeInitialTransform]):
+        if(RedPawn.TeleportTo[RedPawnInitialTransform]):
+        if(RedPawnOne.TeleportTo[RedPawnOneInitialTransform]):
+        if(RedPawnTwo.TeleportTo[RedPawnTwoInitialTransform]):
+        if(RedPawnThree.TeleportTo[RedPawnThreeInitialTransform]):
 
-    if(BluePawn.TeleportTo[BluePawnInitialTransform]):
-    if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]):
-    if(BluePawnTwo.TeleportTo[BluePawnTwoInitialTransform]):
-    if(BluePawnThree.TeleportTo[BluePawnThreeInitialTransform]):
+        if(BluePawn.TeleportTo[BluePawnInitialTransform]):
+        if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]):
+        if(BluePawnTwo.TeleportTo[BluePawnTwoInitialTransform]):
+        if(BluePawnThree.TeleportTo[BluePawnThreeInitialTransform]):
 
-    if(YellowPawn.TeleportTo[YellowPawnInitialTransform]):
-    if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]):
-    if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]):
-    if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
+        if(YellowPawn.TeleportTo[YellowPawnInitialTransform]):
+        if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]):
+        if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]):
+        if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
 
-    if(GreenPawn.TeleportTo[GreenPawnInitialTransform]):
-    if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]):
-    if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]):
-    if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
+        if(GreenPawn.TeleportTo[GreenPawnInitialTransform]):
+        if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]):
+        if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]):
+        if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
 
-    for(PlayerPawn : AllPlayersPawns):
-        PlayerPawn.Hide()
+        for(PlayerPawn : AllPlayersPawns):
+            PlayerPawn.Hide()
 
-    if(NumRed := NumbersProp[0]):
-        NumRed.SetMaterial(MIInv)
-    if(NumBlue := NumbersProp[1]):
-        NumBlue.SetMaterial(MIInv)
-    if(NumYellow := NumbersProp[2]):
-        NumYellow.SetMaterial(MIInv)
-    if(NumGreen := NumbersProp[3]):
-        NumGreen.SetMaterial(MIInv)
-    
-    if(RedVictoryProp := VictoryProps[0]):
-        RedVictoryProp.SetMaterial(MIInv)
-    if(BlueVictoryProp := VictoryProps[1]):
-        BlueVictoryProp.SetMaterial(MIInv)
-    if(YellowVictoryProp := VictoryProps[2]):
-        YellowVictoryProp.SetMaterial(MIInv)
-    if(GreenVictoryProp := VictoryProps[3]):
-        GreenVictoryProp.SetMaterial(MIInv)
+        if(NumRed := NumbersProp[0]):
+            NumRed.SetMaterial(MIInv)
+        if(NumBlue := NumbersProp[1]):
+            NumBlue.SetMaterial(MIInv)
+        if(NumYellow := NumbersProp[2]):
+            NumYellow.SetMaterial(MIInv)
+        if(NumGreen := NumbersProp[3]):
+            NumGreen.SetMaterial(MIInv)
+        
+        if(RedVictoryProp := VictoryProps[0]):
+            RedVictoryProp.SetMaterial(MIInv)
+        if(BlueVictoryProp := VictoryProps[1]):
+            BlueVictoryProp.SetMaterial(MIInv)
+        if(YellowVictoryProp := VictoryProps[2]):
+            YellowVictoryProp.SetMaterial(MIInv)
+        if(GreenVictoryProp := VictoryProps[3]):
+            GreenVictoryProp.SetMaterial(MIInv)
 
-    ResetPlayerDrainerProfile()
+        ResetPlayerDrainerProfile()
 
-    set RedPlayer = false
-    set BluePlayer = false
-    set YellowPlayer = false
-    set GreenPlayer = false
 
-    Print("Match reset complete")
+        Print("Match reset complete")
     )
+
+    FalsingPlayerTurn():void=(
+        set RedPlayerTurn = false
+        set BluePlayerTurn= false
+        set GreenPlayerTurn = false
+        set YellowPlayerTurn = false
+    )
+
+    RedIndexInitialSetter():void=( #will add sturct later if better
+        set RedPawnIndex = -1
+        set RedPawnOneIndex = -1
+        set RedPawnTwoIndex = -1
+        set RedPawnThreeIndex = -1
+    )
+
+    BlueIndexInitialSetter():void=(
+        set BluePawnIndex = -1
+        set BluePawnOneIndex = -1
+        set BluePawnTwoIndex = -1
+        set BluePawnThreeIndex = -1     
+    )
+
+    YellowIndexInitialSetter():void=(
+        set YellowPawnIndex = -1
+        set YellowPawnOneIndex = -1
+        set YellowPawnTwoIndex = -1
+        set YellowPawnThreeIndex = -1
+    )
+
+    GreenIndexInitialSetter():void=(
+        set GreenPawnIndex = -1
+        set GreenPawnOneIndex = -1
+        set GreenPawnTwoIndex = -1
+        set GreenPawnThreeIndex = -1
+    )
+
 
 
