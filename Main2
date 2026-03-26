@@ -829,7 +829,7 @@ LudoManager := class(creative_device):
                 set GreenThreeHighlight.HIghlightIntensity = 20.0
                 GreenPawnThree.SetMaterial(GreenThreeHighlight)
                 set RollerForGreen = 0
-                APHighlight.Play(Agent)
+            APHighlight.Play(Agent)
     )
    
     ConfirmInputPressed(Agent:agent):void= (
