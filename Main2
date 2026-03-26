@@ -16,6 +16,7 @@ YellowPawnTip<localizes>:message = "Yellow Pawns"
 DicesRollTip<localizes>:message = "Dices Prop & Frames"
 PlayerSwitchTip<localizes>:message = "Players Switch"
 EndPlanesPropTip<localizes>:message = "End Screen"
+AudioTip<localizes>:message = "Audio Devices"
 
 PathProps<localizes>:message = "Paths For Each"
 
@@ -83,6 +84,13 @@ LudoManager := class(creative_device):
     @editable {Categories := array{EndPlanesPropTip}} VictoryProps : []creative_prop = array{}
     @editable {Categories := array{EndPlanesPropTip}} NumbersProp :[]creative_prop = array{} #0r1b2y3g
 
+    @editable{Categories := array{AudioTip}} APMove :audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APDice :audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APVictory :audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APEnd :audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APEliminated :audio_player_device = audio_player_device{} 
+    @editable{Categories := array{AudioTip}} APHighlight :audio_player_device = audio_player_device{} #Agent
+    
     var RedZeroHighlight : MI_RedPawn = MI_RedPawn{}
     var RedOneHighlight : MI_RedPawn1 = MI_RedPawn1{}
     var RedTwoHighlight : MI_RedPawn2 = MI_RedPawn2{}
@@ -413,6 +421,7 @@ LudoManager := class(creative_device):
                 set RedDiceRollValue = RollValue
                 if(DiceProp := RedDiceProp[0]):
                     DiceProp.SetMaterial(RollingDice)
+                    APDice.Play()
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagRed = true
@@ -424,6 +433,7 @@ LudoManager := class(creative_device):
                 set BlueDiceRollValue = RollValue
                 if(DiceProp := BlueDiceProp[0]):
                     DiceProp.SetMaterial(RollingDice)
+                    APDice.Play()
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagBlue = true
@@ -434,6 +444,7 @@ LudoManager := class(creative_device):
                 set GreenDiceRollValue = RollValue
                 if(DiceProp := GreenDiceProp[0]):
                     DiceProp.SetMaterial(RollingDice)
+                    APDice.Play()
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagGreen = true
@@ -444,6 +455,7 @@ LudoManager := class(creative_device):
                 set YellowDiceRollValue = RollValue
                 if(DiceProp := YellowDiceProp[0]):
                     DiceProp.SetMaterial(RollingDice)
+                    APDice.Play()
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagYellow = true
@@ -551,24 +563,40 @@ LudoManager := class(creative_device):
         if(RedPlayerTurn = true):
             if(RedPropProfile := RedDiceProp[1]):
                 ResetPlayerDrainerProfile()
+                set MiRedDrainer.TImes = 1.0
+                RedPropProfile.SetMaterial(MiRedDrainer)
+                Sleep(1.0)
+                set MiRedDrainer.TImes = 23.0
                 RedPropProfile.SetMaterial(MiRedDrainer)
             Print("Red Player's Turn")
             spawn{CheckTimerForRed()}
         else if(BluePlayerTurn = true):
             if(BluePropProfile := BlueDiceProp[1]):
                 ResetPlayerDrainerProfile()
+                set MiBlueDrainer.TImes = 1.0
+                BluePropProfile.SetMaterial(MiBlueDrainer)
+                Sleep(1.0)
+                set MiBlueDrainer.TImes = 23.0
                 BluePropProfile.SetMaterial(MiBlueDrainer)
             Print("Blue Player's Turn")
             spawn{CheckTimerForBlue()}
         else if(GreenPlayerTurn = true):
             if(GreenPropProfile := GreenDiceProp[1]):
                 ResetPlayerDrainerProfile()
+                set MiGreenDrainer.TImes = 1.0
+                GreenPropProfile.SetMaterial(MiGreenDrainer)
+                Sleep(1.0)
+                set MiGreenDrainer.TImes = 23.0
                 GreenPropProfile.SetMaterial(MiGreenDrainer)
             Print("Green Player's Turn")
             spawn{CheckTimerForGreen()}
         else if(YellowPlayerTurn = true):
             if(YellowPropProfile := YellowDiceProp[1]):
                 ResetPlayerDrainerProfile()
+                set MiYellowDrainer.TImes = 1.0
+                YellowPropProfile.SetMaterial(MiYellowDrainer)
+                Sleep(1.0)
+                set MiYellowDrainer.TImes = 23.0
                 YellowPropProfile.SetMaterial(MiYellowDrainer)
             Print("Yellow Player's Turn")
             spawn{CheckTimerForYellow()}
@@ -710,90 +738,98 @@ LudoManager := class(creative_device):
     )
 
     SelectZeroPressed(Agent : agent) : void = (
-        if (RedPlayer = option{Agent} and RedPlayerTurn = true and RollerForRed = 0):
-            ResetAllHighlights(Agent)
-            set RedZeroHighlight.HIghlightIntensity = 20.0
-            RedPawn.SetMaterial(RedZeroHighlight)
-            set RollerForRed += 1
-            Print("Higlidhting Red Pawn 0")
-        else if (RedPlayer = option{Agent} and RedPlayerTurn = true and RollerForRed = 1):
-            ResetAllHighlights(Agent)
-            set RedOneHighlight.HIghlightIntensity = 20.0
-            RedPawnOne.SetMaterial(RedOneHighlight)
-            set RollerForRed += 1
-        else if (RedPlayer = option{Agent} and RedPlayerTurn = true and RollerForRed = 2):
-            ResetAllHighlights(Agent)
-            set RedTwoHighlight.HIghlightIntensity = 20.0
-            RedPawnTwo.SetMaterial(RedTwoHighlight)
-            set RollerForRed += 1
-        else if (RedPlayer = option{Agent} and RedPlayerTurn = true and RollerForRed = 3):
-            ResetAllHighlights(Agent)
-            set RedThreeHighlight.HIghlightIntensity = 20.0
-            RedPawnThree.SetMaterial(RedThreeHighlight)
-            set RollerForRed = 0
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
+            if (RollerForRed = 0):
+                ResetAllHighlights(Agent)
+                set RedZeroHighlight.HIghlightIntensity = 20.0
+                RedPawn.SetMaterial(RedZeroHighlight)
+                set RollerForRed += 1
+                Print("Higlidhting Red Pawn 0")
+            else if (RollerForRed = 1):
+                ResetAllHighlights(Agent)
+                set RedOneHighlight.HIghlightIntensity = 20.0
+                RedPawnOne.SetMaterial(RedOneHighlight)
+                set RollerForRed += 1
+            else if (RollerForRed = 2):
+                ResetAllHighlights(Agent)
+                set RedTwoHighlight.HIghlightIntensity = 20.0
+                RedPawnTwo.SetMaterial(RedTwoHighlight)
+                set RollerForRed += 1
+            else if ( RollerForRed = 3):
+                ResetAllHighlights(Agent)
+                set RedThreeHighlight.HIghlightIntensity = 20.0
+                RedPawnThree.SetMaterial(RedThreeHighlight)
+                set RollerForRed = 0
+            APHighlight.Play(Agent)
+        
+        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
+            if(RollerForBlue = 0):
+                ResetAllHighlights(Agent)
+                set BlueZeroHighlight.HIghlightIntensity = 20.0
+                BluePawn.SetMaterial(BlueZeroHighlight)
+                set RollerForBlue += 1
+            else if(RollerForBlue = 1):
+                ResetAllHighlights(Agent)
+                set BlueOneHighlight.HIghlightIntensity = 20.0
+                BluePawnOne.SetMaterial(BlueOneHighlight)
+                set RollerForBlue += 1
+            else if(RollerForBlue = 2):
+                ResetAllHighlights(Agent)
+                set BlueTwoHighlight.HIghlightIntensity = 20.0
+                BluePawnTwo.SetMaterial(BlueTwoHighlight)
+                set RollerForBlue += 1
+            else if(RollerForBlue = 3):
+                ResetAllHighlights(Agent)
+                set BlueThreeHighlight.HIghlightIntensity = 20.0
+                BluePawnThree.SetMaterial(BlueThreeHighlight)
+                set RollerForBlue = 0
+            APHighlight.Play(Agent)
 
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = 0):
-            ResetAllHighlights(Agent)
-            set BlueZeroHighlight.HIghlightIntensity = 20.0
-            BluePawn.SetMaterial(BlueZeroHighlight)
-            set RollerForBlue += 1
-        else if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = 1):
-            ResetAllHighlights(Agent)
-            set BlueOneHighlight.HIghlightIntensity = 20.0
-            BluePawnOne.SetMaterial(BlueOneHighlight)
-            set RollerForBlue += 1
-        else if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = 2):
-            ResetAllHighlights(Agent)
-            set BlueTwoHighlight.HIghlightIntensity = 20.0
-            BluePawnTwo.SetMaterial(BlueTwoHighlight)
-            set RollerForBlue += 1
-        else if(BluePlayer = option{Agent} and BluePlayerTurn = true and RollerForBlue = 3):
-            ResetAllHighlights(Agent)
-            set BlueThreeHighlight.HIghlightIntensity = 20.0
-            BluePawnThree.SetMaterial(BlueThreeHighlight)
-            set RollerForBlue = 0
+        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
+            if(RollerForYellow = 0):
+                ResetAllHighlights(Agent)
+                set YellowZeroHighlight.HIghlightIntensity = 20.0
+                YellowPawn.SetMaterial(YellowZeroHighlight)
+                set RollerForYellow += 1
+            else if(RollerForYellow = 1):
+                ResetAllHighlights(Agent)
+                set YellowOneHighlight.HIghlightIntensity = 20.0
+                YellowPawnOne.SetMaterial(YellowOneHighlight)
+                set RollerForYellow += 1
+            else if(RollerForYellow = 2):
+                ResetAllHighlights(Agent)
+                set YellowTwoHighlight.HIghlightIntensity = 20.0
+                YellowPawnTwo.SetMaterial(YellowTwoHighlight)
+                set RollerForYellow += 1
+            else if(RollerForYellow = 3):
+                ResetAllHighlights(Agent)
+                set YellowThreeHighlight.HIghlightIntensity = 20.0
+                YellowPawnThree.SetMaterial(YellowThreeHighlight)
+                set RollerForYellow = 0
+            APHighlight.Play(Agent)
 
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and RollerForYellow = 0):
-            ResetAllHighlights(Agent)
-            set YellowZeroHighlight.HIghlightIntensity = 20.0
-            YellowPawn.SetMaterial(YellowZeroHighlight)
-            set RollerForYellow += 1
-        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and RollerForYellow = 1):
-            ResetAllHighlights(Agent)
-            set YellowOneHighlight.HIghlightIntensity = 20.0
-            YellowPawnOne.SetMaterial(YellowOneHighlight)
-            set RollerForYellow += 1
-        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and RollerForYellow = 2):
-            ResetAllHighlights(Agent)
-            set YellowTwoHighlight.HIghlightIntensity = 20.0
-            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
-            set RollerForYellow += 1
-        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and RollerForYellow = 3):
-            ResetAllHighlights(Agent)
-            set YellowThreeHighlight.HIghlightIntensity = 20.0
-            YellowPawnThree.SetMaterial(YellowThreeHighlight)
-            set RollerForYellow = 0
-
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and RollerForGreen = 0):
-            ResetAllHighlights(Agent)
-            set GreenZeroHighlight.HIghlightIntensity = 20.0
-            GreenPawn.SetMaterial(GreenZeroHighlight)
-            set RollerForGreen += 1
-        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and RollerForGreen = 1):
-            ResetAllHighlights(Agent)
-            set GreenOneHighlight.HIghlightIntensity = 20.0
-            GreenPawnOne.SetMaterial(GreenOneHighlight)
-            set RollerForGreen += 1
-        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and RollerForGreen = 2):
-            ResetAllHighlights(Agent)
-            set GreenTwoHighlight.HIghlightIntensity = 20.0
-            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
-            set RollerForGreen += 1
-        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and RollerForGreen = 3):
-            ResetAllHighlights(Agent)
-            set GreenThreeHighlight.HIghlightIntensity = 20.0
-            GreenPawnThree.SetMaterial(GreenThreeHighlight)
-            set RollerForGreen = 0
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):     
+            if(RollerForGreen = 0):
+                ResetAllHighlights(Agent)
+                set GreenZeroHighlight.HIghlightIntensity = 20.0
+                GreenPawn.SetMaterial(GreenZeroHighlight)
+                set RollerForGreen += 1
+            else if(RollerForGreen = 1):
+                ResetAllHighlights(Agent)
+                set GreenOneHighlight.HIghlightIntensity = 20.0
+                GreenPawnOne.SetMaterial(GreenOneHighlight)
+                set RollerForGreen += 1
+            else if(RollerForGreen = 2):
+                ResetAllHighlights(Agent)
+                set GreenTwoHighlight.HIghlightIntensity = 20.0
+                GreenPawnTwo.SetMaterial(GreenTwoHighlight)
+                set RollerForGreen += 1
+            else if(RollerForGreen = 3):
+                ResetAllHighlights(Agent)
+                set GreenThreeHighlight.HIghlightIntensity = 20.0
+                GreenPawnThree.SetMaterial(GreenThreeHighlight)
+                set RollerForGreen = 0
+                APHighlight.Play(Agent)
     )
    
     ConfirmInputPressed(Agent:agent):void= (
@@ -947,6 +983,7 @@ LudoManager := class(creative_device):
                 PathTranslation:= PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                    APMove.Play()
                     set CurrentIndex = 0
                     set RedConsecutiveSixes += 1
                     if(RedConsecutiveSixes >= 3):
@@ -969,7 +1006,8 @@ LudoManager := class(creative_device):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]): 
+                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                                APMove.Play()
                             Sleep(0.4)
                     set CurrentIndex = TargetIndex
                     if(RedDiceRollValue = 6):
@@ -1023,6 +1061,7 @@ LudoManager := class(creative_device):
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                    APMove.Play()
                     if(BlueDiceRollValue = 6):
                         set BlueConsecutiveSixes += 1
                         if(BlueConsecutiveSixes >= 3):
@@ -1054,6 +1093,7 @@ LudoManager := class(creative_device):
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                                APMove.Play()
                                 if(BlueDiceRollValue = 6):
                                     set BlueConsecutiveSixes += 1
                                     if(BlueConsecutiveSixes >= 3):
@@ -1108,6 +1148,7 @@ LudoManager := class(creative_device):
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                    APMove.Play()
                     if(YellowDiceRollValue = 6):
                         set YellowConsecutiveSixes += 1
                         if(YellowConsecutiveSixes >= 3):
@@ -1138,6 +1179,7 @@ LudoManager := class(creative_device):
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                                APMove.Play()
                                 if(YellowDiceRollValue = 6):
                                     set YellowConsecutiveSixes += 1
                                     if(YellowConsecutiveSixes >= 3):
@@ -1193,6 +1235,7 @@ LudoManager := class(creative_device):
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                    APMove.Play()
                     if(GreenDiceRollValue = 6):
                         set GreenConsecutiveSixes += 1
                         if(GreenConsecutiveSixes >= 3):
@@ -1224,6 +1267,7 @@ LudoManager := class(creative_device):
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
+                                APMove.Play()
                                 if(GreenDiceRollValue = 6):
                                     set GreenConsecutiveSixes += 1
                                     if(GreenConsecutiveSixes >= 3):
@@ -1325,6 +1369,7 @@ LudoManager := class(creative_device):
                     if(NumbersProp[0].SetMaterial(MINumbers)):
                 else if(RedEnd >= 4):
                     if(NumbersProp[0].SetMaterial(MIInv)):
+                APEnd.Play()
 
         else if(Color = 1): # Blue
             set DynamicOffset = OffsetResToBlue
@@ -1351,6 +1396,7 @@ LudoManager := class(creative_device):
                     if(NumbersProp[1].SetMaterial(MINumbers)):
                 else if(BlueEnd >= 4):
                     if(NumbersProp[1].SetMaterial(MIInv)):
+                APEnd.Play()
 
         else if(Color = 2): #Yellow
             set DynamicOffset = OffsetResToYellow
@@ -1377,6 +1423,7 @@ LudoManager := class(creative_device):
                     if(NumbersProp[2].SetMaterial(MINumbers)):
                 else if(YellowEnd >= 4):
                     if(NumbersProp[2].SetMaterial(MIInv)):
+                APEnd.Play()
 
         else if(Color = 3): # Green
             set DynamicOffset = OffsetResToGreen
@@ -1403,6 +1450,7 @@ LudoManager := class(creative_device):
                     if(NumbersProp[3].SetMaterial(MINumbers)):
                 else if(GreenEnd >= 4):
                     if(NumbersProp[3].SetMaterial(MIInv)):
+                APEnd.Play()
         
         #Will optimize later for target offset relative to each other. if possible # could we do FInd for searching idk.
         #Formula newIndex=(index−targetOffset+52)mod52
@@ -1413,6 +1461,7 @@ LudoManager := class(creative_device):
                 for(PawnIdx := 0..RedPawnIndices.Length -1):
                     if(X = RedPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(RedPawns[PawnIdx].TeleportTo[RedPawnTransforms[PawnIdx]]):
+                            APEliminated.Play()
                             if(PawnIdx = 0):
                                 set RedPawnIndex = -1
                             else if(PawnIdx = 1):
@@ -1429,6 +1478,7 @@ LudoManager := class(creative_device):
                 for(PawnIdx := 0..BluePawnIndices.Length - 1):
                     if(X = BluePawnIndices[PawnIdx] and EliminationOccured = false):
                         if(BluePawns[PawnIdx].TeleportTo[BluePawnTransforms[PawnIdx]]):
+                            APEliminated.Play()
                             if(PawnIdx = 0):
                                 set BluePawnIndex = -1
                             else if(PawnIdx = 1):
@@ -1445,6 +1495,7 @@ LudoManager := class(creative_device):
                 for(PawnIdx := 0..YellowPawnIndices.Length -1):
                     if(X = YellowPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(YellowPawns[PawnIdx].TeleportTo[YellowPawnTransforms[PawnIdx]]):
+                            APEliminated.Play()
                             if(PawnIdx = 0):
                                 set YellowPawnIndex = -1
                             else if(PawnIdx = 1):
@@ -1461,6 +1512,7 @@ LudoManager := class(creative_device):
                 for(PawnIdx := 0..GreenPawnIndices.Length - 1):
                     if(X = GreenPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(GreenPawns[PawnIdx].TeleportTo[GreenPawnTransforms[PawnIdx]]):
+                            APEliminated.Play()
                             if(PawnIdx = 0):
                                 set GreenPawnIndex = -1
                             else if(PawnIdx = 1):
@@ -1502,6 +1554,7 @@ LudoManager := class(creative_device):
                         RedVictoryProp.SetMaterial(MICrownTwo)
                     else if(FinishedOrder.Length = 3):
                         RedVictoryProp.SetMaterial(MICrownThree)
+                    APVictory.Play()
 
         if(BlueEnd >= 4):
             if(not FinishedOrder.Find[1]):
@@ -1514,6 +1567,7 @@ LudoManager := class(creative_device):
                         BlueVictoryProp.SetMaterial(MICrownTwo)
                     else if(FinishedOrder.Length = 3):
                         BlueVictoryProp.SetMaterial(MICrownThree)
+                    APVictory.Play()
 
         if(YellowEnd >= 4):
             if(not FinishedOrder.Find[2]):
@@ -1526,6 +1580,7 @@ LudoManager := class(creative_device):
                         YellowVictoryProp.SetMaterial(MICrownTwo)
                     else if(FinishedOrder.Length = 3):
                         YellowVictoryProp.SetMaterial(MICrownThree)
+                    APVictory.Play()
 
         if(GreenEnd >= 4):
             if(not FinishedOrder.Find[3]):
@@ -1538,6 +1593,7 @@ LudoManager := class(creative_device):
                         GreenVictoryProp.SetMaterial(MICrownTwo)
                     else if(FinishedOrder.Length = 3):
                         GreenVictoryProp.SetMaterial(MICrownThree)
+                    APVictory.Play()
 
         if(FinishedOrder.Length = ActivePlayerCount - 1):
             if(not FinishedOrder.Find[0] and RedPlayer?):
@@ -1560,7 +1616,16 @@ LudoManager := class(creative_device):
         set ActivePlayerCount = 0
         set FinishedOrder = array{}
         FalsingPlayerTurn()
-
+        
+        if(RedAgent := RedPlayer?):
+            RedCamera.RemoveFrom(RedAgent)
+        if(BlueAgent := BluePlayer?):
+            BlueCamera.RemoveFrom(BlueAgent)
+        if(YellowAgent := YellowPlayer?):
+            YellowCamera.RemoveFrom(YellowAgent)
+        if(GreenAgent := GreenPlayer?):
+            GreenCamera.RemoveFrom(GreenAgent)
+            
         set RedDiceRollValue = 0
         set BlueDiceRollValue = 0
         set YellowDiceRollValue = 0
