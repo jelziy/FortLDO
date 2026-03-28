@@ -304,7 +304,7 @@ LudoManager := class(creative_device):
     )
 
     RedOneJoined(Agent : agent) : void = (
-        #if(RedPlayer = false):
+        if(RedPlayer = false):
             RedCamera.AddTo(Agent)   #just to check hash
             set RedPlayer = option{Agent}
             if(GameStarted = false):
@@ -317,7 +317,7 @@ LudoManager := class(creative_device):
     )
 
     BlueOneJoined(Agent : agent) : void = (
-        #if(BluePlayer = false):
+        if(BluePlayer = false):
             set BluePlayer = option{Agent}
            # BlueCamera.AddTo(Agent)
             if(GameStarted = false):
@@ -330,7 +330,7 @@ LudoManager := class(creative_device):
     )
 
     GreenOneJoined(Agent : agent) : void = (
-        #if(GreenPlayer = false):
+        if(GreenPlayer = false):
             set GreenPlayer = option{Agent}
             #GreenCamera.AddTo(Agent)
             if(GameStarted = false):
@@ -343,7 +343,7 @@ LudoManager := class(creative_device):
     )
 
     YellowOneJoined(Agent : agent) : void = (
-        #if(YellowPlayer = false):
+        if(YellowPlayer = false):
             set YellowPlayer = option{Agent}
            # YellowCamera.AddTo(Agent)
             if(GameStarted = false):
@@ -372,7 +372,7 @@ LudoManager := class(creative_device):
                 set ActivePlayerCount -= 1
 
         else if(BluePlayer = option{Agent}):
-            set BluePlayer = false
+            #set BluePlayer = false #for PlayTesting
             BlueCamera.RemoveFrom(Agent)
             if(BluePawn.TeleportTo[BluePawnInitialTransform]): 
             if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]): 
@@ -386,7 +386,7 @@ LudoManager := class(creative_device):
                 set ActivePlayerCount -= 1
 
         else if(YellowPlayer = option{Agent}):
-            set YellowPlayer = false
+            #set YellowPlayer = false
             YellowCamera.RemoveFrom(Agent)
             if(YellowPawn.TeleportTo[YellowPawnInitialTransform]): 
             if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]): 
@@ -400,7 +400,7 @@ LudoManager := class(creative_device):
                 set ActivePlayerCount -= 1
 
         else if(GreenPlayer = option{Agent}):
-            set GreenPlayer = false
+            #set GreenPlayer = false 
             GreenCamera.RemoveFrom(Agent)
             if(GreenPawn.TeleportTo[GreenPawnInitialTransform]): 
             if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]): 
@@ -1008,7 +1008,7 @@ LudoManager := class(creative_device):
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 APMove.Play()
-                            Sleep(0.4)
+                                Sleep(0.4)
                     set CurrentIndex = TargetIndex
                     if(RedDiceRollValue = 6):
                         set RedConsecutiveSixes += 1
@@ -1062,21 +1062,13 @@ LudoManager := class(creative_device):
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     APMove.Play()
-                    if(BlueDiceRollValue = 6):
-                        set BlueConsecutiveSixes += 1
-                        if(BlueConsecutiveSixes >= 3):
-                            # Switch to Green turn, reset counter
-                            set BluePlayerTurn = false
-                            set YellowPlayerTurn = true
-                            set BlueConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set BluePlayerTurn = true
-                    else:
+                    set CurrentIndex = 0
+                    set BlueConsecutiveSixes += 1
+                    if(BlueConsecutiveSixes >= 3):
                         set BluePlayerTurn = false
                         set YellowPlayerTurn = true
-
-                    set CurrentIndex = 0
+                        set BlueConsecutiveSixes = 0
+                    # else keep turn
                     set BlueDiceRollValue = 0
 
         else if(CurrentIndex >= 0):
@@ -1094,22 +1086,23 @@ LudoManager := class(creative_device):
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 APMove.Play()
-                                if(BlueDiceRollValue = 6):
-                                    set BlueConsecutiveSixes += 1
-                                    if(BlueConsecutiveSixes >= 3):
-                                        # Switch to Green turn, reset counter
-                                        set BluePlayerTurn = false
-                                        set YellowPlayerTurn = true
-                                        set BlueConsecutiveSixes = 0
-                                    else:
-                                        # Keep turn
-                                        set BluePlayerTurn = true
-                                else:
-                                    set BluePlayerTurn = false
-                                    set YellowPlayerTurn = true
-                                set CurrentIndex = NextIndex
-                                set BlueDiceRollValue = 0
                                 Sleep(0.4)
+                    set CurrentIndex = TargetIndex
+                    if(BlueDiceRollValue = 6):
+                        set BlueConsecutiveSixes += 1
+                        if(BlueConsecutiveSixes >= 3):
+                            # Switch to Green turn, reset counter
+                            set BluePlayerTurn = false
+                            set YellowPlayerTurn = true
+                            set BlueConsecutiveSixes = 0
+                        else:
+                            # Keep turn
+                            set BluePlayerTurn = true
+                    else:
+                        set BluePlayerTurn = false
+                        set YellowPlayerTurn = true
+                    
+                    set BlueDiceRollValue = 0
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
@@ -1149,20 +1142,13 @@ LudoManager := class(creative_device):
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     APMove.Play()
-                    if(YellowDiceRollValue = 6):
-                        set YellowConsecutiveSixes += 1
-                        if(YellowConsecutiveSixes >= 3):
-                            # Switch to Red turn, reset counter
-                            set YellowPlayerTurn = false
-                            set GreenPlayerTurn = true
-                            set YellowConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set YellowPlayerTurn = true
-                    else:
+                    set CurrentIndex = 0
+                    set YellowConsecutiveSixes += 1
+                    if(YellowConsecutiveSixes >= 3):
                         set YellowPlayerTurn = false
                         set GreenPlayerTurn = true
-                    set CurrentIndex = 0
+                        set YellowConsecutiveSixes = 0
+                    # else keep turn
                     set YellowDiceRollValue = 0
 
         else if(CurrentIndex >= 0):
@@ -1180,23 +1166,23 @@ LudoManager := class(creative_device):
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 APMove.Play()
-                                if(YellowDiceRollValue = 6):
-                                    set YellowConsecutiveSixes += 1
-                                    if(YellowConsecutiveSixes >= 3):
-                                        # Switch to Red turn, reset counter
-                                        set GreenPlayerTurn = false
-                                        set RedPlayerTurn = true
-                                        set YellowConsecutiveSixes = 0
-                                    else:
-                                        # Keep turn
-                                        set YellowPlayerTurn = true
-                                else:
-                                    set YellowPlayerTurn = false
-                                    set GreenPlayerTurn = true
-
-                                set CurrentIndex = NextIndex
-                                set YellowDiceRollValue = 0
                                 Sleep(0.4)
+                    set CurrentIndex = TargetIndex
+                    if(YellowDiceRollValue = 6):
+                        set YellowConsecutiveSixes += 1
+                        if(YellowConsecutiveSixes >= 3):
+                            # Switch to Red turn, reset counter
+                            set GreenPlayerTurn = false
+                            set RedPlayerTurn = true
+                            set YellowConsecutiveSixes = 0
+                        else:
+                            # Keep turn
+                            set YellowPlayerTurn = true
+                    else:
+                        set YellowPlayerTurn = false
+                        set GreenPlayerTurn = true
+
+                    set YellowDiceRollValue = 0
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
@@ -1236,20 +1222,13 @@ LudoManager := class(creative_device):
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     APMove.Play()
-                    if(GreenDiceRollValue = 6):
-                        set GreenConsecutiveSixes += 1
-                        if(GreenConsecutiveSixes >= 3):
-                            # Switch to Yellow turn, reset counter
-                            set GreenPlayerTurn = false
-                            set RedPlayerTurn = true
-                            set GreenConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set GreenPlayerTurn = true
-                    else:
+                    set CurrentIndex = 0
+                    set GreenConsecutiveSixes += 1
+                    if(GreenConsecutiveSixes >= 3):
                         set GreenPlayerTurn = false
                         set RedPlayerTurn = true
-                    set CurrentIndex = 0
+                        set GreenConsecutiveSixes = 0
+
                     set GreenDiceRollValue = 0
 
 
@@ -1268,23 +1247,24 @@ LudoManager := class(creative_device):
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 APMove.Play()
-                                if(GreenDiceRollValue = 6):
-                                    set GreenConsecutiveSixes += 1
-                                    if(GreenConsecutiveSixes >= 3):
-                                        # Switch to Yellow turn, reset counter
-                                        set GreenPlayerTurn = false
-                                        set RedPlayerTurn = true
-                                        set GreenConsecutiveSixes = 0
-                                    else:
-                                        # Keep turn
-                                        set GreenPlayerTurn = true
-                                else:
-                                    set GreenPlayerTurn = false
-                                    set RedPlayerTurn = true
-
-                                set CurrentIndex = NextIndex
-                                set GreenDiceRollValue = 0
                                 Sleep(0.4)
+                    set CurrentIndex = TargetIndex
+                    if(GreenDiceRollValue = 6):
+                        set GreenConsecutiveSixes += 1
+                        if(GreenConsecutiveSixes >= 3):
+                            # Switch to Yellow turn, reset counter
+                            set GreenPlayerTurn = false
+                            set RedPlayerTurn = true
+                            set GreenConsecutiveSixes = 0
+                        else:
+                            # Keep turn
+                            set GreenPlayerTurn = true
+                    else:
+                        set GreenPlayerTurn = false
+                        set RedPlayerTurn = true
+
+                    set GreenDiceRollValue = 0
+                                
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
