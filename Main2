@@ -17,6 +17,7 @@ DicesRollTip<localizes>:message = "Dices Prop & Frames"
 PlayerSwitchTip<localizes>:message = "Players Switch"
 EndPlanesPropTip<localizes>:message = "End Screen"
 AudioTip<localizes>:message = "Audio Devices"
+ChairTip<localizes>:message = "Chairs"
 
 PathProps<localizes>:message = "Paths For Each"
 
@@ -90,7 +91,12 @@ LudoManager := class(creative_device):
     @editable{Categories := array{AudioTip}} APEnd :audio_player_device = audio_player_device{}
     @editable{Categories := array{AudioTip}} APEliminated :audio_player_device = audio_player_device{} 
     @editable{Categories := array{AudioTip}} APHighlight :audio_player_device = audio_player_device{} #Agent
-    
+
+    @editable{Categories := array{ChairTip}} RedChair : chair_device = chair_device{}
+    @editable{Categories := array{ChairTip}} GreenChair : chair_device = chair_device{}
+    @editable{Categories := array{ChairTip}} BlueChair : chair_device = chair_device{}
+    @editable{Categories := array{ChairTip}} YellowChair : chair_device = chair_device{}
+
     var RedZeroHighlight : MI_RedPawn = MI_RedPawn{}
     var RedOneHighlight : MI_RedPawn1 = MI_RedPawn1{}
     var RedTwoHighlight : MI_RedPawn2 = MI_RedPawn2{}
@@ -307,6 +313,7 @@ LudoManager := class(creative_device):
         if(RedPlayer = false):
             RedCamera.AddTo(Agent)   #just to check hash
             set RedPlayer = option{Agent}
+            RedChair.DisableExit()
             if(GameStarted = false):
                 set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
                 for(RedPawnForRedJoined : AllRedPawn):
@@ -319,6 +326,7 @@ LudoManager := class(creative_device):
     BlueOneJoined(Agent : agent) : void = (
         if(BluePlayer = false):
             set BluePlayer = option{Agent}
+           # BlueChair.DisableExit() #hash for playtest
            # BlueCamera.AddTo(Agent)
             if(GameStarted = false):
                 set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
@@ -332,6 +340,7 @@ LudoManager := class(creative_device):
     GreenOneJoined(Agent : agent) : void = (
         if(GreenPlayer = false):
             set GreenPlayer = option{Agent}
+          #  GreenChair.DisableExit()
             #GreenCamera.AddTo(Agent)
             if(GameStarted = false):
                 set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
@@ -346,6 +355,7 @@ LudoManager := class(creative_device):
         if(YellowPlayer = false):
             set YellowPlayer = option{Agent}
            # YellowCamera.AddTo(Agent)
+           # YellowChair.DisableExit()
             if(GameStarted = false):
                 set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
                 for(YellowPawnForYellowJoined : AllYellowPawn):
@@ -360,6 +370,7 @@ LudoManager := class(creative_device):
         if(RedPlayer = option{Agent}):
             set RedPlayer = false
             RedCamera.RemoveFrom(Agent)
+            RedChair.EnableExit()
             if(RedPawn.TeleportTo[RedPawnInitialTransform]):
             if(RedPawnOne.TeleportTo[RedPawnOneInitialTransform]): 
             if(RedPawnTwo.TeleportTo[RedPawnTwoInitialTransform]): 
@@ -374,6 +385,7 @@ LudoManager := class(creative_device):
         else if(BluePlayer = option{Agent}):
             #set BluePlayer = false #for PlayTesting
             BlueCamera.RemoveFrom(Agent)
+            BlueChair.EnableExit()
             if(BluePawn.TeleportTo[BluePawnInitialTransform]): 
             if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]): 
             if(BluePawnTwo.TeleportTo[BluePawnTwoInitialTransform]): 
@@ -388,6 +400,7 @@ LudoManager := class(creative_device):
         else if(YellowPlayer = option{Agent}):
             #set YellowPlayer = false
             YellowCamera.RemoveFrom(Agent)
+            YellowChair.EnableExit()
             if(YellowPawn.TeleportTo[YellowPawnInitialTransform]): 
             if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]): 
             if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]): 
@@ -402,6 +415,7 @@ LudoManager := class(creative_device):
         else if(GreenPlayer = option{Agent}):
             #set GreenPlayer = false 
             GreenCamera.RemoveFrom(Agent)
+            GreenChair.EnableExit()
             if(GreenPawn.TeleportTo[GreenPawnInitialTransform]): 
             if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]): 
             if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]): 
