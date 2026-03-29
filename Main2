@@ -124,14 +124,6 @@ LudoManager := class(creative_device):
     var Dice4Value : MI_DiceValue4 = MI_DiceValue4{}
     var Dice5Value : MI_DiceValue5 = MI_DiceValue5{}
     var Dice6Value : MI_DiceValue6 = MI_DiceValue6{}
-    var MiRedNorm : MI_NormRed = MI_NormRed{}
-    var MiGreenNorm : MI_NormGreen = MI_NormGreen{}
-    var MiBlueNorm : MI_NormBlue = MI_NormBlue{}
-    var MiYellowNorm : MI_NormYellow = MI_NormYellow{}
-    var MiRedDrainer : MI_DrainerRed = MI_DrainerRed{}
-    var MiGreenDrainer : MI_DrainerGreen = MI_DrainerGreen{}
-    var MiBlueDrainer : MI_DrainerBlue = MI_DrainerBlue{}
-    var MiYellowDrainer : MI_DrainerYellow = MI_DrainerYellow{}
     var MICrownOne : MI_CrownOne = MI_CrownOne{}
     var MICrownTwo : MI_CrownTwo = MI_CrownTwo{}
     var MICrownThree : MI_CrownThree = MI_CrownThree{}
@@ -236,6 +228,25 @@ LudoManager := class(creative_device):
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=(
         
+        InitialInitiator()     
+        set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree, BluePawn, BluePawnOne,
+                                    BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
+                                    YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+        for(PlayerPawn : AllPlayersPawns):
+            PlayerPawn.Hide()
+        RedButton.InteractedWithEvent.Subscribe(RedOneJoined)
+        BlueButton.InteractedWithEvent.Subscribe(BlueOneJoined)
+        GreenButton.InteractedWithEvent.Subscribe(GreenOneJoined)
+        YellowButton.InteractedWithEvent.Subscribe(YellowOneJoined)
+
+        SelectZero.PressedEvent.Subscribe(SelectZeroPressed)
+        ConfirmInput.PressedEvent.Subscribe(ConfirmInputPressed)
+        DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
+        SelectOne.PressedEvent.Subscribe(ExitingTheArena)
+        GetPlayspace().PlayerRemovedEvent().Subscribe(ExitingTheArena)
+    )
+
+    InitialInitiator():void=(
         set RedPawnInitialTransform = RedPawn.GetTransform()
         set RedPawnOneInitialTransform = RedPawnOne.GetTransform()
         set RedPawnTwoInitialTransform = RedPawnTwo.GetTransform()
@@ -252,22 +263,7 @@ LudoManager := class(creative_device):
         set GreenPawnOneInitialTransform = GreenPawnOne.GetTransform()
         set GreenPawnTwoInitialTransform = GreenPawnTwo.GetTransform()
         set GreenPawnThreeInitialTransform = GreenPawnThree.GetTransform()
-
-        set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree, BluePawn, BluePawnOne,
-                                    BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
-                                    YellowPawnOne, YellowPawnTwo, YellowPawnThree}
-        for(PlayerPawn : AllPlayersPawns):
-            PlayerPawn.Hide()
-        RedButton.InteractedWithEvent.Subscribe(RedOneJoined)
-        BlueButton.InteractedWithEvent.Subscribe(BlueOneJoined)
-        GreenButton.InteractedWithEvent.Subscribe(GreenOneJoined)
-        YellowButton.InteractedWithEvent.Subscribe(YellowOneJoined)
-
-        SelectZero.PressedEvent.Subscribe(SelectZeroPressed)
-        ConfirmInput.PressedEvent.Subscribe(ConfirmInputPressed)
-        DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
-        SelectOne.PressedEvent.Subscribe(ExitingTheArena)
-        GetPlayspace().PlayerRemovedEvent().Subscribe(ExitingTheArena)
+        ResetPlayerDrainerProfile()
     )
 
     GameStartInitiator():void=(
@@ -577,54 +573,42 @@ LudoManager := class(creative_device):
         if(RedPlayerTurn = true):
             if(RedPropProfile := RedDiceProp[1]):
                 ResetPlayerDrainerProfile()
-                set MiRedDrainer.TImes = 1.0
-                RedPropProfile.SetMaterial(MiRedDrainer)
                 Sleep(1.0)
-                set MiRedDrainer.TImes = 23.0
-                RedPropProfile.SetMaterial(MiRedDrainer)
+                RedPropProfile.Show()
             Print("Red Player's Turn")
             spawn{CheckTimerForRed()}
         else if(BluePlayerTurn = true):
             if(BluePropProfile := BlueDiceProp[1]):
                 ResetPlayerDrainerProfile()
-                set MiBlueDrainer.TImes = 1.0
-                BluePropProfile.SetMaterial(MiBlueDrainer)
                 Sleep(1.0)
-                set MiBlueDrainer.TImes = 23.0
-                BluePropProfile.SetMaterial(MiBlueDrainer)
+                BluePropProfile.Show()
             Print("Blue Player's Turn")
             spawn{CheckTimerForBlue()}
         else if(GreenPlayerTurn = true):
             if(GreenPropProfile := GreenDiceProp[1]):
                 ResetPlayerDrainerProfile()
-                set MiGreenDrainer.TImes = 1.0
-                GreenPropProfile.SetMaterial(MiGreenDrainer)
                 Sleep(1.0)
-                set MiGreenDrainer.TImes = 23.0
-                GreenPropProfile.SetMaterial(MiGreenDrainer)
+                GreenPropProfile.Show()
             Print("Green Player's Turn")
             spawn{CheckTimerForGreen()}
         else if(YellowPlayerTurn = true):
             if(YellowPropProfile := YellowDiceProp[1]):
                 ResetPlayerDrainerProfile()
-                set MiYellowDrainer.TImes = 1.0
-                YellowPropProfile.SetMaterial(MiYellowDrainer)
                 Sleep(1.0)
-                set MiYellowDrainer.TImes = 23.0
-                YellowPropProfile.SetMaterial(MiYellowDrainer)
+                YellowPropProfile.Show()
             Print("Yellow Player's Turn")
             spawn{CheckTimerForYellow()}
     )
 
     ResetPlayerDrainerProfile():void=(
         if(RedPropProfile := RedDiceProp[1]):
-            RedPropProfile.SetMaterial(MiRedNorm)
+            RedPropProfile.Hide()
         if(BluePropProfile := BlueDiceProp[1]):
-            BluePropProfile.SetMaterial(MiBlueNorm)
+            BluePropProfile.Hide()
         if(GreenPropProfile := GreenDiceProp[1]):
-            GreenPropProfile.SetMaterial(MiGreenNorm)
+            GreenPropProfile.Hide()
         if(YellowPropProfile := YellowDiceProp[1]):
-            YellowPropProfile.SetMaterial(MiYellowNorm)
+            YellowPropProfile.Hide()
     )
 
     HelperDiceRoll(Agent:agent)<suspends>:void=(
