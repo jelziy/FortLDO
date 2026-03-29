@@ -426,6 +426,7 @@ LudoManager := class(creative_device):
 
     DiceRollPressed(Agent:agent):void=(
         if(RedPlayer = option{Agent}): #removes else if from this function for PlayTesting
+            Print("Red Pressing")
             if(RedPlayerTurn = true and DoubleRollFlagRed = false):
                 RollValue := GetRandomInt(1,6)
                 set RedDiceRollValue = RollValue
@@ -448,6 +449,7 @@ LudoManager := class(creative_device):
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagBlue = true
                 Print("Dice Rolled: {RollValue} ")
+
         if(GreenPlayer = option{Agent}):
             if(GreenPlayerTurn = true and DoubleRollFlagGreen = false):
                 RollValue := GetRandomInt(1,6)
@@ -459,7 +461,9 @@ LudoManager := class(creative_device):
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagGreen = true
                 Print("Dice Rolled: {RollValue} ")
+                
         if(YellowPlayer = option{Agent}):
+            Print("Agent yellow found")
             if(YellowPlayerTurn = true and DoubleRollFlagYellow = false):
                 RollValue := GetRandomInt(1,6)
                 set YellowDiceRollValue = RollValue
@@ -905,7 +909,12 @@ LudoManager := class(creative_device):
             else:
                 Sleep(1.0)
                 set RedPlayerTurn = false
-                set BluePlayerTurn = true
+                if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagRed = false
                 Print("False cant move")
@@ -924,7 +933,12 @@ LudoManager := class(creative_device):
             else:
                 Sleep(1.0)
                 set BluePlayerTurn = false
-                set YellowPlayerTurn = true
+                if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayerTurn = true):
+                    set RedPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagBlue = false
                 Print("False cant move")
@@ -943,7 +957,12 @@ LudoManager := class(creative_device):
             else:
                 Sleep(1.0)
                 set YellowPlayerTurn = false
-                set GreenPlayerTurn = true
+                if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagYellow = false
                 Print("False cant move")
@@ -962,7 +981,12 @@ LudoManager := class(creative_device):
             else:
                 Sleep(1.0)
                 set GreenPlayerTurn = false
-                set RedPlayerTurn = true
+                if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagGreen = false
                 Print("False cant move")
@@ -986,7 +1010,12 @@ LudoManager := class(creative_device):
                     set RedConsecutiveSixes += 1
                     if(RedConsecutiveSixes >= 3):
                         set RedPlayerTurn = false
-                        set BluePlayerTurn = true
+                        if(BluePlayer?):
+                            set BluePlayerTurn = true
+                        else if(YellowPlayer?):
+                            set YellowPlayerTurn = true
+                        else if(GreenPlayer?):
+                            set GreenPlayerTurn = true
                         set RedConsecutiveSixes = 0
                     # else keep turn
                     set RedDiceRollValue = 0
@@ -1012,13 +1041,23 @@ LudoManager := class(creative_device):
                         set RedConsecutiveSixes += 1
                         if(RedConsecutiveSixes >= 3):
                             set RedPlayerTurn = false
-                            set BluePlayerTurn = true
+                            if(BluePlayer?):
+                                set BluePlayerTurn = true
+                            else if(YellowPlayer?):
+                                set YellowPlayerTurn = true
+                            else if(GreenPlayer?):
+                                set GreenPlayerTurn = true
                             set RedConsecutiveSixes = 0
                         # else keep turn
                     else:
                         set RedConsecutiveSixes = 0
                         set RedPlayerTurn = false
-                        set BluePlayerTurn = true
+                        if(BluePlayer?):
+                            set BluePlayerTurn = true
+                        else if(YellowPlayer?):
+                            set YellowPlayerTurn = true
+                        else if(GreenPlayer?):
+                            set GreenPlayerTurn = true
                     set RedDiceRollValue = 0
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -1064,7 +1103,12 @@ LudoManager := class(creative_device):
                     set BlueConsecutiveSixes += 1
                     if(BlueConsecutiveSixes >= 3):
                         set BluePlayerTurn = false
-                        set YellowPlayerTurn = true
+                        if(YellowPlayer?):
+                            set YellowPlayerTurn = true
+                        else if(GreenPlayer?):
+                            set GreenPlayerTurn = true
+                        else if(RedPlayer?):
+                            set RedPlayerTurn = true
                         set BlueConsecutiveSixes = 0
                     # else keep turn
                     set BlueDiceRollValue = 0
@@ -1091,15 +1135,24 @@ LudoManager := class(creative_device):
                         if(BlueConsecutiveSixes >= 3):
                             # Switch to Green turn, reset counter
                             set BluePlayerTurn = false
-                            set YellowPlayerTurn = true
+                            if(YellowPlayer?):
+                                set YellowPlayerTurn = true
+                            else if(GreenPlayer?):
+                                set GreenPlayerTurn = true
+                            else if(RedPlayer?):
+                                set RedPlayerTurn = true
                             set BlueConsecutiveSixes = 0
                         else:
                             # Keep turn
                             set BluePlayerTurn = true
                     else:
                         set BluePlayerTurn = false
-                        set YellowPlayerTurn = true
-                    
+                            if(YellowPlayer?):
+                                set YellowPlayerTurn = true
+                            else if(GreenPlayer?):
+                                set GreenPlayerTurn = true
+                            else if(RedPlayer?):
+                                set RedPlayerTurn = true
                     set BlueDiceRollValue = 0
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -1144,7 +1197,12 @@ LudoManager := class(creative_device):
                     set YellowConsecutiveSixes += 1
                     if(YellowConsecutiveSixes >= 3):
                         set YellowPlayerTurn = false
-                        set GreenPlayerTurn = true
+                        if(GreenPlayer?):
+                            set GreenPlayerTurn = true
+                        else if(RedPlayer?):
+                            set RedPlayerTurn = true
+                        else if(BluePlayer?):
+                            set BluePlayerTurn = true
                         set YellowConsecutiveSixes = 0
                     # else keep turn
                     set YellowDiceRollValue = 0
@@ -1170,16 +1228,25 @@ LudoManager := class(creative_device):
                         set YellowConsecutiveSixes += 1
                         if(YellowConsecutiveSixes >= 3):
                             # Switch to Red turn, reset counter
-                            set GreenPlayerTurn = false
-                            set RedPlayerTurn = true
+                            set YellowPlayerTurn = false
+                            if(GreenPlayer?):
+                                set GreenPlayerTurn = true
+                            else if(RedPlayer?):
+                                set RedPlayerTurn = true
+                            else if(BluePlayer?):
+                                set BluePlayerTurn = true
                             set YellowConsecutiveSixes = 0
                         else:
                             # Keep turn
                             set YellowPlayerTurn = true
                     else:
                         set YellowPlayerTurn = false
-                        set GreenPlayerTurn = true
-
+                        if(GreenPlayer?):
+                            set GreenPlayerTurn = true
+                        else if(RedPlayer?):
+                            set RedPlayerTurn = true
+                        else if(BluePlayer?):
+                            set BluePlayerTurn = true
                     set YellowDiceRollValue = 0
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -1224,7 +1291,12 @@ LudoManager := class(creative_device):
                     set GreenConsecutiveSixes += 1
                     if(GreenConsecutiveSixes >= 3):
                         set GreenPlayerTurn = false
-                        set RedPlayerTurn = true
+                        if(RedPlayer?):
+                            set RedPlayerTurn = true
+                        else if(BluePlayer?):
+                            set BluePlayerTurn = true
+                        else if(YellowPlayer?):
+                            set YellowPlayerTurn = true
                         set GreenConsecutiveSixes = 0
 
                     set GreenDiceRollValue = 0
@@ -1250,17 +1322,26 @@ LudoManager := class(creative_device):
                     if(GreenDiceRollValue = 6):
                         set GreenConsecutiveSixes += 1
                         if(GreenConsecutiveSixes >= 3):
-                            # Switch to Yellow turn, reset counter
+                            # Switch to Red turn, reset counter
                             set GreenPlayerTurn = false
-                            set RedPlayerTurn = true
+                            if(RedPlayer?):
+                                set RedPlayerTurn = true
+                            else if(BluePlayer?):
+                                set BluePlayerTurn = true
+                            else if(YellowPlayer?):
+                                set YellowPlayerTurn = true
                             set GreenConsecutiveSixes = 0
                         else:
                             # Keep turn
                             set GreenPlayerTurn = true
                     else:
                         set GreenPlayerTurn = false
-                        set RedPlayerTurn = true
-
+                        if(RedPlayer?):
+                            set RedPlayerTurn = true
+                        else if(BluePlayer?):
+                            set BluePlayerTurn = true
+                        else if(YellowPlayer?):
+                            set YellowPlayerTurn = true
                     set GreenDiceRollValue = 0
                                 
             else:
@@ -1505,15 +1586,15 @@ LudoManager := class(creative_device):
 
         if(EliminationOccured = true):
             FalsingPlayerTurn()
-            if(Color = 0):
+            if(Color = 0 and RedPlayer?):
                 set RedPlayerTurn = true
-            else if(Color = 1):
+            else if(Color = 1 and BluePlayer?):
                 set BluePlayerTurn = true
-            else if(Color = 2):
+            else if(Color = 2 and YellowPlayer?):
                 set YellowPlayerTurn = true
-            else if(Color = 3):
+            else if(Color = 3 and GreenPlayer?):
                 set GreenPlayerTurn = true
-            HelperPlayerProfileTurn()
+            spawn{HelperPlayerProfileTurn()}
             TimerCheckerHelper()
         else:
             Print("Blahhhh")
@@ -1533,6 +1614,7 @@ LudoManager := class(creative_device):
                     else if(FinishedOrder.Length = 3):
                         RedVictoryProp.SetMaterial(MICrownThree)
                     APVictory.Play()
+                    set RedPlayer = false
 
         if(BlueEnd >= 4):
             if(not FinishedOrder.Find[1]):
@@ -1546,6 +1628,7 @@ LudoManager := class(creative_device):
                     else if(FinishedOrder.Length = 3):
                         BlueVictoryProp.SetMaterial(MICrownThree)
                     APVictory.Play()
+                    set BluePlayer = false
 
         if(YellowEnd >= 4):
             if(not FinishedOrder.Find[2]):
@@ -1559,6 +1642,7 @@ LudoManager := class(creative_device):
                     else if(FinishedOrder.Length = 3):
                         YellowVictoryProp.SetMaterial(MICrownThree)
                     APVictory.Play()
+                    set YellowPlayer = false
 
         if(GreenEnd >= 4):
             if(not FinishedOrder.Find[3]):
@@ -1572,6 +1656,7 @@ LudoManager := class(creative_device):
                     else if(FinishedOrder.Length = 3):
                         GreenVictoryProp.SetMaterial(MICrownThree)
                     APVictory.Play()
+                    set GreenPlayer = false
 
         if(FinishedOrder.Length = ActivePlayerCount - 1):
             if(not FinishedOrder.Find[0] and RedPlayer?):
