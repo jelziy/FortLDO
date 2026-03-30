@@ -488,16 +488,26 @@ LudoManager := class(creative_device):
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set RedPlayerTurn = false
-                set BluePlayerTurn = true
+                if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForBlue()}
+                TimerCheckerHelper()
                 return
 
             else if(RedPlayer = false):
                 set RedPlayerTurn = false
-                set BluePlayerTurn = true
+                if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForBlue()}
+                TimerCheckerHelper()
 
                 return
     )
@@ -513,15 +523,26 @@ LudoManager := class(creative_device):
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set BluePlayerTurn = false
-                set YellowPlayerTurn = true
+                if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForYellow()}
+                TimerCheckerHelper()
                 return
+
             else if(BluePlayer = false):
                 set BluePlayerTurn = false
-                set YellowPlayerTurn = true
+                if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForYellow()}
+                TimerCheckerHelper()
                 return
     )
 
@@ -536,16 +557,26 @@ LudoManager := class(creative_device):
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set GreenPlayerTurn = false
-                set RedPlayerTurn = true
+                if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForRed()}
+                TimerCheckerHelper()
                 return
 
             else if(GreenPlayer = false):
                 set GreenPlayerTurn = false
-                set RedPlayerTurn = true
+                if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForRed()}
+                TimerCheckerHelper()
                 return
     )
 
@@ -560,15 +591,25 @@ LudoManager := class(creative_device):
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set YellowPlayerTurn = false
-                set GreenPlayerTurn = true
+                if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForGreen()}
+                TimerCheckerHelper()
                 return
             else if(YellowPlayer = false):
                 set YellowPlayerTurn = false
-                set GreenPlayerTurn = true
+                if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
-                spawn{CheckTimerForGreen()}
+                TimerCheckerHelper()
                 return
 
     )
