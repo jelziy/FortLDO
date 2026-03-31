@@ -425,9 +425,9 @@ LudoManager := class(creative_device):
     )
 
     DiceRollPressed(Agent:agent):void=(
-        if(RedPlayer = option{Agent}): #removes else if from this function for PlayTesting
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true): #removes else if from this function for PlayTesting
             Print("Red Pressing")
-            if(RedPlayerTurn = true and DoubleRollFlagRed = false):
+            if(DoubleRollFlagRed = false):
                 RollValue := GetRandomInt(1,6)
                 set RedDiceRollValue = RollValue
                 if(DiceProp := RedDiceProp[0]):
@@ -436,10 +436,10 @@ LudoManager := class(creative_device):
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagRed = true
-                Print("Dice Rolled: {RollValue} ")
+                Print("Dice Rolled: {RollValue}")
 
-       if(BluePlayer = option{Agent}):
-            if(BluePlayerTurn = true and DoubleRollFlagBlue = false):
+        else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
+            if( DoubleRollFlagBlue = false):
                 RollValue := GetRandomInt(1,6)
                 set BlueDiceRollValue = RollValue
                 if(DiceProp := BlueDiceProp[0]):
@@ -450,8 +450,8 @@ LudoManager := class(creative_device):
                 set DoubleRollFlagBlue = true
                 Print("Dice Rolled: {RollValue} ")
 
-        if(GreenPlayer = option{Agent}):
-            if(GreenPlayerTurn = true and DoubleRollFlagGreen = false):
+        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
+            if(DoubleRollFlagGreen = false):
                 RollValue := GetRandomInt(1,6)
                 set GreenDiceRollValue = RollValue
                 if(DiceProp := GreenDiceProp[0]):
@@ -462,9 +462,9 @@ LudoManager := class(creative_device):
                 set DoubleRollFlagGreen = true
                 Print("Dice Rolled: {RollValue} ")
                 
-        if(YellowPlayer = option{Agent}):
+        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
             Print("Agent yellow found")
-            if(YellowPlayerTurn = true and DoubleRollFlagYellow = false):
+            if(DoubleRollFlagYellow = false):
                 RollValue := GetRandomInt(1,6)
                 set YellowDiceRollValue = RollValue
                 if(DiceProp := YellowDiceProp[0]):
@@ -475,7 +475,7 @@ LudoManager := class(creative_device):
                 set DoubleRollFlagYellow = true
                 Print("Dice Rolled: {RollValue} ")
     )
-
+    
     CheckTimerForRed()<suspends>:void=(
         
         var StartTime: float = GetSimulationElapsedTime()
@@ -494,6 +494,7 @@ LudoManager := class(creative_device):
                     set YellowPlayerTurn = true
                 else if(GreenPlayer?):
                     set GreenPlayerTurn = true
+                FalsingDoubleRollFlags()
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -506,6 +507,7 @@ LudoManager := class(creative_device):
                     set YellowPlayerTurn = true
                 else if(GreenPlayer?):
                     set GreenPlayerTurn = true
+                FalsingDoubleRollFlags()
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
 
@@ -529,6 +531,7 @@ LudoManager := class(creative_device):
                     set GreenPlayerTurn = true
                 else if(RedPlayer?):
                     set RedPlayerTurn = true
+                FalsingDoubleRollFlags()
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -541,6 +544,7 @@ LudoManager := class(creative_device):
                     set GreenPlayerTurn = true
                 else if(RedPlayer?):
                     set RedPlayerTurn = true
+                FalsingDoubleRollFlags()
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -563,6 +567,7 @@ LudoManager := class(creative_device):
                     set BluePlayerTurn = true
                 else if(YellowPlayer?):
                     set YellowPlayerTurn = true
+                FalsingDoubleRollFlags()
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -575,6 +580,7 @@ LudoManager := class(creative_device):
                     set BluePlayerTurn = true
                 else if(YellowPlayer?):
                     set YellowPlayerTurn = true
+                FalsingDoubleRollFlags()
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -597,6 +603,7 @@ LudoManager := class(creative_device):
                     set RedPlayerTurn = true
                 else if(BluePlayer?):
                     set BluePlayerTurn = true
+                FalsingDoubleRollFlags()
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -608,6 +615,7 @@ LudoManager := class(creative_device):
                     set RedPlayerTurn = true
                 else if(BluePlayer?):
                     set BluePlayerTurn = true
+                FalsingDoubleRollFlags()
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -958,6 +966,7 @@ LudoManager := class(creative_device):
                     set GreenPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagRed = false
+                TimerCheckerHelper()
                 Print("False cant move")
 
         else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
@@ -982,6 +991,7 @@ LudoManager := class(creative_device):
                     set RedPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagBlue = false
+                TimerCheckerHelper()
                 Print("False cant move")
 
         else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
@@ -1006,6 +1016,7 @@ LudoManager := class(creative_device):
                     set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagYellow = false
+                TimerCheckerHelper()
                 Print("False cant move")
 
         else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
@@ -1030,6 +1041,7 @@ LudoManager := class(creative_device):
                     set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagGreen = false
+                TimerCheckerHelper()
                 Print("False cant move")
         
     )
@@ -1060,6 +1072,7 @@ LudoManager := class(creative_device):
                         set RedConsecutiveSixes = 0
                     # else keep turn
                     set RedDiceRollValue = 0
+
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1124,7 +1137,7 @@ LudoManager := class(creative_device):
         
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
-        
+        TimerCheckerHelper()
     )
 
     MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1187,13 +1200,14 @@ LudoManager := class(creative_device):
                             # Keep turn
                             set BluePlayerTurn = true
                     else:
+                        set BlueConsecutiveSixes = 0
                         set BluePlayerTurn = false
-                            if(YellowPlayer?):
-                                set YellowPlayerTurn = true
-                            else if(GreenPlayer?):
-                                set GreenPlayerTurn = true
-                            else if(RedPlayer?):
-                                set RedPlayerTurn = true
+                        if(YellowPlayer?):
+                            set YellowPlayerTurn = true
+                        else if(GreenPlayer?):
+                            set GreenPlayerTurn = true
+                        else if(RedPlayer?):
+                            set RedPlayerTurn = true
                     set BlueDiceRollValue = 0
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -1218,7 +1232,7 @@ LudoManager := class(creative_device):
 
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
-        spawn{CheckTimerForYellow()}
+        TimerCheckerHelper()
     )
 
     MovePawnYellow(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1281,6 +1295,7 @@ LudoManager := class(creative_device):
                             # Keep turn
                             set YellowPlayerTurn = true
                     else:
+                        set YellowConsecutiveSixes = 0
                         set YellowPlayerTurn = false
                         if(GreenPlayer?):
                             set GreenPlayerTurn = true
@@ -1376,6 +1391,7 @@ LudoManager := class(creative_device):
                             # Keep turn
                             set GreenPlayerTurn = true
                     else:
+                        set GreenConsecutiveSixes = 0
                         set GreenPlayerTurn = false
                         if(RedPlayer?):
                             set RedPlayerTurn = true
@@ -1408,7 +1424,7 @@ LudoManager := class(creative_device):
 
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
-        spawn{CheckTimerForRed()}    
+        TimerCheckerHelper()   
     )
 
     PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int, Agent:agent)<suspends>:void=(
@@ -1813,6 +1829,13 @@ LudoManager := class(creative_device):
 
 
         Print("Match reset complete")
+    )
+    
+    FalsingDoubleRollFlags():void=(
+        set DoubleRollFlagRed = false
+        set DoubleRollFlagBlue = false
+        set DoubleRollFlagYellow = false
+        set DoubleRollFlagGreen = false
     )
 
     FalsingPlayerTurn():void=(
