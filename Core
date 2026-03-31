@@ -280,29 +280,40 @@ LudoManager := class(creative_device):
         if(OnePlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 1):
                 set GameStarted = true
-                set RedPlayerTurn = true
+                RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
         if(TwoPlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 2):
                 set GameStarted = true
-                set RedPlayerTurn = true
+                RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
 
         else if(ThreePlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 3):
                 set GameStarted = true
-                set RedPlayerTurn = true
+                RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
 
         else if(FourPlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 4):
                 set GameStarted = true
-                set RedPlayerTurn = true
+                RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
+    )
+    
+    RedTurnSetter():void=(
+        if(RedPlayer?):
+            set RedPlayerTurn = true
+        else if(BluePlayer?):
+            set BluePlayerTurn = true
+        else if(YellowPlayer?):
+            set YellowPlayerTurn = true
+        else if(GreenPlayer?):
+            set GreenPlayerTurn = true
     )
 
     RedOneJoined(Agent : agent) : void = (
@@ -431,8 +442,8 @@ LudoManager := class(creative_device):
                 RollValue := GetRandomInt(1,6)
                 set RedDiceRollValue = RollValue
                 if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
                     APDice.Play()
+                    DiceProp.SetMaterial(RollingDice)  
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagRed = true
@@ -443,8 +454,8 @@ LudoManager := class(creative_device):
                 RollValue := GetRandomInt(1,6)
                 set BlueDiceRollValue = RollValue
                 if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
                     APDice.Play()
+                    DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagBlue = true
@@ -455,8 +466,8 @@ LudoManager := class(creative_device):
                 RollValue := GetRandomInt(1,6)
                 set GreenDiceRollValue = RollValue
                 if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
                     APDice.Play()
+                    DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagGreen = true
@@ -468,8 +479,8 @@ LudoManager := class(creative_device):
                 RollValue := GetRandomInt(1,6)
                 set YellowDiceRollValue = RollValue
                 if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
                     APDice.Play()
+                    DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagYellow = true
@@ -495,6 +506,7 @@ LudoManager := class(creative_device):
                 else if(GreenPlayer?):
                     set GreenPlayerTurn = true
                 FalsingDoubleRollFlags()
+                set RedConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -508,6 +520,7 @@ LudoManager := class(creative_device):
                 else if(GreenPlayer?):
                     set GreenPlayerTurn = true
                 FalsingDoubleRollFlags()
+                set RedConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
 
@@ -532,6 +545,7 @@ LudoManager := class(creative_device):
                 else if(RedPlayer?):
                     set RedPlayerTurn = true
                 FalsingDoubleRollFlags()
+                set BlueConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -545,6 +559,7 @@ LudoManager := class(creative_device):
                 else if(RedPlayer?):
                     set RedPlayerTurn = true
                 FalsingDoubleRollFlags()
+                set BlueConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -568,6 +583,7 @@ LudoManager := class(creative_device):
                 else if(YellowPlayer?):
                     set YellowPlayerTurn = true
                 FalsingDoubleRollFlags()
+                set GreenConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -581,6 +597,7 @@ LudoManager := class(creative_device):
                 else if(YellowPlayer?):
                     set YellowPlayerTurn = true
                 FalsingDoubleRollFlags()
+                set GreenConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -604,6 +621,7 @@ LudoManager := class(creative_device):
                 else if(BluePlayer?):
                     set BluePlayerTurn = true
                 FalsingDoubleRollFlags()
+                set YellowConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -616,6 +634,7 @@ LudoManager := class(creative_device):
                 else if(BluePlayer?):
                     set BluePlayerTurn = true
                 FalsingDoubleRollFlags()
+                set YellowConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -1058,7 +1077,7 @@ LudoManager := class(creative_device):
                 PathTranslation:= PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                    APMove.Play()
+                APMove.Play()
                     set CurrentIndex = 0
                     set RedConsecutiveSixes += 1
                     if(RedConsecutiveSixes >= 3):
@@ -1088,7 +1107,7 @@ LudoManager := class(creative_device):
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                                APMove.Play()
+                            APMove.Play()
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
                     if(RedDiceRollValue = 6):
@@ -1568,10 +1587,8 @@ LudoManager := class(creative_device):
                     if(NumbersProp[3].SetMaterial(MIInv)):
                 APEnd.Play()
         
-        #Will optimize later for target offset relative to each other. if possible # could we do FInd for searching idk.
         #Formula newIndex=(index−targetOffset+52)mod52
         #for ELim
-        #there could be that it eliminate all pawn so account for that
         if((Color = 1 or Color = 2 or Color = 3) and not SafeSpots.Find[PawnPosition]): # for red
             if(X := Mod[(PawnPosition - DynamicOffset[0] + 52), 52]):
                 for(PawnIdx := 0..RedPawnIndices.Length -1):
