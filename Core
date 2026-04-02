@@ -912,7 +912,6 @@ LudoManager := class(creative_device):
                 spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
-            set DoubleRollFlagRed = false
         if(BluePlayer = option{Agent} and BluePlayerTurn = true and BlueDiceRollValue > 0):
             if (BlueZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
@@ -922,7 +921,6 @@ LudoManager := class(creative_device):
                 spawn{MovePawnBlue(BluePawnTwo, BluePawnTwoIndex, Agent)}
             else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawnThree, BluePawnThreeIndex, Agent)}
-            set DoubleRollFlagBlue = false
         if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and YellowDiceRollValue > 0):
             if (YellowZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawn, YellowPawnIndex, Agent)}
@@ -932,7 +930,6 @@ LudoManager := class(creative_device):
                 spawn{MovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, Agent)}
             else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, Agent)}
-            set DoubleRollFlagYellow = false
         if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and GreenDiceRollValue > 0):
             if (GreenZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawn, GreenPawnIndex, Agent)}
@@ -942,7 +939,6 @@ LudoManager := class(creative_device):
                 spawn{MovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex, Agent)}
             else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
-            set DoubleRollFlagGreen = false
     )
 
 
@@ -1091,6 +1087,7 @@ LudoManager := class(creative_device):
                         set RedConsecutiveSixes = 0
                     # else keep turn
                     set RedDiceRollValue = 0
+                    set DoubleRollFlagRed = false
 
 
         else if(CurrentIndex >= 0):
@@ -1132,6 +1129,7 @@ LudoManager := class(creative_device):
                         else if(GreenPlayer?):
                             set GreenPlayerTurn = true
                     set RedDiceRollValue = 0
+                    set DoubleRollFlagRed = false
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
@@ -1185,6 +1183,7 @@ LudoManager := class(creative_device):
                         set BlueConsecutiveSixes = 0
                     # else keep turn
                     set BlueDiceRollValue = 0
+                    set DoubleRollFlagBlue = false
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1228,6 +1227,7 @@ LudoManager := class(creative_device):
                         else if(RedPlayer?):
                             set RedPlayerTurn = true
                     set BlueDiceRollValue = 0
+                    set DoubleRollFlagBlue = false
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
@@ -1280,6 +1280,7 @@ LudoManager := class(creative_device):
                         set YellowConsecutiveSixes = 0
                     # else keep turn
                     set YellowDiceRollValue = 0
+                    set DoubleRollFlagYellow = false
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1323,6 +1324,7 @@ LudoManager := class(creative_device):
                         else if(BluePlayer?):
                             set BluePlayerTurn = true
                     set YellowDiceRollValue = 0
+                    set DoubleRollFlagYellow = false
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
@@ -1375,6 +1377,7 @@ LudoManager := class(creative_device):
                         set GreenConsecutiveSixes = 0
 
                     set GreenDiceRollValue = 0
+                    set DoubleRollFlagGreen = false
 
 
         else if(CurrentIndex >= 0):
@@ -1419,6 +1422,7 @@ LudoManager := class(creative_device):
                         else if(YellowPlayer?):
                             set YellowPlayerTurn = true
                     set GreenDiceRollValue = 0
+                    set DoubleRollFlagGreen = false
                                 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
