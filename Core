@@ -1495,7 +1495,7 @@ LudoManager := class(creative_device):
                     Offset := vector3{X := 20.0, Y := 0.0, Z := 0.0}
                     NewLocX := PawnTranslation + Offset
                         if(RedPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
-            if(PawnPosition >= 57):
+            if(PawnPosition >= 56):
                 set RedEnd += 1
                 if(RedEnd = 1):
                     set MINumbers.HowManyNumbers = 1.0
@@ -1522,7 +1522,7 @@ LudoManager := class(creative_device):
                     Offset := vector3{X := 10.0, Y := 0.0, Z := 0.0}
                     NewLocX := PawnTranslation + Offset
                         if(BluePawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
-            if(PawnPosition >= 57):
+            if(PawnPosition >= 56):
                 set BlueEnd += 1
                 if(BlueEnd = 1):
                     set MINumbers.HowManyNumbers = 1.0
@@ -1549,7 +1549,7 @@ LudoManager := class(creative_device):
                     Offset := vector3{X := -5.0, Y := 0.0, Z := 0.0}
                     NewLocX := PawnTranslation + Offset
                         if(YellowPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
-            if(PawnPosition >= 57):
+            if(PawnPosition >= 56):
                 set YellowEnd += 1
                 if(YellowEnd = 1):
                     set MINumbers.HowManyNumbers = 1.0
@@ -1576,7 +1576,7 @@ LudoManager := class(creative_device):
                     Offset := vector3{X := -20.0, Y := 0.0, Z := 0.0}
                     NewLocX := PawnTranslation + Offset
                         if(GreenPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
-            if(PawnPosition >= 57):
+            if(PawnPosition >= 56):
                 set GreenEnd += 1
                 if(GreenEnd = 1):
                     set MINumbers.HowManyNumbers = 1.0
@@ -1593,7 +1593,7 @@ LudoManager := class(creative_device):
         
         #Formula newIndex=(index−targetOffset+52)mod52
         #for ELim
-        if((Color = 1 or Color = 2 or Color = 3) and not SafeSpots.Find[PawnPosition]): # for red
+        if((Color = 1 or Color = 2 or Color = 3) and not SafeSpots.Find[PawnPosition] and PawnPosition <= 50): # for red
             if(X := Mod[(PawnPosition - DynamicOffset[0] + 52), 52]):
                 for(PawnIdx := 0..RedPawnIndices.Length -1):
                     if(X = RedPawnIndices[PawnIdx] and EliminationOccured = false):
@@ -1610,7 +1610,7 @@ LudoManager := class(creative_device):
                             set EliminationOccured = true
                             Print("Red ELiminated by someone")
                                 
-        if((Color = 0 or Color = 2 or Color = 3) and not SafeSpots.Find[PawnPosition]): # for blue
+        if((Color = 0 or Color = 2 or Color = 3) and not SafeSpots.Find[PawnPosition] and PawnPosition <= 50): # for blue
             if(X := Mod[(PawnPosition - DynamicOffset[1] + 52), 52]):
                 for(PawnIdx := 0..BluePawnIndices.Length - 1):
                     if(X = BluePawnIndices[PawnIdx] and EliminationOccured = false):
@@ -1627,7 +1627,7 @@ LudoManager := class(creative_device):
                             set EliminationOccured = true
                             Print("Blue Eliminated by someone")
 
-        if((Color = 0 or Color = 1 or Color = 3) and not SafeSpots.Find[PawnPosition]): # for Yellow
+        if((Color = 0 or Color = 1 or Color = 3) and not SafeSpots.Find[PawnPosition] and PawnPosition <= 50): # for Yellow
             if(X := Mod[(PawnPosition - DynamicOffset[2] + 52), 52]):
                 for(PawnIdx := 0..YellowPawnIndices.Length -1):
                     if(X = YellowPawnIndices[PawnIdx] and EliminationOccured = false):
@@ -1644,7 +1644,7 @@ LudoManager := class(creative_device):
                             set EliminationOccured = true
                             Print("Yellow Eliminated")
             
-        if((Color = 0 or Color = 1 or Color = 2) and not SafeSpots.Find[PawnPosition]): # for Green
+        if((Color = 0 or Color = 1 or Color = 2) and not SafeSpots.Find[PawnPosition] and PawnPosition <= 50): # for Green
             if(X := Mod[(PawnPosition - DynamicOffset[3] + 52), 52]):
                 for(PawnIdx := 0..GreenPawnIndices.Length - 1):
                     if(X = GreenPawnIndices[PawnIdx] and EliminationOccured = false):
