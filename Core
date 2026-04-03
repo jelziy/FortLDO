@@ -127,7 +127,10 @@ LudoManager := class(creative_device):
     var MICrownOne : MI_CrownOne = MI_CrownOne{}
     var MICrownTwo : MI_CrownTwo = MI_CrownTwo{}
     var MICrownThree : MI_CrownThree = MI_CrownThree{}
-    var MINumbers : MI_NumerUnoDosTres = MI_NumerUnoDosTres{}
+    var MInbRed : MI_NumerRed = MI_NumerRed{}
+    var MInbBlue : MI_NumerBlue = MI_NumerBlue{}
+    var MInbYellow : MI_NumerYellow = MI_NumerYellow{}
+    var MInbGreen : MI_NumerGreen = MI_NumerGreen{}
     var MIInv : MI_Invisible = MI_Invisible{}
 
 
@@ -1498,14 +1501,14 @@ LudoManager := class(creative_device):
             if(PawnPosition >= 56):
                 set RedEnd += 1
                 if(RedEnd = 1):
-                    set MINumbers.HowManyNumbers = 1.0
-                    if(NumbersProp[0].SetMaterial(MINumbers)):
+                    set MInbRed.HowManyNumbers = 1.0
+                    if(NumbersProp[0].SetMaterial(MInbRed)):
                 else if(RedEnd = 2):
-                    set MINumbers.HowManyNumbers = 2.0
-                    if(NumbersProp[0].SetMaterial(MINumbers)):
+                    set MInbRed.HowManyNumbers = 2.0
+                    if(NumbersProp[0].SetMaterial(MInbRed)):
                 else if(RedEnd = 3):
-                    set MINumbers.HowManyNumbers = 3.0
-                    if(NumbersProp[0].SetMaterial(MINumbers)):
+                    set MInbRed.HowManyNumbers = 3.0
+                    if(NumbersProp[0].SetMaterial(MInbRed)):
                 else if(RedEnd >= 4):
                     if(NumbersProp[0].SetMaterial(MIInv)):
                 APEnd.Play()
@@ -1525,14 +1528,14 @@ LudoManager := class(creative_device):
             if(PawnPosition >= 56):
                 set BlueEnd += 1
                 if(BlueEnd = 1):
-                    set MINumbers.HowManyNumbers = 1.0
-                    if(NumbersProp[1].SetMaterial(MINumbers)):
+                    set MInbBlue.HowManyNumbers = 1.0
+                    if(NumbersProp[1].SetMaterial(MInbBlue)):
                 else if(BlueEnd = 2):
-                    set MINumbers.HowManyNumbers = 2.0
-                    if(NumbersProp[1].SetMaterial(MINumbers)):
+                    set MInbBlue.HowManyNumbers = 2.0
+                    if(NumbersProp[1].SetMaterial(MInbBlue)):
                 else if(BlueEnd = 3):
-                    set MINumbers.HowManyNumbers = 3.0
-                    if(NumbersProp[1].SetMaterial(MINumbers)):
+                    set MInbBlue.HowManyNumbers = 3.0
+                    if(NumbersProp[1].SetMaterial(MInbBlue)):
                 else if(BlueEnd >= 4):
                     if(NumbersProp[1].SetMaterial(MIInv)):
                 APEnd.Play()
@@ -1552,14 +1555,14 @@ LudoManager := class(creative_device):
             if(PawnPosition >= 56):
                 set YellowEnd += 1
                 if(YellowEnd = 1):
-                    set MINumbers.HowManyNumbers = 1.0
-                    if(NumbersProp[2].SetMaterial(MINumbers)):
+                    set MInbYellow.HowManyNumbers = 1.0
+                    if(NumbersProp[2].SetMaterial(MInbYellow)):
                 else if(YellowEnd = 2):
-                    set MINumbers.HowManyNumbers = 2.0
-                    if(NumbersProp[2].SetMaterial(MINumbers)):
+                    set MInbYellow.HowManyNumbers = 2.0
+                    if(NumbersProp[2].SetMaterial(MInbYellow)):
                 else if(YellowEnd = 3):
-                    set MINumbers.HowManyNumbers = 3.0
-                    if(NumbersProp[2].SetMaterial(MINumbers)):
+                    set MInbYellow.HowManyNumbers = 3.0
+                    if(NumbersProp[2].SetMaterial(MInbYellow)):
                 else if(YellowEnd >= 4):
                     if(NumbersProp[2].SetMaterial(MIInv)):
                 APEnd.Play()
@@ -1579,14 +1582,14 @@ LudoManager := class(creative_device):
             if(PawnPosition >= 56):
                 set GreenEnd += 1
                 if(GreenEnd = 1):
-                    set MINumbers.HowManyNumbers = 1.0
-                    if(NumbersProp[3].SetMaterial(MINumbers)):
+                    set MInbGreen.HowManyNumbers = 1.0
+                    if(NumbersProp[3].SetMaterial(MInbGreen)):
                 else if(GreenEnd = 2):
-                    set MINumbers.HowManyNumbers = 2.0
-                    if(NumbersProp[3].SetMaterial(MINumbers)):
+                    set MInbGreen.HowManyNumbers = 2.0
+                    if(NumbersProp[3].SetMaterial(MInbGreen)):
                 else if(GreenEnd = 3):
-                    set MINumbers.HowManyNumbers = 3.0
-                    if(NumbersProp[3].SetMaterial(MINumbers)):
+                    set MInbGreen.HowManyNumbers = 3.0
+                    if(NumbersProp[3].SetMaterial(MInbGreen)):
                 else if(GreenEnd >= 4):
                     if(NumbersProp[3].SetMaterial(MIInv)):
                 APEnd.Play()
@@ -1752,7 +1755,7 @@ LudoManager := class(creative_device):
     )
 
     GameOverReset()<suspends>:void=(
-        Sleep(3.0)
+        Sleep(7.0)
         set GameStarted = false
         set ActivePlayerCount = 0
         set FinishedOrder = array{}
@@ -1760,12 +1763,16 @@ LudoManager := class(creative_device):
         
         if(RedAgent := RedPlayer?):
             RedCamera.RemoveFrom(RedAgent)
+            RedChair.EnableExit()
         if(BlueAgent := BluePlayer?):
             BlueCamera.RemoveFrom(BlueAgent)
+            BlueChair.EnableExit()
         if(YellowAgent := YellowPlayer?):
             YellowCamera.RemoveFrom(YellowAgent)
+            YellowChair.EnableExit()
         if(GreenAgent := GreenPlayer?):
             GreenCamera.RemoveFrom(GreenAgent)
+            GreenChair.EnableExit()
             
         set RedDiceRollValue = 0
         set BlueDiceRollValue = 0
@@ -1845,6 +1852,11 @@ LudoManager := class(creative_device):
             YellowVictoryProp.SetMaterial(MIInv)
         if(GreenVictoryProp := VictoryProps[3]):
             GreenVictoryProp.SetMaterial(MIInv)
+        
+        set MInbRed.HowManyNumbers = 0.0
+        set MInbBlue.HowManyNumbers = 0.0   
+        set MInbYellow.HowManyNumbers = 0.0
+        set MInbGreen.HowManyNumbers = 0.0
 
         ResetPlayerDrainerProfile()
 
