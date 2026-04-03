@@ -208,6 +208,26 @@ LudoManager := class(creative_device):
     var BluePlayerTurn : logic = false
     var YellowPlayerTurn : logic = false
 
+    var RedFinished : logic = false
+    var RedOneFinished : logic = false
+    var RedTwoFinished : logic = false
+    var RedThreeFinished : logic = false
+
+    var BlueFinished : logic = false
+    var BlueOneFinished : logic = false
+    var BlueTwoFinished : logic = false
+    var BlueThreeFinished : logic = false
+
+    var YellowFinished : logic = false
+    var YellowOneFinished : logic = false
+    var YellowTwoFinished : logic = false
+    var YellowThreeFinished : logic = false
+
+    var GreenFinished : logic = false
+    var GreenOneFinished : logic = false
+    var GreenTwoFinished : logic = false
+    var GreenThreeFinished : logic = false
+
     var WhichColorElim : int = -1 #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
 
     var RollerForRed : int = 0
@@ -811,98 +831,185 @@ LudoManager := class(creative_device):
     )
 
     SelectZeroPressed(Agent : agent) : void = (
+        var Attempts:int = 0
+        
         if(RedPlayer = option{Agent} and RedPlayerTurn = true):
-            if (RollerForRed = 0):
-                ResetAllHighlights(Agent)
-                set RedZeroHighlight.HIghlightIntensity = 20.0
-                RedPawn.SetMaterial(RedZeroHighlight)
-                set RollerForRed += 1
-                Print("Higlidhting Red Pawn 0")
-            else if (RollerForRed = 1):
-                ResetAllHighlights(Agent)
-                set RedOneHighlight.HIghlightIntensity = 20.0
-                RedPawnOne.SetMaterial(RedOneHighlight)
-                set RollerForRed += 1
-            else if (RollerForRed = 2):
-                ResetAllHighlights(Agent)
-                set RedTwoHighlight.HIghlightIntensity = 20.0
-                RedPawnTwo.SetMaterial(RedTwoHighlight)
-                set RollerForRed += 1
-            else if ( RollerForRed = 3):
-                ResetAllHighlights(Agent)
-                set RedThreeHighlight.HIghlightIntensity = 20.0
-                RedPawnThree.SetMaterial(RedThreeHighlight)
-                set RollerForRed = 0
-            APHighlight.Play(Agent)
+            loop:
+                if(Attempts >= 4):
+                    break
+                if (RollerForRed = 0 and RedFinished = false):
+                    ResetAllHighlights(Agent)
+                    set RedZeroHighlight.HIghlightIntensity = 20.0
+                    RedPawn.SetMaterial(RedZeroHighlight)
+                    set RollerForRed += 1
+                    APHighlight.Play(Agent)
+                    Print("Higlidhting Red Pawn 0")
+                    break
+                else if (RollerForRed = 1 and RedOneFinished = false):
+                    ResetAllHighlights(Agent)
+                    set RedOneHighlight.HIghlightIntensity = 20.0
+                    RedPawnOne.SetMaterial(RedOneHighlight)
+                    set RollerForRed += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if (RollerForRed = 2 and RedTwoFinished = false):
+                    ResetAllHighlights(Agent)
+                    set RedTwoHighlight.HIghlightIntensity = 20.0
+                    RedPawnTwo.SetMaterial(RedTwoHighlight)
+                    set RollerForRed += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if ( RollerForRed = 3 and RedThreeFinished = false):
+                    ResetAllHighlights(Agent)
+                    set RedThreeHighlight.HIghlightIntensity = 20.0
+                    RedPawnThree.SetMaterial(RedThreeHighlight)
+                    set RollerForRed = 0
+                    APHighlight.Play(Agent)
+                    break
+                else:
+                    if(RollerForRed = 0):
+                        set RollerForRed = 1
+                    else if(RollerForRed = 1):
+                        set RollerForRed = 2
+                    else if(RollerForRed = 2):
+                        set RollerForRed = 3
+                    else:
+                        set RollerForRed = 0
+                    
+                    set Attempts += 1
         
         if(BluePlayer = option{Agent} and BluePlayerTurn = true):
-            if(RollerForBlue = 0):
-                ResetAllHighlights(Agent)
-                set BlueZeroHighlight.HIghlightIntensity = 20.0
-                BluePawn.SetMaterial(BlueZeroHighlight)
-                set RollerForBlue += 1
-            else if(RollerForBlue = 1):
-                ResetAllHighlights(Agent)
-                set BlueOneHighlight.HIghlightIntensity = 20.0
-                BluePawnOne.SetMaterial(BlueOneHighlight)
-                set RollerForBlue += 1
-            else if(RollerForBlue = 2):
-                ResetAllHighlights(Agent)
-                set BlueTwoHighlight.HIghlightIntensity = 20.0
-                BluePawnTwo.SetMaterial(BlueTwoHighlight)
-                set RollerForBlue += 1
-            else if(RollerForBlue = 3):
-                ResetAllHighlights(Agent)
-                set BlueThreeHighlight.HIghlightIntensity = 20.0
-                BluePawnThree.SetMaterial(BlueThreeHighlight)
-                set RollerForBlue = 0
-            APHighlight.Play(Agent)
+            loop:
+                if(Attempts >= 4):
+                    break
+                if(RollerForBlue = 0 and BlueFinished = false):
+                    ResetAllHighlights(Agent)
+                    set BlueZeroHighlight.HIghlightIntensity = 20.0
+                    BluePawn.SetMaterial(BlueZeroHighlight)
+                    set RollerForBlue += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if(RollerForBlue = 1 and BlueOneFinished = false):
+                    ResetAllHighlights(Agent)
+                    set BlueOneHighlight.HIghlightIntensity = 20.0
+                    BluePawnOne.SetMaterial(BlueOneHighlight)
+                    set RollerForBlue += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if(RollerForBlue = 2 and BlueTwoFinished = false):
+                    ResetAllHighlights(Agent)
+                    set BlueTwoHighlight.HIghlightIntensity = 20.0
+                    BluePawnTwo.SetMaterial(BlueTwoHighlight)
+                    set RollerForBlue += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if(RollerForBlue = 3 and BlueThreeFinished = false):
+                    ResetAllHighlights(Agent)
+                    set BlueThreeHighlight.HIghlightIntensity = 20.0
+                    BluePawnThree.SetMaterial(BlueThreeHighlight)
+                    set RollerForBlue = 0
+                    APHighlight.Play(Agent)
+                    break
+                else:
+                    if(RollerForBlue = 0):
+                        set RollerForBlue = 1
+                    else if(RollerForBlue = 1):
+                        set RollerForBlue = 2
+                    else if(RollerForBlue = 2):
+                        set RollerForBlue = 3
+                    else:
+                        set RollerForBlue = 0
+                    
+                    set Attempts += 1
 
         if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
-            if(RollerForYellow = 0):
-                ResetAllHighlights(Agent)
-                set YellowZeroHighlight.HIghlightIntensity = 20.0
-                YellowPawn.SetMaterial(YellowZeroHighlight)
-                set RollerForYellow += 1
-            else if(RollerForYellow = 1):
-                ResetAllHighlights(Agent)
-                set YellowOneHighlight.HIghlightIntensity = 20.0
-                YellowPawnOne.SetMaterial(YellowOneHighlight)
-                set RollerForYellow += 1
-            else if(RollerForYellow = 2):
-                ResetAllHighlights(Agent)
-                set YellowTwoHighlight.HIghlightIntensity = 20.0
-                YellowPawnTwo.SetMaterial(YellowTwoHighlight)
-                set RollerForYellow += 1
-            else if(RollerForYellow = 3):
-                ResetAllHighlights(Agent)
-                set YellowThreeHighlight.HIghlightIntensity = 20.0
-                YellowPawnThree.SetMaterial(YellowThreeHighlight)
-                set RollerForYellow = 0
-            APHighlight.Play(Agent)
+            loop:
+                if(Attempts >= 4):
+                    break
+                if(RollerForYellow = 0 and YellowFinished = false):
+                    ResetAllHighlights(Agent)
+                    set YellowZeroHighlight.HIghlightIntensity = 20.0
+                    YellowPawn.SetMaterial(YellowZeroHighlight)
+                    set RollerForYellow += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if(RollerForYellow = 1 and YellowOneFinished = false):
+                    ResetAllHighlights(Agent)
+                    set YellowOneHighlight.HIghlightIntensity = 20.0
+                    YellowPawnOne.SetMaterial(YellowOneHighlight)
+                    set RollerForYellow += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if(RollerForYellow = 2 and YellowTwoFinished = false):
+                     ResetAllHighlights(Agent)
+                    ResetAllHighlights(Agent)
+                    set YellowTwoHighlight.HIghlightIntensity = 20.0
+                    YellowPawnTwo.SetMaterial(YellowTwoHighlight)
+                    set RollerForYellow += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if(RollerForYellow = 3 and YellowThreeFinished = false):
+                    ResetAllHighlights(Agent)
+                    set YellowThreeHighlight.HIghlightIntensity = 20.0
+                    YellowPawnThree.SetMaterial(YellowThreeHighlight)
+                    set RollerForYellow = 0
+                    APHighlight.Play(Agent)
+                    break
+                else:
+                    if(RollerForYellow = 0):
+                        set RollerForYellow = 1
+                    else if(RollerForYellow = 1):
+                        set RollerForYellow = 2
+                    else if(RollerForYellow = 2):
+                        set RollerForYellow = 3
+                    else:
+                        set RollerForYellow = 0
+                    
+                    set Attempts += 1
 
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):     
-            if(RollerForGreen = 0):
-                ResetAllHighlights(Agent)
-                set GreenZeroHighlight.HIghlightIntensity = 20.0
-                GreenPawn.SetMaterial(GreenZeroHighlight)
-                set RollerForGreen += 1
-            else if(RollerForGreen = 1):
-                ResetAllHighlights(Agent)
-                set GreenOneHighlight.HIghlightIntensity = 20.0
-                GreenPawnOne.SetMaterial(GreenOneHighlight)
-                set RollerForGreen += 1
-            else if(RollerForGreen = 2):
-                ResetAllHighlights(Agent)
-                set GreenTwoHighlight.HIghlightIntensity = 20.0
-                GreenPawnTwo.SetMaterial(GreenTwoHighlight)
-                set RollerForGreen += 1
-            else if(RollerForGreen = 3):
-                ResetAllHighlights(Agent)
-                set GreenThreeHighlight.HIghlightIntensity = 20.0
-                GreenPawnThree.SetMaterial(GreenThreeHighlight)
-                set RollerForGreen = 0
-            APHighlight.Play(Agent)
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
+            loop:
+                if(Attempts >= 4):
+                    break     
+                if(RollerForGreen = 0 and GreenFinished = false):
+                    ResetAllHighlights(Agent)
+                    set GreenZeroHighlight.HIghlightIntensity = 20.0
+                    GreenPawn.SetMaterial(GreenZeroHighlight)
+                    set RollerForGreen += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if(RollerForGreen = 1 and GreenOneFinished = false):
+                    ResetAllHighlights(Agent)
+                    set GreenOneHighlight.HIghlightIntensity = 20.0
+                    GreenPawnOne.SetMaterial(GreenOneHighlight)
+                    set RollerForGreen += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if(RollerForGreen = 2 and GreenTwoFinished = false):
+                    ResetAllHighlights(Agent)
+                    set GreenTwoHighlight.HIghlightIntensity = 20.0
+                    GreenPawnTwo.SetMaterial(GreenTwoHighlight)
+                    set RollerForGreen += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if(RollerForGreen = 3 and GreenThreeFinished = false):
+                    ResetAllHighlights(Agent)
+                    set GreenThreeHighlight.HIghlightIntensity = 20.0
+                    GreenPawnThree.SetMaterial(GreenThreeHighlight)
+                    set RollerForGreen = 0
+                    APHighlight.Play(Agent)
+                    break
+                else:
+                    if(RollerForGreen = 0):
+                        set RollerForGreen = 1
+                    else if(RollerForGreen = 1):
+                        set RollerForGreen = 2
+                    else if(RollerForGreen = 2):
+                        set RollerForGreen = 3
+                    else:
+                        set RollerForGreen = 0
+                    
+                    set Attempts += 1
     )
    
     ConfirmInputPressed(Agent:agent):void= (
@@ -1454,7 +1561,7 @@ LudoManager := class(creative_device):
     )
 
     PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int, Agent:agent)<suspends>:void=(
-        #1 -- color. 2 -- which pawn index. 3. Position that pawns position index. All int Yes.
+        #1 -- color. 2 -- which pawn from that color. 3. Position that pawns position index. All int Yes.
         #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
         
         RedPawns : []creative_prop = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
@@ -1500,6 +1607,15 @@ LudoManager := class(creative_device):
                         if(RedPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
                 set RedEnd += 1
+                if(Pawn = 0):
+                    set RedFinished = true
+                else if(Pawn = 1):
+                    set RedOneFinished = true
+                else if(Pawn = 2):
+                    set RedTwoFinished = true
+                else if(Pawn = 3):
+                    set RedThreeFinished = true
+                #------------------------------------------------------
                 if(RedEnd = 1):
                     set MInbRed.HowManyNumbers = 1.0
                     if(NumbersProp[0].SetMaterial(MInbRed)):
@@ -1527,6 +1643,15 @@ LudoManager := class(creative_device):
                         if(BluePawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
                 set BlueEnd += 1
+                if(Pawn = 0):
+                    set BlueFinished = true
+                else if(Pawn = 1):
+                    set BlueOneFinished = true
+                else if(Pawn = 2):
+                    set BlueTwoFinished = true
+                else if(Pawn = 3):
+                    set BlueThreeFinished = true
+                #------------------------------------------------------    
                 if(BlueEnd = 1):
                     set MInbBlue.HowManyNumbers = 1.0
                     if(NumbersProp[1].SetMaterial(MInbBlue)):
@@ -1554,6 +1679,15 @@ LudoManager := class(creative_device):
                         if(YellowPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
                 set YellowEnd += 1
+                if(Pawn = 0):
+                    set YellowFinished = true
+                else if(Pawn = 1):
+                    set YellowOneFinished = true
+                else if(Pawn = 2):
+                    set YellowTwoFinished = true
+                else if(Pawn = 3):
+                    set YellowThreeFinished = true
+                #------------------------------------------------------
                 if(YellowEnd = 1):
                     set MInbYellow.HowManyNumbers = 1.0
                     if(NumbersProp[2].SetMaterial(MInbYellow)):
@@ -1581,6 +1715,15 @@ LudoManager := class(creative_device):
                         if(GreenPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
                 set GreenEnd += 1
+                if(Pawn = 0):
+                    set GreenFinished = true
+                else if(Pawn = 1):
+                    set GreenOneFinished = true
+                else if(Pawn = 2):
+                    set GreenTwoFinished = true
+                else if(Pawn = 3):
+                    set GreenThreeFinished = true
+                #------------------------------------------------------
                 if(GreenEnd = 1):
                     set MInbGreen.HowManyNumbers = 1.0
                     if(NumbersProp[3].SetMaterial(MInbGreen)):
@@ -1857,13 +2000,36 @@ LudoManager := class(creative_device):
         set MInbBlue.HowManyNumbers = 0.0   
         set MInbYellow.HowManyNumbers = 0.0
         set MInbGreen.HowManyNumbers = 0.0
-
+        
+        PawnFinishStateResetter()
         ResetPlayerDrainerProfile()
 
 
         Print("Match reset complete")
     )
     
+    PawnFinishStateResetter():void=(
+        set RedFinished = false
+        set RedOneFinished = false
+        set RedTwoFinished = false
+        set RedThreeFinished = false
+
+        set BlueFinished = false
+        set BlueOneFinished = false
+        set BlueTwoFinished = false
+        set BlueThreeFinished = false
+
+        set YellowFinished = false
+        set YellowOneFinished = false
+        set YellowTwoFinished = false
+        set YellowThreeFinished = false
+
+        set GreenFinished = false
+        set GreenOneFinished = false
+        set GreenTwoFinished = false
+        set GreenThreeFinished = false
+    )
+
     FalsingDoubleRollFlags():void=(
         set DoubleRollFlagRed = false
         set DoubleRollFlagBlue = false
