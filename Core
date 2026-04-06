@@ -4,6 +4,9 @@ using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 using { /Verse.org/Random }
 using { /UnrealEngine.com/Temporary/SpatialMath }
+using { /Fortnite.com/UI }
+using { /UnrealEngine.com/Temporary/UI }
+using {F_WIdget}
 using {PawnMInstance}
 using {Pawn2MInstance}
 
@@ -18,6 +21,7 @@ PlayerSwitchTip<localizes>:message = "Players Switch"
 EndPlanesPropTip<localizes>:message = "End Screen"
 AudioTip<localizes>:message = "Audio Devices"
 ChairTip<localizes>:message = "Chairs"
+WidgetTip<localizes>:message = "Widgets"
 
 PathProps<localizes>:message = "Paths For Each"
 
@@ -51,6 +55,7 @@ LudoManager := class(creative_device):
     @editable {Categories := array{InputTip}}
     SelectOne : input_trigger_device = input_trigger_device{}
 
+    @editable {Categories := array{WidgetTip}} WidgetLoading : Ldo_Loading = Ldo_Loading{}
 
     @editable {Categories := array{RedPawnTip}} RedPawn : creative_prop = creative_prop{}
     @editable {Categories := array{RedPawnTip}} RedPawnOne : creative_prop = creative_prop{}
@@ -289,7 +294,7 @@ LudoManager := class(creative_device):
         ResetPlayerDrainerProfile()
     )
 
-    GameStartInitiator():void=(
+    GameStartInitiator()<suspends>:void=(
         var PlayerCount : int = 0
         if(RedPlayer?):
             set PlayerCount += 1
@@ -326,6 +331,31 @@ LudoManager := class(creative_device):
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
+
+        
+        if(RedAgent := RedPlayer?):
+            if(Player := player[RedAgent]):
+                if(PlayerUI := GetPlayerUI[Player]):
+                    Sleep(3.0)
+                    PlayerUI.RemoveWidget(WidgetLoading)
+        
+        if(BlueAgent := BluePlayer?):
+            if(Player := player[BlueAgent]):
+                if(PlayerUI := GetPlayerUI[Player]):
+                    Sleep(3.0);
+                    PlayerUI.RemoveWidget(WidgetLoading)
+
+        if(GreenAgent := GreenPlayer?):
+            if(Player := player[GreenAgent]):
+                if(PlayerUI := GetPlayerUI[Player]):
+                    Sleep(3.0);
+                    PlayerUI.RemoveWidget(WidgetLoading)
+        
+        if(YellowAgent := YellowPlayer?):
+            if(Player := player[YellowAgent]):
+                if(PlayerUI := GetPlayerUI[Player]):
+                    Sleep(3.0);
+                    PlayerUI.RemoveWidget(WidgetLoading)
     )
     
     RedTurnSetter():void=(
@@ -339,22 +369,32 @@ LudoManager := class(creative_device):
             set GreenPlayerTurn = true
     )
 
+
     RedOneJoined(Agent : agent) : void = (
         if(RedPlayer = false):
+            if (Player := player[Agent]):
+                if(PlayerUI := GetPlayerUI[Player]):
+                    PlayerUI.AddWidget(WidgetLoading)
+
             RedCamera.AddTo(Agent)   #just to check hash
             set RedPlayer = option{Agent}
             RedChair.DisableExit()
+            
             if(GameStarted = false):
                 set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
                 for(RedPawnForRedJoined : AllRedPawn):
                     RedPawnForRedJoined.Show()
-                    GameStartInitiator()
+                    spawn{GameStartInitiator()}
             else if(GameStarted = true):
                 Print("Game has already started. You cannot join now.")
     )
 
     BlueOneJoined(Agent : agent) : void = (
         if(BluePlayer = false):
+            if(Player := player[Agent]):
+                if(PlayerUI := GetPlayerUI[Player]):
+                    PlayerUI.AddWidget(WidgetLoading)
+
             set BluePlayer = option{Agent}
            # BlueChair.DisableExit() #hash for playtest
            # BlueCamera.AddTo(Agent)
@@ -362,13 +402,17 @@ LudoManager := class(creative_device):
                 set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
                 for(BluePawnForBlueJoined : AllBluePawn):
                     BluePawnForBlueJoined.Show()
-                    GameStartInitiator()
+                    spawn{GameStartInitiator()}
             else if(GameStarted = true):
                 Print("Game has already started. You cannot join now.")
     )
 
     GreenOneJoined(Agent : agent) : void = (
         if(GreenPlayer = false):
+            if(Player := player[Agent]):
+                if(PlayerUI := GetPlayerUI[Player]):
+                    PlayerUI.AddWidget(WidgetLoading)
+
             set GreenPlayer = option{Agent}
           #  GreenChair.DisableExit()
             #GreenCamera.AddTo(Agent)
@@ -376,13 +420,17 @@ LudoManager := class(creative_device):
                 set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
                 for(GreenPawnForGreenJoined : AllGreenPawn):
                     GreenPawnForGreenJoined.Show()
-                    GameStartInitiator()
+                    spawn{GameStartInitiator()}
             else if(GameStarted = true):
                 Print("Game has already started. You cannot join now.")
     )
 
     YellowOneJoined(Agent : agent) : void = (
         if(YellowPlayer = false):
+            if(Player := player[Agent]):
+                if(PlayerUI := GetPlayerUI[Player]):
+                    PlayerUI.AddWidget(WidgetLoading)
+
             set YellowPlayer = option{Agent}
            # YellowCamera.AddTo(Agent)
            # YellowChair.DisableExit()
@@ -390,7 +438,7 @@ LudoManager := class(creative_device):
                 set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
                 for(YellowPawnForYellowJoined : AllYellowPawn):
                     YellowPawnForYellowJoined.Show()
-                    GameStartInitiator()
+                    spawn{GameStartInitiator()}
             else if(GameStarted = true):
                 Print("Game has already started. You cannot join now.")
     )
