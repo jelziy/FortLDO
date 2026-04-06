@@ -56,6 +56,7 @@ LudoManager := class(creative_device):
     SelectOne : input_trigger_device = input_trigger_device{}
 
     @editable {Categories := array{WidgetTip}} WidgetLoading : Ldo_Loading = Ldo_Loading{}
+    @editable {Categories := array{WidgetTip}} WidgetLeaving : Ldo_Leaving = Ldo_Leaving{}
 
     @editable {Categories := array{RedPawnTip}} RedPawn : creative_prop = creative_prop{}
     @editable {Categories := array{RedPawnTip}} RedPawnOne : creative_prop = creative_prop{}
@@ -331,31 +332,6 @@ LudoManager := class(creative_device):
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
-
-        
-        if(RedAgent := RedPlayer?):
-            if(Player := player[RedAgent]):
-                if(PlayerUI := GetPlayerUI[Player]):
-                    Sleep(3.0)
-                    PlayerUI.RemoveWidget(WidgetLoading)
-        
-        if(BlueAgent := BluePlayer?):
-            if(Player := player[BlueAgent]):
-                if(PlayerUI := GetPlayerUI[Player]):
-                    Sleep(3.0);
-                    PlayerUI.RemoveWidget(WidgetLoading)
-
-        if(GreenAgent := GreenPlayer?):
-            if(Player := player[GreenAgent]):
-                if(PlayerUI := GetPlayerUI[Player]):
-                    Sleep(3.0);
-                    PlayerUI.RemoveWidget(WidgetLoading)
-        
-        if(YellowAgent := YellowPlayer?):
-            if(Player := player[YellowAgent]):
-                if(PlayerUI := GetPlayerUI[Player]):
-                    Sleep(3.0);
-                    PlayerUI.RemoveWidget(WidgetLoading)
     )
     
     RedTurnSetter():void=(
@@ -372,10 +348,7 @@ LudoManager := class(creative_device):
 
     RedOneJoined(Agent : agent) : void = (
         if(RedPlayer = false):
-            if (Player := player[Agent]):
-                if(PlayerUI := GetPlayerUI[Player]):
-                    PlayerUI.AddWidget(WidgetLoading)
-
+            spawn{LoadWidget(Agent)}
             RedCamera.AddTo(Agent)   #just to check hash
             set RedPlayer = option{Agent}
             RedChair.DisableExit()
@@ -391,10 +364,7 @@ LudoManager := class(creative_device):
 
     BlueOneJoined(Agent : agent) : void = (
         if(BluePlayer = false):
-            if(Player := player[Agent]):
-                if(PlayerUI := GetPlayerUI[Player]):
-                    PlayerUI.AddWidget(WidgetLoading)
-
+            spawn{LoadWidget(Agent)}
             set BluePlayer = option{Agent}
            # BlueChair.DisableExit() #hash for playtest
            # BlueCamera.AddTo(Agent)
@@ -409,10 +379,7 @@ LudoManager := class(creative_device):
 
     GreenOneJoined(Agent : agent) : void = (
         if(GreenPlayer = false):
-            if(Player := player[Agent]):
-                if(PlayerUI := GetPlayerUI[Player]):
-                    PlayerUI.AddWidget(WidgetLoading)
-
+            spawn{LoadWidget(Agent)}
             set GreenPlayer = option{Agent}
           #  GreenChair.DisableExit()
             #GreenCamera.AddTo(Agent)
@@ -427,10 +394,7 @@ LudoManager := class(creative_device):
 
     YellowOneJoined(Agent : agent) : void = (
         if(YellowPlayer = false):
-            if(Player := player[Agent]):
-                if(PlayerUI := GetPlayerUI[Player]):
-                    PlayerUI.AddWidget(WidgetLoading)
-
+            spawn{LoadWidget(Agent)}
             set YellowPlayer = option{Agent}
            # YellowCamera.AddTo(Agent)
            # YellowChair.DisableExit()
@@ -442,11 +406,28 @@ LudoManager := class(creative_device):
             else if(GameStarted = true):
                 Print("Game has already started. You cannot join now.")
     )
+    
+    LoadWidget(Agent:agent)<suspends>:void=(
+        if(Player := player[Agent]):
+            if(PlayerUI := GetPlayerUI[Player]):
+                PlayerUI.AddWidget(WidgetLoading)
+                Sleep(3.0)
+                PlayerUI.RemoveWidget(WidgetLoading)
+            
+    )
 
+    LeaveWidget(Agent:agent)<suspends>:void=(
+        if(Player := player[Agent]):
+            if(PlayerUI := GetPlayerUI[Player]):
+                PlayerUI.AddWidget(WidgetLeaving)
+                Sleep(3.0)
+                PlayerUI.RemoveWidget(WidgetLeaving)
+    )
     ExitingTheArena(Agent:agent):void=(
 
         if(RedPlayer = option{Agent}):
             set RedPlayer = false
+            spawn{LeaveWidget(Agent)}           
             RedCamera.RemoveFrom(Agent)
             RedChair.EnableExit()
             if(RedPawn.TeleportTo[RedPawnInitialTransform]):
@@ -461,7 +442,8 @@ LudoManager := class(creative_device):
                 set ActivePlayerCount -= 1
 
         else if(BluePlayer = option{Agent}):
-            set BluePlayer = false # for PlayTesting.... was "#"# there not now 
+            set BluePlayer = false # for PlayTesting.... was "#"# there not now
+            spawn{LeaveWidget(Agent)}
             BlueCamera.RemoveFrom(Agent)
             BlueChair.EnableExit()
             if(BluePawn.TeleportTo[BluePawnInitialTransform]): 
@@ -477,6 +459,7 @@ LudoManager := class(creative_device):
 
         else if(YellowPlayer = option{Agent}):
             set YellowPlayer = false
+            spawn{LeaveWidget(Agent)}
             YellowCamera.RemoveFrom(Agent)
             YellowChair.EnableExit()
             if(YellowPawn.TeleportTo[YellowPawnInitialTransform]): 
@@ -491,7 +474,8 @@ LudoManager := class(creative_device):
                 set ActivePlayerCount -= 1
 
         else if(GreenPlayer = option{Agent}):
-            set GreenPlayer = false 
+            set GreenPlayer = false
+            spawn{LeaveWidget(Agent)}
             GreenCamera.RemoveFrom(Agent)
             GreenChair.EnableExit()
             if(GreenPawn.TeleportTo[GreenPawnInitialTransform]): 
