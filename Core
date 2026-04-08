@@ -22,6 +22,7 @@ EndPlanesPropTip<localizes>:message = "End Screen"
 AudioTip<localizes>:message = "Audio Devices"
 ChairTip<localizes>:message = "Chairs"
 WidgetTip<localizes>:message = "Widgets"
+PRFTip<localizes>:message = "Player References Devices"
 
 PathProps<localizes>:message = "Paths For Each"
 
@@ -54,6 +55,8 @@ LudoManager := class(creative_device):
     SelectZero : input_trigger_device = input_trigger_device{}
     @editable {Categories := array{InputTip}}
     SelectOne : input_trigger_device = input_trigger_device{}
+
+    @editable {Categories := array{PRFTip}} PlayerReferences : []player_reference_device = array{} # 0 = 1, 1 = 2, 2 = 3 Ranks
 
     @editable {Categories := array{WidgetTip}} WidgetLoading : Ldo_Loading = Ldo_Loading{}
     @editable {Categories := array{WidgetTip}} WidgetLeaving : Ldo_Leaving = Ldo_Leaving{}
@@ -97,6 +100,7 @@ LudoManager := class(creative_device):
     @editable{Categories := array{AudioTip}} APEnd :audio_player_device = audio_player_device{}
     @editable{Categories := array{AudioTip}} APEliminated :audio_player_device = audio_player_device{} 
     @editable{Categories := array{AudioTip}} APHighlight :audio_player_device = audio_player_device{} #Agent
+    @editable{Categories := array{AudioTip}} APInGame : audio_player_device = audio_player_device{}
 
     @editable{Categories := array{ChairTip}} RedChair : chair_device = chair_device{}
     @editable{Categories := array{ChairTip}} GreenChair : chair_device = chair_device{}
@@ -306,6 +310,7 @@ LudoManager := class(creative_device):
         if(GreenPlayer?):
             set PlayerCount += 1
         
+        Sleep(4.0) # Small delay to ensure all players are registered before starting the game
         if(OnePlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 1):
                 set GameStarted = true
@@ -332,6 +337,9 @@ LudoManager := class(creative_device):
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
+
+        if(GameStarted = true):
+            APInGame.Play()
     )
     
     RedTurnSetter():void=(
@@ -411,7 +419,7 @@ LudoManager := class(creative_device):
         if(Player := player[Agent]):
             if(PlayerUI := GetPlayerUI[Player]):
                 PlayerUI.AddWidget(WidgetLoading)
-                Sleep(3.0)
+                Sleep(6.0)
                 PlayerUI.RemoveWidget(WidgetLoading)
             
     )
@@ -420,7 +428,7 @@ LudoManager := class(creative_device):
         if(Player := player[Agent]):
             if(PlayerUI := GetPlayerUI[Player]):
                 PlayerUI.AddWidget(WidgetLeaving)
-                Sleep(3.0)
+                Sleep(6.0)
                 PlayerUI.RemoveWidget(WidgetLeaving)
     )
     ExitingTheArena(Agent:agent):void=(
@@ -1863,10 +1871,16 @@ LudoManager := class(creative_device):
                 if(RedVictoryProp := VictoryProps[0]):
                     if(FinishedOrder.Length = 1):
                         RedVictoryProp.SetMaterial(MICrownOne)
+                        if(PRF := PlayerReferences[0]):
+                            PRF.Register(Agent)
                     else if(FinishedOrder.Length = 2):
                         RedVictoryProp.SetMaterial(MICrownTwo)
+                        if(PRF := PlayerReferences[1]):
+                            PRF.Register(Agent)
                     else if(FinishedOrder.Length = 3):
                         RedVictoryProp.SetMaterial(MICrownThree)
+                        if(PRF := PlayerReferences[2]):
+                            PRF.Register(Agent)
                     APVic.Play()
                     set RedPlayer = false
 
@@ -1877,10 +1891,16 @@ LudoManager := class(creative_device):
                 if(BlueVictoryProp := VictoryProps[1]):
                     if(FinishedOrder.Length = 1):
                         BlueVictoryProp.SetMaterial(MICrownOne)
+                        if(PRF := PlayerReferences[0]):
+                            PRF.Register(Agent)
                     else if(FinishedOrder.Length = 2):
                         BlueVictoryProp.SetMaterial(MICrownTwo)
+                        if(PRF := PlayerReferences[1]):
+                            PRF.Register(Agent)
                     else if(FinishedOrder.Length = 3):
                         BlueVictoryProp.SetMaterial(MICrownThree)
+                        if(PRF := PlayerReferences[2]):
+                            PRF.Register(Agent)
                     APVic.Play()
                     set BluePlayer = false
 
@@ -1891,10 +1911,16 @@ LudoManager := class(creative_device):
                 if(YellowVictoryProp := VictoryProps[2]):
                     if(FinishedOrder.Length = 1):
                         YellowVictoryProp.SetMaterial(MICrownOne)
+                        if(PRF := PlayerReferences[0]):
+                            PRF.Register(Agent)
                     else if(FinishedOrder.Length = 2):
                         YellowVictoryProp.SetMaterial(MICrownTwo)
+                        if(PRF := PlayerReferences[1]):
+                            PRF.Register(Agent)
                     else if(FinishedOrder.Length = 3):
                         YellowVictoryProp.SetMaterial(MICrownThree)
+                        if(PRF := PlayerReferences[2]):
+                            PRF.Register(Agent)
                     APVic.Play()
                     set YellowPlayer = false
 
@@ -1905,10 +1931,16 @@ LudoManager := class(creative_device):
                 if(GreenVictoryProp := VictoryProps[3]):
                     if(FinishedOrder.Length = 1):
                         GreenVictoryProp.SetMaterial(MICrownOne)
+                        if(PRF := PlayerReferences[0]):
+                            PRF.Register(Agent)
                     else if(FinishedOrder.Length = 2):
                         GreenVictoryProp.SetMaterial(MICrownTwo)
+                        if(PRF := PlayerReferences[1]):
+                            PRF.Register(Agent)
                     else if(FinishedOrder.Length = 3):
                         GreenVictoryProp.SetMaterial(MICrownThree)
+                        if(PRF := PlayerReferences[2]):
+                            PRF.Register(Agent)
                     APVic.Play()
                     set GreenPlayer = false
 
@@ -1929,6 +1961,7 @@ LudoManager := class(creative_device):
 
     GameOverReset()<suspends>:void=(
         Sleep(7.0)
+        APInGame.Stop()
         set GameStarted = false
         set ActivePlayerCount = 0
         set FinishedOrder = array{}
@@ -1946,7 +1979,9 @@ LudoManager := class(creative_device):
         if(GreenAgent := GreenPlayer?):
             GreenCamera.RemoveFrom(GreenAgent)
             GreenChair.EnableExit()
-            
+        
+        for(PRFS : PlayerReferences):
+            PRFS.Clear()
         set RedDiceRollValue = 0
         set BlueDiceRollValue = 0
         set YellowDiceRollValue = 0
