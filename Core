@@ -56,6 +56,8 @@ LudoManager := class(creative_device):
     @editable {Categories := array{InputTip}}
     SelectOne : input_trigger_device = input_trigger_device{}
 
+    @editable EndGameCD : cinematic_sequence_device = cinematic_sequence_device{}
+
     @editable {Categories := array{PRFTip}} PlayerReferences : []player_reference_device = array{} # 0 = 1, 1 = 2, 2 = 3 Ranks
 
     @editable {Categories := array{WidgetTip}} WidgetLoading : Ldo_Loading = Ldo_Loading{}
@@ -101,6 +103,7 @@ LudoManager := class(creative_device):
     @editable{Categories := array{AudioTip}} APEliminated :audio_player_device = audio_player_device{} 
     @editable{Categories := array{AudioTip}} APHighlight :audio_player_device = audio_player_device{} #Agent
     @editable{Categories := array{AudioTip}} APInGame : audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APEnvOg : []audio_player_device = array{}
 
     @editable{Categories := array{ChairTip}} RedChair : chair_device = chair_device{}
     @editable{Categories := array{ChairTip}} GreenChair : chair_device = chair_device{}
@@ -277,6 +280,10 @@ LudoManager := class(creative_device):
         DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
         SelectOne.PressedEvent.Subscribe(ExitingTheArena)
         GetPlayspace().PlayerRemovedEvent().Subscribe(ExitingTheArena)
+
+        Sleep(7.0)
+        for(Mdevice : APEnvOg):
+            Mdevice.Play()
     )
 
     InitialInitiator():void=(
@@ -339,7 +346,9 @@ LudoManager := class(creative_device):
                 spawn{HelperPlayerProfileTurn()}
 
         if(GameStarted = true):
-            APInGame.Play()
+            for(Music : APEnvOg):
+                Music.Stop()
+            APInGame.Play()  
     )
     
     RedTurnSetter():void=(
@@ -1962,21 +1971,32 @@ LudoManager := class(creative_device):
     GameOverReset()<suspends>:void=(
         Sleep(7.0)
         APInGame.Stop()
+        for(Music : APEnvOg):
+            Music.Stop()
         set GameStarted = false
         set ActivePlayerCount = 0
         set FinishedOrder = array{}
         FalsingPlayerTurn()
         
+        EndGameCD.Play()
+        
         if(RedAgent := RedPlayer?):
+            spawn{LeaveWidget(RedAgent)}
             RedCamera.RemoveFrom(RedAgent)
             RedChair.EnableExit()
+
         if(BlueAgent := BluePlayer?):
+            spawn{LeaveWidget(BlueAgent)}
             BlueCamera.RemoveFrom(BlueAgent)
             BlueChair.EnableExit()
+
         if(YellowAgent := YellowPlayer?):
+            spawn{LeaveWidget(YellowAgent)}
             YellowCamera.RemoveFrom(YellowAgent)
             YellowChair.EnableExit()
+
         if(GreenAgent := GreenPlayer?):
+            spawn{LeaveWidget(GreenAgent)}
             GreenCamera.RemoveFrom(GreenAgent)
             GreenChair.EnableExit()
         
@@ -2136,6 +2156,10 @@ LudoManager := class(creative_device):
         set GreenPawnTwoIndex = -1
         set GreenPawnThreeIndex = -1
     )
+
+
+
+
 
 
 
