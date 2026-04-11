@@ -1991,7 +1991,7 @@ LudoManager := class(creative_device):
         set FinishedOrder = array{}
         FalsingPlayerTurn()
         
-        spawn{CameraDisEn()}
+    
         if(RedAgent := RedPlayer?):
             spawn{LeaveWidget(RedAgent)}
             RedCamera.RemoveFrom(RedAgent)
@@ -2012,8 +2012,9 @@ LudoManager := class(creative_device):
             GreenCamera.RemoveFrom(GreenAgent)
             GreenChair.EnableExit()
         
-        for(PRFS : PlayerReferences):
-            PRFS.Clear()
+        spawn{CameraDisEn()}
+        
+        
         set RedDiceRollValue = 0
         set BlueDiceRollValue = 0
         set YellowDiceRollValue = 0
@@ -2128,7 +2129,9 @@ LudoManager := class(creative_device):
         RedChair.Enable()
         BlueChair.Enable()
         YellowChair.Enable()
-        GreenChair.Enable()  
+        GreenChair.Enable()
+        for(PRFS : PlayerReferences):
+            PRFS.Clear()
     )
     
     PawnFinishStateResetter():void=(
