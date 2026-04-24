@@ -260,6 +260,7 @@ LudoManager := class(creative_device):
 
     var FinishedOrder :[]int =array{}
     var ActivePlayerCount : int = 0
+    var ConfirmFlag : logic = false
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=(
@@ -324,6 +325,7 @@ LudoManager := class(creative_device):
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
+                
         if(TwoPlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 2):
                 set GameStarted = true
@@ -383,8 +385,8 @@ LudoManager := class(creative_device):
         if(BluePlayer = false):
             spawn{LoadWidget(Agent)}
             set BluePlayer = option{Agent}
-           # BlueChair.DisableExit() #hash for playtest
-           # BlueCamera.AddTo(Agent)
+            BlueChair.DisableExit() #hash for playtest
+            BlueCamera.AddTo(Agent)
             if(GameStarted = false):
                 set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
                 for(BluePawnForBlueJoined : AllBluePawn):
@@ -398,8 +400,8 @@ LudoManager := class(creative_device):
         if(GreenPlayer = false):
             spawn{LoadWidget(Agent)}
             set GreenPlayer = option{Agent}
-          #  GreenChair.DisableExit()
-            #GreenCamera.AddTo(Agent)
+            GreenChair.DisableExit()
+            GreenCamera.AddTo(Agent)
             if(GameStarted = false):
                 set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
                 for(GreenPawnForGreenJoined : AllGreenPawn):
@@ -413,8 +415,8 @@ LudoManager := class(creative_device):
         if(YellowPlayer = false):
             spawn{LoadWidget(Agent)}
             set YellowPlayer = option{Agent}
-           # YellowCamera.AddTo(Agent)
-           # YellowChair.DisableExit()
+            #YellowCamera.AddTo(Agent)
+            #YellowChair.DisableExit()
             if(GameStarted = false):
                 set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
                 for(YellowPawnForYellowJoined : AllYellowPawn):
@@ -519,6 +521,7 @@ LudoManager := class(creative_device):
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagRed = true
+                set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue}")
 
         else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
@@ -531,6 +534,7 @@ LudoManager := class(creative_device):
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagBlue = true
+                set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue} ")
 
         else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
@@ -543,6 +547,7 @@ LudoManager := class(creative_device):
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagGreen = true
+                set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue} ")
                 
         else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
@@ -556,6 +561,7 @@ LudoManager := class(creative_device):
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
                 set DoubleRollFlagYellow = true
+                set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue} ")
     )
     
@@ -756,7 +762,7 @@ LudoManager := class(creative_device):
     )
 
     HelperDiceRoll(Agent:agent)<suspends>:void=(
-        if(RedPlayer = option{Agent}):
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
             Sleep(1.0)
             if(RedDiceRollValue = 1):
                 if(DiceProp := RedDiceProp[0]):
@@ -776,7 +782,7 @@ LudoManager := class(creative_device):
             else if(RedDiceRollValue = 6):
                 if(DiceProp := RedDiceProp[0]):
                     DiceProp.SetMaterial(Dice6Value)
-        if(BluePlayer = option{Agent}):
+        else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
             Sleep(1.0)
             if(BlueDiceRollValue = 1):
                 if(DiceProp := BlueDiceProp[0]):
@@ -796,7 +802,7 @@ LudoManager := class(creative_device):
             else if(BlueDiceRollValue = 6):
                 if(DiceProp := BlueDiceProp[0]):
                     DiceProp.SetMaterial(Dice6Value)
-        if(GreenPlayer = option{Agent}):
+        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
             Sleep(1.0)
             if(GreenDiceRollValue = 1):
                 if(DiceProp := GreenDiceProp[0]):
@@ -816,7 +822,7 @@ LudoManager := class(creative_device):
             else if(GreenDiceRollValue = 6):
                 if(DiceProp := GreenDiceProp[0]):
                     DiceProp.SetMaterial(Dice6Value)
-        if(YellowPlayer = option{Agent}):
+        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
             Sleep(1.0)
             if(YellowDiceRollValue = 1):
                 if(DiceProp := YellowDiceProp[0]):
@@ -882,7 +888,7 @@ LudoManager := class(creative_device):
     SelectZeroPressed(Agent : agent) : void = (
         var Attempts:int = 0
         
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true  and ConfirmFlag = false): #removes else if from this function for PlayTesting
             loop:
                 if(Attempts >= 4):
                     break
@@ -926,7 +932,7 @@ LudoManager := class(creative_device):
                         set RollerForRed = 0
                     set Attempts += 1
         
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true):
+        if(BluePlayer = option{Agent} and BluePlayerTurn = true and ConfirmFlag = false ):
             loop:
                 if(Attempts >= 4):
                     break
@@ -969,7 +975,7 @@ LudoManager := class(creative_device):
                         set RollerForBlue = 0 
                     set Attempts += 1
 
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
+        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and ConfirmFlag = false):
             loop:
                 if(Attempts >= 4):
                     break
@@ -1003,7 +1009,7 @@ LudoManager := class(creative_device):
                     APHighlight.Play(Agent)
                     break
                 else:
-                    if(RollerForYellow = 0 and YellowFinished = true):
+                    if(RollerForYellow = 0 and YellowFinished = true ):
                         set RollerForYellow = 1
                     else if(RollerForYellow = 1 and YellowOneFinished = true):
                         set RollerForYellow = 2
@@ -1014,7 +1020,7 @@ LudoManager := class(creative_device):
                     
                     set Attempts += 1
 
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
+        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and ConfirmFlag = false  ):
             loop:
                 if(Attempts >= 4):
                     break     
@@ -1069,6 +1075,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
+            set ConfirmFlag = true
         if(BluePlayer = option{Agent} and BluePlayerTurn = true and BlueDiceRollValue > 0):
             if (BlueZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
@@ -1078,6 +1085,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnBlue(BluePawnTwo, BluePawnTwoIndex, Agent)}
             else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawnThree, BluePawnThreeIndex, Agent)}
+            set ConfirmFlag = true
         if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and YellowDiceRollValue > 0):
             if (YellowZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawn, YellowPawnIndex, Agent)}
@@ -1087,6 +1095,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, Agent)}
             else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, Agent)}
+            set ConfirmFlag = true
         if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and GreenDiceRollValue > 0):
             if (GreenZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawn, GreenPawnIndex, Agent)}
@@ -1096,6 +1105,7 @@ LudoManager := class(creative_device):
                 spawn{MovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex, Agent)}
             else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
+            set ConfirmFlag = true
     )
 
 
@@ -1138,6 +1148,7 @@ LudoManager := class(creative_device):
                     set GreenPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagRed = false
+                set ConfirmFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
@@ -1163,6 +1174,7 @@ LudoManager := class(creative_device):
                     set RedPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagBlue = false
+                set ConfirmFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
@@ -1188,6 +1200,7 @@ LudoManager := class(creative_device):
                     set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagYellow = false
+                set ConfirmFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
@@ -1213,6 +1226,7 @@ LudoManager := class(creative_device):
                     set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagGreen = false
+                set ConfirmFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
         
@@ -1245,6 +1259,7 @@ LudoManager := class(creative_device):
                     # else keep turn
                     set RedDiceRollValue = 0
                     set DoubleRollFlagRed = false
+                set ConfirmFlag = false
 
 
         else if(CurrentIndex >= 0):
@@ -1287,6 +1302,8 @@ LudoManager := class(creative_device):
                             set GreenPlayerTurn = true
                     set RedDiceRollValue = 0
                     set DoubleRollFlagRed = false
+                    set ConfirmFlag = false
+
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
@@ -1296,22 +1313,27 @@ LudoManager := class(creative_device):
             set RedPawnIndex = CurrentIndex
             set WhichPawn = 0
             spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         else if (RedOneHighlight.HIghlightIntensity = 20.0):
             set WhichPawn = 1
             set RedPawnOneIndex = CurrentIndex
             spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         else if (RedTwoHighlight.HIghlightIntensity = 20.0):
             set RedPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
             spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         else if (RedThreeHighlight.HIghlightIntensity = 20.0):
             set RedPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
             spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
+        set ConfirmFlag = false
     )
 
     MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1341,6 +1363,7 @@ LudoManager := class(creative_device):
                     # else keep turn
                     set BlueDiceRollValue = 0
                     set DoubleRollFlagBlue = false
+                set ConfirmFlag = false
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1385,6 +1408,7 @@ LudoManager := class(creative_device):
                             set RedPlayerTurn = true
                     set BlueDiceRollValue = 0
                     set DoubleRollFlagBlue = false
+                    set ConfirmFlag = false
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
@@ -1393,18 +1417,22 @@ LudoManager := class(creative_device):
             set BluePawnIndex = CurrentIndex
             set WhichPawn = 0
             spawn{PossibleElimChecker(BluePawnIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         else if (BlueOneHighlight.HIghlightIntensity = 20.0):
             set BluePawnOneIndex = CurrentIndex
             set WhichPawn = 1
             spawn{PossibleElimChecker(BluePawnOneIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
             set BluePawnTwoIndex = CurrentIndex
             set WhichPawn = 2
             spawn{PossibleElimChecker(BluePawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
             set BluePawnThreeIndex = CurrentIndex
             set WhichPawn = 3
             spawn{PossibleElimChecker(BluePawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
 
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
@@ -1438,6 +1466,7 @@ LudoManager := class(creative_device):
                     # else keep turn
                     set YellowDiceRollValue = 0
                     set DoubleRollFlagYellow = false
+                set ConfirmFlag = false
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1482,6 +1511,7 @@ LudoManager := class(creative_device):
                             set BluePlayerTurn = true
                     set YellowDiceRollValue = 0
                     set DoubleRollFlagYellow = false
+                    set ConfirmFlag = false
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
@@ -1489,23 +1519,28 @@ LudoManager := class(creative_device):
         if (YellowZeroHighlight.HIghlightIntensity = 20.0):
             set YellowPawnIndex = CurrentIndex
             set WhichPawn = 0
+            set ConfirmFlag = false
             spawn{PossibleElimChecker(YellowPawnIndex, WhichPawn, WhichColorElim, Agent)}
         else if (YellowOneHighlight.HIghlightIntensity = 20.0):
             set YellowPawnOneIndex = CurrentIndex
             set WhichPawn = 1
+            set ConfirmFlag = false
             spawn{PossibleElimChecker(YellowPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
         else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
             set YellowPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
+            set ConfirmFlag = false
             spawn{PossibleElimChecker(YellowPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
         else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
             set YellowPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
             spawn{PossibleElimChecker(YellowPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         spawn{CheckTimerForGreen()}
+
     )
 
     MovePawnGreen(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1535,6 +1570,7 @@ LudoManager := class(creative_device):
 
                     set GreenDiceRollValue = 0
                     set DoubleRollFlagGreen = false
+                set ConfirmFlag = false
 
 
         else if(CurrentIndex >= 0):
@@ -1580,6 +1616,7 @@ LudoManager := class(creative_device):
                             set YellowPlayerTurn = true
                     set GreenDiceRollValue = 0
                     set DoubleRollFlagGreen = false
+                    set ConfirmFlag = false
                                 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -1589,22 +1626,27 @@ LudoManager := class(creative_device):
             set GreenPawnIndex = CurrentIndex
             set WhichPawn = 0
             spawn{PossibleElimChecker(GreenPawnIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         else if (GreenOneHighlight.HIghlightIntensity = 20.0):
             set GreenPawnOneIndex = CurrentIndex
             set WhichPawn = 1
             spawn{PossibleElimChecker(GreenPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
             set GreenPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
             spawn{PossibleElimChecker(GreenPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
         else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
             set GreenPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
             spawn{PossibleElimChecker(GreenPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+            set ConfirmFlag = false
 
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
-        TimerCheckerHelper()   
+        TimerCheckerHelper()
+        set ConfirmFlag = false
     )
 
     PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int, Agent:agent)<suspends>:void=(
@@ -1978,8 +2020,7 @@ LudoManager := class(creative_device):
         set FinishedOrder = array{}
         FalsingPlayerTurn()
         
-        EndGameCD.Play()
-        
+    
         if(RedAgent := RedPlayer?):
             spawn{LeaveWidget(RedAgent)}
             RedCamera.RemoveFrom(RedAgent)
@@ -2000,8 +2041,9 @@ LudoManager := class(creative_device):
             GreenCamera.RemoveFrom(GreenAgent)
             GreenChair.EnableExit()
         
-        for(PRFS : PlayerReferences):
-            PRFS.Clear()
+        spawn{CameraDisEn()}
+        
+        
         set RedDiceRollValue = 0
         set BlueDiceRollValue = 0
         set YellowDiceRollValue = 0
@@ -2088,9 +2130,37 @@ LudoManager := class(creative_device):
         
         PawnFinishStateResetter()
         ResetPlayerDrainerProfile()
+        
+        Sleep(7.0)
+        EndGameCD.Play()
 
 
         Print("Match reset complete")
+    )
+
+    CameraDisEn()<suspends>:void=(
+        RedChair.Disable()
+        BlueChair.Disable()
+        YellowChair.Disable()
+        GreenChair.Disable()
+
+        RedCamera.Disable()
+        BlueCamera.Disable()    
+        YellowCamera.Disable()
+        GreenCamera.Disable()
+
+        Sleep(20.0)
+        RedCamera.Enable()
+        BlueCamera.Enable()
+        YellowCamera.Enable()
+        GreenCamera.Enable()
+
+        RedChair.Enable()
+        BlueChair.Enable()
+        YellowChair.Enable()
+        GreenChair.Enable()
+        for(PRFS : PlayerReferences):
+            PRFS.Clear()
     )
     
     PawnFinishStateResetter():void=(
@@ -2156,10 +2226,6 @@ LudoManager := class(creative_device):
         set GreenPawnTwoIndex = -1
         set GreenPawnThreeIndex = -1
     )
-
-
-
-
 
 
 
