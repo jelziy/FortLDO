@@ -507,6 +507,9 @@ LudoManager := class(creative_device):
             GreenIndexInitialSetter()
             if(not FinishedOrder.Find[3]):
                 set ActivePlayerCount -= 1
+
+        if(ActivePlayerCount <= 1 and GameStarted = true):
+            GameResetForPlayerLeft()
     )
 
     DiceRollPressed(Agent:agent):void=(
@@ -1075,7 +1078,6 @@ LudoManager := class(creative_device):
                 spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
-            set ConfirmFlag = true
         if(BluePlayer = option{Agent} and BluePlayerTurn = true and BlueDiceRollValue > 0):
             if (BlueZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
@@ -1085,7 +1087,6 @@ LudoManager := class(creative_device):
                 spawn{MovePawnBlue(BluePawnTwo, BluePawnTwoIndex, Agent)}
             else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnBlue(BluePawnThree, BluePawnThreeIndex, Agent)}
-            set ConfirmFlag = true
         if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and YellowDiceRollValue > 0):
             if (YellowZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawn, YellowPawnIndex, Agent)}
@@ -1095,7 +1096,6 @@ LudoManager := class(creative_device):
                 spawn{MovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, Agent)}
             else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, Agent)}
-            set ConfirmFlag = true
         if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and GreenDiceRollValue > 0):
             if (GreenZeroHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawn, GreenPawnIndex, Agent)}
@@ -1105,7 +1105,6 @@ LudoManager := class(creative_device):
                 spawn{MovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex, Agent)}
             else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
-            set ConfirmFlag = true
     )
 
 
@@ -1231,12 +1230,21 @@ LudoManager := class(creative_device):
                 Print("False cant move")
         
     )
+    
+    ConfirmFlagfalseSetter():void=(
+        set ConfirmFlag = false
+    )
+
+    ConfirmFlagTrueSetter():void=(
+        set ConfirmFlag = true
+    )
 
     MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void= (
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
         var WhichPawn : int = -1
+        ConfirmFlagTrueSetter()
 
         if(CurrentIndex = -1 and RedDiceRollValue = 6):
             if(Path := RedPaths[0]):
@@ -1259,7 +1267,6 @@ LudoManager := class(creative_device):
                     # else keep turn
                     set RedDiceRollValue = 0
                     set DoubleRollFlagRed = false
-                set ConfirmFlag = false
 
 
         else if(CurrentIndex >= 0):
@@ -1302,7 +1309,6 @@ LudoManager := class(creative_device):
                             set GreenPlayerTurn = true
                     set RedDiceRollValue = 0
                     set DoubleRollFlagRed = false
-                    set ConfirmFlag = false
 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -1313,27 +1319,23 @@ LudoManager := class(creative_device):
             set RedPawnIndex = CurrentIndex
             set WhichPawn = 0
             spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         else if (RedOneHighlight.HIghlightIntensity = 20.0):
             set WhichPawn = 1
             set RedPawnOneIndex = CurrentIndex
             spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         else if (RedTwoHighlight.HIghlightIntensity = 20.0):
             set RedPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
             spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         else if (RedThreeHighlight.HIghlightIntensity = 20.0):
             set RedPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
             spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
-        set ConfirmFlag = false
+        ConfirmFlagfalseSetter()
     )
 
     MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1341,6 +1343,7 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
         var WhichPawn : int = -1
+        ConfirmFlagTrueSetter()
         
         if(CurrentIndex = -1 and BlueDiceRollValue = 6):
             if(Path := BluePaths[0]):
@@ -1363,7 +1366,6 @@ LudoManager := class(creative_device):
                     # else keep turn
                     set BlueDiceRollValue = 0
                     set DoubleRollFlagBlue = false
-                set ConfirmFlag = false
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1408,7 +1410,6 @@ LudoManager := class(creative_device):
                             set RedPlayerTurn = true
                     set BlueDiceRollValue = 0
                     set DoubleRollFlagBlue = false
-                    set ConfirmFlag = false
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
@@ -1417,26 +1418,23 @@ LudoManager := class(creative_device):
             set BluePawnIndex = CurrentIndex
             set WhichPawn = 0
             spawn{PossibleElimChecker(BluePawnIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         else if (BlueOneHighlight.HIghlightIntensity = 20.0):
             set BluePawnOneIndex = CurrentIndex
             set WhichPawn = 1
             spawn{PossibleElimChecker(BluePawnOneIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
             set BluePawnTwoIndex = CurrentIndex
             set WhichPawn = 2
             spawn{PossibleElimChecker(BluePawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
             set BluePawnThreeIndex = CurrentIndex
             set WhichPawn = 3
             spawn{PossibleElimChecker(BluePawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
 
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
+        ConfirmFlagfalseSetter()
     )
 
     MovePawnYellow(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1444,6 +1442,7 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
         var WhichPawn : int = -1
+        ConfirmFlagTrueSetter()
 
         if(CurrentIndex = -1 and YellowDiceRollValue = 6):
             if(Path := YellowPaths[0]):
@@ -1466,7 +1465,6 @@ LudoManager := class(creative_device):
                     # else keep turn
                     set YellowDiceRollValue = 0
                     set DoubleRollFlagYellow = false
-                set ConfirmFlag = false
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1511,7 +1509,6 @@ LudoManager := class(creative_device):
                             set BluePlayerTurn = true
                     set YellowDiceRollValue = 0
                     set DoubleRollFlagYellow = false
-                    set ConfirmFlag = false
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
@@ -1519,28 +1516,24 @@ LudoManager := class(creative_device):
         if (YellowZeroHighlight.HIghlightIntensity = 20.0):
             set YellowPawnIndex = CurrentIndex
             set WhichPawn = 0
-            set ConfirmFlag = false
             spawn{PossibleElimChecker(YellowPawnIndex, WhichPawn, WhichColorElim, Agent)}
         else if (YellowOneHighlight.HIghlightIntensity = 20.0):
             set YellowPawnOneIndex = CurrentIndex
             set WhichPawn = 1
-            set ConfirmFlag = false
             spawn{PossibleElimChecker(YellowPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
         else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
             set YellowPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
-            set ConfirmFlag = false
             spawn{PossibleElimChecker(YellowPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
         else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
             set YellowPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
             spawn{PossibleElimChecker(YellowPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         spawn{CheckTimerForGreen()}
-
+        ConfirmFlagfalseSetter()
     )
 
     MovePawnGreen(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1616,7 +1609,7 @@ LudoManager := class(creative_device):
                             set YellowPlayerTurn = true
                     set GreenDiceRollValue = 0
                     set DoubleRollFlagGreen = false
-                    set ConfirmFlag = false
+                set ConfirmFlag = false
                                 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -2135,6 +2128,126 @@ LudoManager := class(creative_device):
         EndGameCD.Play()
 
 
+        Print("Match reset complete")
+    )
+
+    GameResetForPlayerLeft():void=( #duplicated because of the time constraint, ideally should be one function with a parameter to determine if it's game over or player left.
+        APInGame.Stop()
+        for(Music : APEnvOg):
+            Music.Stop()
+        set GameStarted = false
+        set ActivePlayerCount = 0
+        set FinishedOrder = array{}
+        FalsingPlayerTurn()
+        
+        if(RedAgent := RedPlayer?):
+            spawn{LeaveWidget(RedAgent)}
+            RedCamera.RemoveFrom(RedAgent)
+            RedChair.EnableExit()
+
+        if(BlueAgent := BluePlayer?):
+            spawn{LeaveWidget(BlueAgent)}
+            BlueCamera.RemoveFrom(BlueAgent)
+            BlueChair.EnableExit()
+
+        if(YellowAgent := YellowPlayer?):
+            spawn{LeaveWidget(YellowAgent)}
+            YellowCamera.RemoveFrom(YellowAgent)
+            YellowChair.EnableExit()
+
+        if(GreenAgent := GreenPlayer?):
+            spawn{LeaveWidget(GreenAgent)}
+            GreenCamera.RemoveFrom(GreenAgent)
+            GreenChair.EnableExit()
+        
+        spawn{CameraDisEn()}
+        
+        set RedDiceRollValue = 0
+        set BlueDiceRollValue = 0
+        set YellowDiceRollValue = 0
+        set GreenDiceRollValue = 0
+
+        set RedConsecutiveSixes = 0
+        set BlueConsecutiveSixes = 0
+        set YellowConsecutiveSixes = 0
+        set GreenConsecutiveSixes = 0
+
+        set RollerForRed = 0
+        set RollerForBlue = 0
+        set RollerForYellow = 0
+        set RollerForGreen = 0
+        
+        set RedPlayer = false 
+        set BluePlayer = false
+        set GreenPlayer = false
+        set YellowPlayer = false
+
+        set DoubleRollFlagRed = false
+        set DoubleRollFlagBlue = false
+        set DoubleRollFlagYellow = false
+        set DoubleRollFlagGreen = false
+
+        set RedEnd = 0
+        set BlueEnd = 0
+        set YellowEnd = 0
+        set GreenEnd = 0
+        
+        RedIndexInitialSetter()
+        BlueIndexInitialSetter()
+        YellowIndexInitialSetter()
+        GreenIndexInitialSetter()
+
+        set WhichColorElim = -1
+
+        if(RedPawn.TeleportTo[RedPawnInitialTransform]):
+        if(RedPawnOne.TeleportTo[RedPawnOneInitialTransform]):
+        if(RedPawnTwo.TeleportTo[RedPawnTwoInitialTransform]):
+        if(RedPawnThree.TeleportTo[RedPawnThreeInitialTransform]):
+
+        if(BluePawn.TeleportTo[BluePawnInitialTransform]):
+        if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]):
+        if(BluePawnTwo.TeleportTo[BluePawnTwoInitialTransform]):
+        if(BluePawnThree.TeleportTo[BluePawnThreeInitialTransform]):
+
+        if(YellowPawn.TeleportTo[YellowPawnInitialTransform]):
+        if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]):
+        if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]):
+        if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
+
+        if(GreenPawn.TeleportTo[GreenPawnInitialTransform]):
+        if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]):
+        if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]):
+        if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
+
+        for(PlayerPawn : AllPlayersPawns):
+            PlayerPawn.Hide()
+
+        if(NumRed := NumbersProp[0]):
+            NumRed.SetMaterial(MIInv)
+        if(NumBlue := NumbersProp[1]):
+            NumBlue.SetMaterial(MIInv)
+        if(NumYellow := NumbersProp[2]):
+            NumYellow.SetMaterial(MIInv)
+        if(NumGreen := NumbersProp[3]):
+            NumGreen.SetMaterial(MIInv)
+        
+        if(RedVictoryProp := VictoryProps[0]):
+            RedVictoryProp.SetMaterial(MIInv)
+        if(BlueVictoryProp := VictoryProps[1]):
+            BlueVictoryProp.SetMaterial(MIInv)
+        if(YellowVictoryProp := VictoryProps[2]):
+            YellowVictoryProp.SetMaterial(MIInv)
+        if(GreenVictoryProp := VictoryProps[3]):
+            GreenVictoryProp.SetMaterial(MIInv)
+        
+        set MInbRed.HowManyNumbers = 0.0
+        set MInbBlue.HowManyNumbers = 0.0   
+        set MInbYellow.HowManyNumbers = 0.0
+        set MInbGreen.HowManyNumbers = 0.0
+        
+        PawnFinishStateResetter()
+        ResetPlayerDrainerProfile()
+        
         Print("Match reset complete")
     )
 
