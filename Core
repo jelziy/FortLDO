@@ -415,8 +415,8 @@ LudoManager := class(creative_device):
         if(YellowPlayer = false):
             spawn{LoadWidget(Agent)}
             set YellowPlayer = option{Agent}
-            #YellowCamera.AddTo(Agent)
-            #YellowChair.DisableExit()
+            YellowCamera.AddTo(Agent)
+            YellowChair.DisableExit()
             if(GameStarted = false):
                 set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
                 for(YellowPawnForYellowJoined : AllYellowPawn):
@@ -576,7 +576,7 @@ LudoManager := class(creative_device):
             if(RedPlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
-            Print("Timer {Elapsed}")
+            #Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set RedPlayerTurn = false
@@ -691,7 +691,7 @@ LudoManager := class(creative_device):
             if(YellowPlayerTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
-            Print("Timer {Elapsed}")
+            #Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set YellowPlayerTurn = false
@@ -1237,6 +1237,11 @@ LudoManager := class(creative_device):
 
     ConfirmFlagTrueSetter():void=(
         set ConfirmFlag = true
+    )
+
+    SoundPlayMove()<suspends>:void=(
+        APMove.Play() 
+        Print("move playing")
     )
 
     MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void= (
