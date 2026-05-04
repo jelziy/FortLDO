@@ -220,6 +220,11 @@ LudoManager := class(creative_device):
     var BluePlayer : ?agent = false
     var YellowPlayer : ?agent = false
 
+    var tempRedPlayer : ?agent = false
+    var tempGreenPlayer : ?agent = false
+    var tempBluePlayer : ?agent = false
+    var tempYellowPlayer : ?agent = false
+
     var RedPlayerTurn : logic = false
     var GreenPlayerTurn : logic = false
     var BluePlayerTurn : logic = false
@@ -1939,6 +1944,7 @@ LudoManager := class(creative_device):
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
+                        set tempRedPlayer = RedPlayer
                         set RedPlayer = false
 
         if(BlueEnd >= 4):
@@ -1963,6 +1969,7 @@ LudoManager := class(creative_device):
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
+                        set tempBluePlayer = BluePlayer
                         set BluePlayer = false
 
         if(YellowEnd >= 4):
@@ -1987,6 +1994,7 @@ LudoManager := class(creative_device):
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
+                        set tempYellowPlayer = YellowPlayer
                         set YellowPlayer = false
 
         if(GreenEnd >= 4):
@@ -2011,6 +2019,7 @@ LudoManager := class(creative_device):
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
+                        set tempGreenPlayer = GreenPlayer
                         set GreenPlayer = false
 
         if(FinishedOrder.Length = ActivePlayerCount - 1):
@@ -2039,25 +2048,26 @@ LudoManager := class(creative_device):
         FalsingPlayerTurn()
         
         
-        if(RedAgent := RedPlayer?):
+        if(RedAgent := tempRedPlayer?):
             spawn{LeaveWidget(RedAgent)}
             RedCamera.RemoveFrom(RedAgent)
-            RedChair.EnableExit()
 
-        if(BlueAgent := BluePlayer?):
+        if(BlueAgent := tempBluePlayer?):
             spawn{LeaveWidget(BlueAgent)}
             BlueCamera.RemoveFrom(BlueAgent)
-            BlueChair.EnableExit()
 
-        if(YellowAgent := YellowPlayer?):
+        if(YellowAgent := tempYellowPlayer?):
             spawn{LeaveWidget(YellowAgent)}
             YellowCamera.RemoveFrom(YellowAgent)
-            YellowChair.EnableExit()
 
-        if(GreenAgent := GreenPlayer?):
+        if(GreenAgent := tempGreenPlayer?):
             spawn{LeaveWidget(GreenAgent)}
             GreenCamera.RemoveFrom(GreenAgent)
-            GreenChair.EnableExit()
+
+        RedChair.EnableExit()
+        BlueChair.EnableExit()
+        YellowChair.EnableExit()
+        GreenChair.EnableExit()
         
         spawn{CameraDisEn()}
         
@@ -2146,6 +2156,7 @@ LudoManager := class(creative_device):
         set MInbYellow.HowManyNumbers = 0.0
         set MInbGreen.HowManyNumbers = 0.0
         
+        FalsingTempPlayer()
         PawnFinishStateResetter()
         ResetPlayerDrainerProfile()
         
@@ -2164,28 +2175,27 @@ LudoManager := class(creative_device):
         set ActivePlayerCount = 0
         set FinishedOrder = array{}
         FalsingPlayerTurn()
+        var FunctionAgent : []agent = array{}
         
-        if(RedAgent := RedPlayer?):
+        
+        if(RedAgent := tempRedPlayer?):
             spawn{LeaveWidget(RedAgent)}
             RedCamera.RemoveFrom(RedAgent)
-            RedChair.EnableExit()
 
-        if(BlueAgent := BluePlayer?):
+        if(BlueAgent := tempBluePlayer?):
             spawn{LeaveWidget(BlueAgent)}
             BlueCamera.RemoveFrom(BlueAgent)
-            BlueChair.EnableExit()
 
-        if(YellowAgent := YellowPlayer?):
+        if(YellowAgent := tempYellowPlayer?):
             spawn{LeaveWidget(YellowAgent)}
             YellowCamera.RemoveFrom(YellowAgent)
-            YellowChair.EnableExit()
 
-        if(GreenAgent := GreenPlayer?):
+        if(GreenAgent := tempGreenPlayer?):
             spawn{LeaveWidget(GreenAgent)}
             GreenCamera.RemoveFrom(GreenAgent)
-            GreenChair.EnableExit()
-        
-        spawn{CameraDisEn()}
+
+
+        spawn{CameraDisEn()} #this wont be needed if above AllPlayers works.. 
         
         set RedDiceRollValue = 0
         set BlueDiceRollValue = 0
@@ -2270,6 +2280,7 @@ LudoManager := class(creative_device):
         set MInbYellow.HowManyNumbers = 0.0
         set MInbGreen.HowManyNumbers = 0.0
         
+        FalsingTempPlayer()
         PawnFinishStateResetter()
         ResetPlayerDrainerProfile()
         
@@ -2336,6 +2347,12 @@ LudoManager := class(creative_device):
         set GreenPlayerTurn = false
         set YellowPlayerTurn = false
     )
+    FalsingTempPlayer():void=(
+        set tempRedPlayer = false
+        set tempBluePlayer = false
+        set tempYellowPlayer = false
+        set tempGreenPlayer = false
+    )
 
     RedIndexInitialSetter():void=( #will add sturct later if better
         set RedPawnIndex = -1
@@ -2364,5 +2381,6 @@ LudoManager := class(creative_device):
         set GreenPawnTwoIndex = -1
         set GreenPawnThreeIndex = -1
     )
+
 
 
