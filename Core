@@ -25,6 +25,7 @@ WidgetTip<localizes>:message = "Widgets"
 PRFTip<localizes>:message = "Player References Devices"
 
 PathProps<localizes>:message = "Paths For Each"
+XPTip<localizes>:message = "XP Devices"
 
 
 LudoManager := class(creative_device):
@@ -204,8 +205,11 @@ LudoManager := class(creative_device):
     var GreenPawnOneInitialTransform : transform = transform{}
     var GreenPawnTwoInitialTransform : transform = transform{}
     var GreenPawnThreeInitialTransform : transform = transform{}
-    
 
+    @editable {Categories := array{XPTip}} Accolade1 : accolades_device = accolades_device{}
+    @editable {Categories := array{XPTip}} Accolade2 : accolades_device = accolades_device{}
+    @editable {Categories := array{XPTip}} Accolade3 : accolades_device = accolades_device{}
+    
     var RedConsecutiveSixes : int = 0       
     var GreenConsecutiveSixes : int = 0
     var BlueConsecutiveSixes : int = 0
@@ -1918,80 +1922,96 @@ LudoManager := class(creative_device):
                 set FinishedOrder += array{0}
                 Print("rank {FinishedOrder.Length}")
                 if(RedVictoryProp := VictoryProps[0]):
-                    if(FinishedOrder.Length = 1):
-                        RedVictoryProp.SetMaterial(MICrownOne)
-                        if(PRF := PlayerReferences[0]):
-                            PRF.Register(Agent)
-                    else if(FinishedOrder.Length = 2):
-                        RedVictoryProp.SetMaterial(MICrownTwo)
-                        if(PRF := PlayerReferences[1]):
-                            PRF.Register(Agent)
-                    else if(FinishedOrder.Length = 3):
-                        RedVictoryProp.SetMaterial(MICrownThree)
-                        if(PRF := PlayerReferences[2]):
-                            PRF.Register(Agent)
-                    APVic.Play()
-                    set RedPlayer = false
+                    if(RedAgent := RedPlayer?):
+                        if(FinishedOrder.Length = 1):
+                            RedVictoryProp.SetMaterial(MICrownOne)
+                            Accolade1.Award(RedAgent)
+                            if(PRF := PlayerReferences[0]):
+                                PRF.Register(Agent)
+                        else if(FinishedOrder.Length = 2):
+                            RedVictoryProp.SetMaterial(MICrownTwo)
+                            Accolade2.Award(RedAgent)
+                            if(PRF := PlayerReferences[1]):
+                                PRF.Register(Agent)
+                        else if(FinishedOrder.Length = 3):
+                            RedVictoryProp.SetMaterial(MICrownThree)
+                            Accolade3.Award(RedAgent)
+                            if(PRF := PlayerReferences[2]):
+                                PRF.Register(Agent)
+                        APVic.Play()
+                        set RedPlayer = false
 
         if(BlueEnd >= 4):
             if(not FinishedOrder.Find[1]):
                 set FinishedOrder += array{1}
                 Print("rank {FinishedOrder.Length}")
                 if(BlueVictoryProp := VictoryProps[1]):
-                    if(FinishedOrder.Length = 1):
-                        BlueVictoryProp.SetMaterial(MICrownOne)
-                        if(PRF := PlayerReferences[0]):
-                            PRF.Register(Agent)
-                    else if(FinishedOrder.Length = 2):
-                        BlueVictoryProp.SetMaterial(MICrownTwo)
-                        if(PRF := PlayerReferences[1]):
-                            PRF.Register(Agent)
-                    else if(FinishedOrder.Length = 3):
-                        BlueVictoryProp.SetMaterial(MICrownThree)
-                        if(PRF := PlayerReferences[2]):
-                            PRF.Register(Agent)
-                    APVic.Play()
-                    set BluePlayer = false
+                    if(BlueAgent := BluePlayer?):
+                        if(FinishedOrder.Length = 1):
+                            BlueVictoryProp.SetMaterial(MICrownOne)
+                            Accolade1.Award(BlueAgent)
+                            if(PRF := PlayerReferences[0]):
+                                PRF.Register(Agent)
+                        else if(FinishedOrder.Length = 2):
+                            BlueVictoryProp.SetMaterial(MICrownTwo)
+                            Accolade2.Award(BlueAgent)
+                            if(PRF := PlayerReferences[1]):
+                                PRF.Register(Agent)
+                        else if(FinishedOrder.Length = 3):
+                            BlueVictoryProp.SetMaterial(MICrownThree)
+                            Accolade3.Award(BlueAgent)
+                            if(PRF := PlayerReferences[2]):
+                                PRF.Register(Agent)
+                        APVic.Play()
+                        set BluePlayer = false
 
         if(YellowEnd >= 4):
             if(not FinishedOrder.Find[2]):
                 set  FinishedOrder += array{2}
                 Print("rank {FinishedOrder.Length}")
                 if(YellowVictoryProp := VictoryProps[2]):
-                    if(FinishedOrder.Length = 1):
-                        YellowVictoryProp.SetMaterial(MICrownOne)
-                        if(PRF := PlayerReferences[0]):
-                            PRF.Register(Agent)
-                    else if(FinishedOrder.Length = 2):
-                        YellowVictoryProp.SetMaterial(MICrownTwo)
-                        if(PRF := PlayerReferences[1]):
-                            PRF.Register(Agent)
-                    else if(FinishedOrder.Length = 3):
-                        YellowVictoryProp.SetMaterial(MICrownThree)
-                        if(PRF := PlayerReferences[2]):
-                            PRF.Register(Agent)
-                    APVic.Play()
-                    set YellowPlayer = false
+                    if(YellowAgent := YellowPlayer?):
+                        if(FinishedOrder.Length = 1):
+                            YellowVictoryProp.SetMaterial(MICrownOne)
+                            Accolade1.Award(YellowAgent)
+                            if(PRF := PlayerReferences[0]):
+                                PRF.Register(Agent)
+                        else if(FinishedOrder.Length = 2):
+                            YellowVictoryProp.SetMaterial(MICrownTwo)
+                            Accolade2.Award(YellowAgent)
+                            if(PRF := PlayerReferences[1]):
+                                PRF.Register(Agent)
+                        else if(FinishedOrder.Length = 3):
+                            YellowVictoryProp.SetMaterial(MICrownThree)
+                            Accolade3.Award(YellowAgent)
+                            if(PRF := PlayerReferences[2]):
+                                PRF.Register(Agent)
+                        APVic.Play()
+                        set YellowPlayer = false
 
         if(GreenEnd >= 4):
             if(not FinishedOrder.Find[3]):
                 set FinishedOrder += array{3}
                 Print("rank {FinishedOrder.Length}")
                 if(GreenVictoryProp := VictoryProps[3]):
-                    if(FinishedOrder.Length = 1):
-                        GreenVictoryProp.SetMaterial(MICrownOne)
-                        if(PRF := PlayerReferences[0]):
-                            PRF.Register(Agent)
-                    else if(FinishedOrder.Length = 2):
-                        GreenVictoryProp.SetMaterial(MICrownTwo)
-                        if(PRF := PlayerReferences[1]):
-                            PRF.Register(Agent)
-                    else if(FinishedOrder.Length = 3):
-                        GreenVictoryProp.SetMaterial(MICrownThree)
-                        if(PRF := PlayerReferences[2]):
-                            PRF.Register(Agent)
-                    APVic.Play()
-                    set GreenPlayer = false
+                    if(GreenAgent := GreenPlayer?):
+                        if(FinishedOrder.Length = 1):
+                            GreenVictoryProp.SetMaterial(MICrownOne)
+                            Accolade1.Award(GreenAgent)
+                            if(PRF := PlayerReferences[0]):
+                                PRF.Register(Agent)
+                        else if(FinishedOrder.Length = 2):
+                            GreenVictoryProp.SetMaterial(MICrownTwo)
+                            Accolade2.Award(GreenAgent)
+                            if(PRF := PlayerReferences[1]):
+                                PRF.Register(Agent)
+                        else if(FinishedOrder.Length = 3):
+                            GreenVictoryProp.SetMaterial(MICrownThree)
+                            Accolade3.Award(GreenAgent)
+                            if(PRF := PlayerReferences[2]):
+                                PRF.Register(Agent)
+                        APVic.Play()
+                        set GreenPlayer = false
 
         if(FinishedOrder.Length = ActivePlayerCount - 1):
             if(not FinishedOrder.Find[0] and RedPlayer?):
@@ -2018,7 +2038,7 @@ LudoManager := class(creative_device):
         set FinishedOrder = array{}
         FalsingPlayerTurn()
         
-    
+        
         if(RedAgent := RedPlayer?):
             spawn{LeaveWidget(RedAgent)}
             RedCamera.RemoveFrom(RedAgent)
@@ -2344,6 +2364,5 @@ LudoManager := class(creative_device):
         set GreenPawnTwoIndex = -1
         set GreenPawnThreeIndex = -1
     )
-
 
 
