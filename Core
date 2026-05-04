@@ -527,8 +527,8 @@ LudoManager := class(creative_device):
             if(DoubleRollFlagRed = false):
                 RollValue := GetRandomInt(1,6)
                 set RedDiceRollValue = RollValue
+                APDice.Play()
                 if(DiceProp := RedDiceProp[0]):
-                    APDice.Play()
                     DiceProp.SetMaterial(RollingDice)  
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
@@ -540,8 +540,8 @@ LudoManager := class(creative_device):
             if( DoubleRollFlagBlue = false):
                 RollValue := GetRandomInt(1,6)
                 set BlueDiceRollValue = RollValue
+                APDice.Play()
                 if(DiceProp := BlueDiceProp[0]):
-                    APDice.Play()
                     DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
@@ -553,8 +553,8 @@ LudoManager := class(creative_device):
             if(DoubleRollFlagGreen = false):
                 RollValue := GetRandomInt(1,6)
                 set GreenDiceRollValue = RollValue
+                APDice.Play()
                 if(DiceProp := GreenDiceProp[0]):
-                    APDice.Play()
                     DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
@@ -567,8 +567,8 @@ LudoManager := class(creative_device):
             if(DoubleRollFlagYellow = false):
                 RollValue := GetRandomInt(1,6)
                 set YellowDiceRollValue = RollValue
+                APDice.Play()
                 if(DiceProp := YellowDiceProp[0]):
-                    APDice.Play()
                     DiceProp.SetMaterial(RollingDice)
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
@@ -1265,8 +1265,8 @@ LudoManager := class(creative_device):
                 PathTransform:= Path.GetTransform()
                 PathTranslation:= PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                 APMove.Play()
+                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
                     set RedConsecutiveSixes += 1
                     if(RedConsecutiveSixes >= 3):
@@ -1296,8 +1296,8 @@ LudoManager := class(creative_device):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                             APMove.Play()
+                            if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
                     if(RedDiceRollValue = 6):
@@ -1364,8 +1364,8 @@ LudoManager := class(creative_device):
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                    APMove.Play()
+                APMove.Play()
+                if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):   
                     set CurrentIndex = 0
                     set BlueConsecutiveSixes += 1
                     if(BlueConsecutiveSixes >= 3):
@@ -1394,8 +1394,8 @@ LudoManager := class(creative_device):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                            APMove.Play()
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                                APMove.Play()
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
                     if(BlueDiceRollValue = 6):
@@ -1463,8 +1463,8 @@ LudoManager := class(creative_device):
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                APMove.Play()
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                    APMove.Play()
                     set CurrentIndex = 0
                     set YellowConsecutiveSixes += 1
                     if(YellowConsecutiveSixes >= 3):
@@ -1493,8 +1493,8 @@ LudoManager := class(creative_device):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                            APMove.Play()
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                                APMove.Play()
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
                     if(YellowDiceRollValue = 6):
@@ -1561,8 +1561,8 @@ LudoManager := class(creative_device):
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                APMove.Play()
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                    APMove.Play()
                     set CurrentIndex = 0
                     set GreenConsecutiveSixes += 1
                     if(GreenConsecutiveSixes >= 3):
@@ -1593,8 +1593,8 @@ LudoManager := class(creative_device):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
+                            APMove.Play()
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
-                                APMove.Play()
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
                     if(GreenDiceRollValue = 6):
