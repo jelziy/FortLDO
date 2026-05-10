@@ -1,0 +1,59 @@
+
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /UnrealEngine.com/Temporary/UI}
+
+
+# Custom event class to hold an Event, Cancel, and Await function
+event_subscription := class:
+    CancelEvent:event() = event(){}
+
+    Cancel():void=
+        CancelEvent.Signal()
+
+# Async function that holds until the event is signaled or canceled
+AwaitForEvent(Event:event(t), Callback(:t):void, Subscription:event_subscription where t : type)<suspends>:void=
+    race:
+        loop:
+            # Await till event is signaled
+            Payload := Event.Await()
+            Callback(Payload)
+        # Await till event is cancelled
+        Subscription.CancelEvent.Await() 
+ 
+# Call this function to subscribe to an event which spawns the AwaitForEvent async function to fire when the event is signaled
+(Event:event(t) where t : type).Subscribe(Callback(:t):void):event_subscription=
+    Subscription := event_subscription{}
+    spawn{ AwaitForEvent(Event, Callback, Subscription) }
+    return Subscription
+
+#---------------------------------------------------------------------------------------------------------------------------------
+
+Guide := class(creative_device):
+
+    WidgetRef : UI.WBP_Guide = UI.WBP_Guide{}
+
+    var MyUIPerPlayer : [player]?UI.WBP_Guide = map{}
+
+    @editable Button : button_device = button_device{}
+
+    StringToMessage<localizes>(Value:string) : message = ""
+
+    # Runs when the device is started in a running game
+    OnBegin<override>()<suspends>:void=
+        Button.InteractedWithEvent.Subscribe(CreatePlayerWidget)
+
+    CreatePlayerWidget(Agent:agent):void=
+        if(Player := player[Agent]):
+            NewWidget := WidgetRef
+            if(PlayerUI := GetPlayerUI[Player], set MyUIPerPlayer[Player] = option{NewWidget}):
+                PlayerUI.AddWidget(NewWidget, player_ui_slot{InputMode := ui_input_mode.All})
+                PlayerUI.SetFocus(NewWidget)
+
+                #subscribe
+                NewWidget.NextButtonClick.Subscribe(OnNextButtonClicked)
+
+    OnNextButtonClicked():void=
+        ()
+             
