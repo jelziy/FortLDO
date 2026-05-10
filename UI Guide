@@ -38,11 +38,12 @@ Guide := class(creative_device):
 
     @editable Button : button_device = button_device{}
 
-    StringToMessage<localizes>(Value:string) : message = ""
+    StringToMessage<localizes>(value:string) : message = "{value}"
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
         Button.InteractedWithEvent.Subscribe(CreatePlayerWidget)
+        GetPlayspace().PlayerRemovedEvent().Subscribe(OnPlayerRemoved)
 
     CreatePlayerWidget(Agent:agent):void=
         if(Player := player[Agent]):
@@ -54,6 +55,38 @@ Guide := class(creative_device):
                 #subscribe
                 NewWidget.NextButtonClick.Subscribe(OnNextButtonClicked)
 
+                spawn{WaitForPlayer(Player, NewWidget)}
+
     OnNextButtonClicked():void=
         ()
+
+    WaitForPlayer(Player : player, UIInstance : UI.WBP_Guide)<suspends>:void=
+        var Close : logic = false
+        loop:
+            if(Close = false):
+                race:
+                    block:
+                        UIInstance.BackButtonClick.Await()
+                        Print("anything below this will happen when the button is clicked")
+                    block:
+                        UIInstance.NextButtonClick.Await()
+                    block:
+                        UIInstance.CloseButton.Await()
+                        OnPlayerRemoved(Player)
+                        set Close = true
+            else:
+                break
+    
+    OnPlayerRemoved(Player : player):void=
+        if(WidgetOpt := MyUIPerPlayer[Player], Widget := WidgetOpt?):
+            if(PlayerUI := GetPlayerUI[Player]):
+                PlayerUI.RemoveWidget(Widget)
+        
+        var NewMap : [player]?UI.WBP_Guide = map{}
+        for (Key -> Value : MyUIPerPlayer, Key <> Player):
+            if(set  NewMap[Key] = Value):
+                set MyUIPerPlayer = NewMap
+
+
+            
              
