@@ -3,6 +3,8 @@ using { /Fortnite.com/Devices }
 using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 using { /UnrealEngine.com/Temporary/UI}
+using { /Verse.org/Assets }
+using { /Verse.org/Colors }
 
 
 # Custom event class to hold an Event, Cancel, and Await function
@@ -38,8 +40,56 @@ Guide := class(creative_device):
 
     @editable Button : button_device = button_device{}
 
+    @editable GreenStepMat : UI.MI_GuideStepsGreen = UI.MI_GuideStepsGreen{}
+    @editable RedStepMat : UI.MI_GuideStepsRed = UI.MI_GuideStepsRed{}
+    @editable BlueStepMat : UI.MI_GuideStepsBLue = UI.MI_GuideStepsBLue{}
+    @editable YellowStepMat : UI.MI_GuideStepsYellow = UI.MI_GuideStepsYellow{}
+    @editable GreyStepMat : UI.MI_GuideStepsGrey = UI.MI_GuideStepsGrey{}
+
+    var TextGreen : color_alpha = color_alpha{Color := color{R := 0.0, G := 1.0, B := 0.799}, A := 1.0}
+    var TextRed : color_alpha = color_alpha{Color := color{R := 1.0, G := 0.0, B := 0.033}, A := 1.0}
+    var TextBlue : color_alpha = color_alpha{Color := color{R := 0.023, G := 0.091, B := 1.0}, A := 1.0}
+    var TextYellow : color_alpha = color_alpha{Color := color{R := 1.0, G := 0.925, B := 0.0}, A := 1.0}
+    var TextGrey : color_alpha = color_alpha{Color := color{R := 0.135, G := 0.203, B := 0.196}, A := 1.0}
+
     StringToMessage<localizes>(value:string) : message = "{value}"
 
+    P1SetupText : string = "Step 1 - Setup"
+    P1TitleText : string = "Pick your color"
+    P1ContentText : string = "Each player can choose any of the give colors, simply select the number of player, join the game and wait for opponent to fill the spot to begin the game."
+    P1TipText : string = "2-4 Players can play!"
+
+    P2SetupText : string = "Step 2 - Starting"
+    P2TitleText : string = "Roll a 6 to start"
+    P2ContentText : string ="You must roll a 6 on the dice to move a token from your base onto the starting position. Rolling a 6 also gives a bonus roll!"
+    P2TipText : string = "Bonus is limited to 3 rolls"
+
+    P3SetupText : string = "Step 3 - Movement"
+    P3TitleText : string = "Move your tokens"
+    P3ContentText : string = "On each turn, roll the dice and move one of your eligible tokens forward by that many squares. Token travel clockwise around the board."
+    P3TipText : string = "You have limited time, think fast!"
+
+    P4SetupText : string = "Step 4 - Safety"
+    P4TitleText : string = "Safe Squares"
+    P4ContentText : string = "Star and starting squared of each color are safe zones. No token can be captured on these squares."
+    P4TipText : string = " Use them to protect your tokens!"
+
+    P5SetupText : string = "Step 5 - Attack"
+    P5TitleText : string = "Capture opponents"
+    P5ContentText : string = "Land on an opponent's token to send it back to their base. They must roll a 6 again to re-enter."
+    P5TipText : string = "Captures give you an extra roll!"
+
+    P6SetupText : string = "Step 6 - Final stretch"
+    P6TitleText : string = "Home column"
+    P6ContentText : string = "After going all the way around the board your token enters your colored home column. Only your tokens can travel through your home column — no captures here!"
+    P6TipText : string = "Almost there!"
+
+    P7SetupText : string = "Step 7 - Victory"
+    P7TitleText : string = "Reach home to win"
+    P7ContentText : string = "Move all 4 of your tokens to the center home triangle before your opponents to win. You will be ranked based on how fast you do it."
+    P7TipText : string = "Thats all, phew!"
+
+    
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
         Button.InteractedWithEvent.Subscribe(CreatePlayerWidget)
@@ -52,6 +102,13 @@ Guide := class(creative_device):
                 PlayerUI.AddWidget(NewWidget, player_ui_slot{InputMode := ui_input_mode.All})
                 PlayerUI.SetFocus(NewWidget)
 
+                set NewWidget.StepTexts = StringToMessage(P1SetupText)
+                set NewWidget.TitleText = StringToMessage(P1TitleText)
+                set NewWidget.ContentText = StringToMessage(P1ContentText)
+                set NewWidget.TipText = StringToMessage(P1TipText)
+                set NewWidget.StepMat = GreenStepMat
+                set NewWidget.TextColor  = TextGreen
+
                 #subscribe
                 NewWidget.NextButtonClick.Subscribe(OnNextButtonClicked)
 
@@ -62,14 +119,21 @@ Guide := class(creative_device):
 
     WaitForPlayer(Player : player, UIInstance : UI.WBP_Guide)<suspends>:void=
         var Close : logic = false
+        var Page : int = 1 # 0=1 and so on
         loop:
             if(Close = false):
                 race:
                     block:
                         UIInstance.BackButtonClick.Await()
+                        if(Page > 1):
+                            set Page -= 1
+                            PageMove(Player, Page)
                         Print("anything below this will happen when the button is clicked")
                     block:
                         UIInstance.NextButtonClick.Await()
+                        if(Page < 7):
+                            set Page += 1
+                            PageMove(Player, Page)
                     block:
                         UIInstance.CloseButton.Await()
                         OnPlayerRemoved(Player)
@@ -86,6 +150,58 @@ Guide := class(creative_device):
         for (Key -> Value : MyUIPerPlayer, Key <> Player):
             if(set  NewMap[Key] = Value):
                 set MyUIPerPlayer = NewMap
+    
+    PageMove(Player : player, Page : int):void=
+        if(WidgetOpt := MyUIPerPlayer[Player], NewWidget := WidgetOpt?):
+            if(Page = 1):
+                set NewWidget.StepTexts = StringToMessage(P1SetupText)
+                set NewWidget.TitleText = StringToMessage(P1TitleText)
+                set NewWidget.ContentText = StringToMessage(P1ContentText)
+                set NewWidget.TipText = StringToMessage(P1TipText)
+                set NewWidget.StepMat = GreenStepMat
+                set NewWidget.TextColor  = TextGreen 
+            else if(Page = 2):
+                set NewWidget.StepTexts = StringToMessage(P2SetupText)
+                set NewWidget.TitleText = StringToMessage(P2TitleText)
+                set NewWidget.ContentText = StringToMessage(P2ContentText)
+                set NewWidget.TipText = StringToMessage(P2TipText)
+                set NewWidget.StepMat = YellowStepMat
+                set NewWidget.TextColor  = TextYellow
+            else if(Page = 3):
+                set NewWidget.StepTexts = StringToMessage(P3SetupText)
+                set NewWidget.TitleText = StringToMessage(P3TitleText)
+                set NewWidget.ContentText = StringToMessage(P3ContentText)
+                set NewWidget.TipText = StringToMessage(P3TipText)
+                set NewWidget.StepMat = BlueStepMat
+                set NewWidget.TextColor  = TextBlue
+            else if(Page = 4):
+                set NewWidget.StepTexts = StringToMessage(P4SetupText)
+                set NewWidget.TitleText = StringToMessage(P4TitleText)
+                set NewWidget.ContentText = StringToMessage(P4ContentText)
+                set NewWidget.TipText = StringToMessage(P4TipText)
+                set NewWidget.StepMat = GreyStepMat
+                set NewWidget.TextColor  = TextGrey
+            else if(Page = 5):
+                set NewWidget.StepTexts = StringToMessage(P5SetupText)
+                set NewWidget.TitleText = StringToMessage(P5TitleText)
+                set NewWidget.ContentText = StringToMessage(P5ContentText)
+                set NewWidget.TipText = StringToMessage(P5TipText)
+                set NewWidget.StepMat = RedStepMat
+                set NewWidget.TextColor  = TextRed
+            else if(Page = 6):
+                set NewWidget.StepTexts = StringToMessage(P6SetupText)
+                set NewWidget.TitleText = StringToMessage(P6TitleText)
+                set NewWidget.ContentText = StringToMessage(P6ContentText)
+                set NewWidget.TipText = StringToMessage(P6TipText)
+                set NewWidget.StepMat = GreenStepMat
+                set NewWidget.TextColor  = TextGreen
+            else if(Page = 7):
+                set NewWidget.StepTexts = StringToMessage(P7SetupText)
+                set NewWidget.TitleText = StringToMessage(P7TitleText)
+                set NewWidget.ContentText = StringToMessage(P7ContentText)
+                set NewWidget.TipText = StringToMessage(P7TipText)
+                set NewWidget.StepMat = YellowStepMat
+                set NewWidget.TextColor  = TextYellow
 
 
             
