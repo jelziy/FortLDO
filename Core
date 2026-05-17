@@ -6,6 +6,9 @@ using { /Verse.org/Random }
 using { /UnrealEngine.com/Temporary/SpatialMath }
 using { /Fortnite.com/UI }
 using { /UnrealEngine.com/Temporary/UI }
+using { /Fortnite.com/Characters }
+using { /Verse.org/SceneGraph }
+using { /Verse.org/Assets }
 using {F_WIdget}
 using {PawnMInstance}
 using {Pawn2MInstance}
@@ -23,15 +26,21 @@ AudioTip<localizes>:message = "Audio Devices"
 ChairTip<localizes>:message = "Chairs"
 WidgetTip<localizes>:message = "Widgets"
 PRFTip<localizes>:message = "Player References Devices"
+AvTip<localizes>:message = "Player Icons"
 
 PathProps<localizes>:message = "Paths For Each"
 XPTip<localizes>:message = "XP Devices"
+
 
 
 LudoManager := class(creative_device):
     
     @editable  var CoolDownTime : float = 24.0
     
+    @editable CurrencySystem : display_currency_device = display_currency_device{}
+
+    var PerGameCost : float = 100.0
+
     @editable {Categories := array{CamerasTip}}
     RedCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
     @editable {Categories := array{CamerasTip}}
@@ -130,6 +139,18 @@ LudoManager := class(creative_device):
     var YellowOneHighlight : MI_YellowPawn1 = MI_YellowPawn1{}
     var YellowTwoHighlight : MI_YellowPawn2 = MI_YellowPawn2{}
     var YellowThreeHighlight : MI_YellowPawn3 = MI_YellowPawn3{}
+
+    var RedPlayerIcon : MI_NormRed = MI_NormRed{}
+    var GreenPlayerIcon : MI_NormGreen = MI_NormGreen{}
+    var BluePlayerIcon : MI_NormBlue = MI_NormBlue{}
+    var YellowPlayerIcon : MI_NormYellow = MI_NormYellow{}
+    @editable {Categories := array{AvTip}} var NormAv1 : ?texture = false
+    NormAv : texture = Pawn1
+    
+    @editable {Categories := array{AvTip}} var RedAvProp : creative_prop = creative_prop{}
+    @editable {Categories := array{AvTip}} var GreenAvProp : creative_prop = creative_prop{}
+    @editable {Categories := array{AvTip}} var BlueAvProp : creative_prop = creative_prop{}
+    @editable {Categories := array{AvTip}} var YellowAvProp : creative_prop = creative_prop{}
 
     var RollingDice : MI_DiceRolls = MI_DiceRolls{}
     var Dice1Value : MI_DiceValue1 = MI_DiceValue1{}
@@ -270,6 +291,7 @@ LudoManager := class(creative_device):
     var FinishedOrder :[]int =array{}
     var ActivePlayerCount : int = 0
     var ConfirmFlag : logic = false
+    var GameFormat : int = 0
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=(
@@ -340,21 +362,27 @@ LudoManager := class(creative_device):
                 set GameStarted = true
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
+                set GameFormat = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
+                GameCostDeductor()
 
         else if(ThreePlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 3):
                 set GameStarted = true
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
+                set GameFormat = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
+                GameCostDeductor()
 
         else if(FourPlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 4):
                 set GameStarted = true
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
+                set GameFormat = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
+                GameCostDeductor()
 
         if(GameStarted = true):
             for(Music : APEnvOg):
@@ -380,6 +408,12 @@ LudoManager := class(creative_device):
             RedCamera.AddTo(Agent)   #just to check hash
             set RedPlayer = option{Agent}
             RedChair.DisableExit()
+            if:
+                FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
+                Player := player[Agent]
+            then:
+                set RedPlayerIcon.TexParam = FcIcon
+                RedAvProp.SetMaterial(RedPlayerIcon)
             
             if(GameStarted = false):
                 set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
@@ -396,6 +430,13 @@ LudoManager := class(creative_device):
             set BluePlayer = option{Agent}
             BlueChair.DisableExit() #hash for playtest
             BlueCamera.AddTo(Agent)
+            if:
+                FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
+                Player := player[Agent]
+            then:
+                set BluePlayerIcon.TexParam = FcIcon
+                BlueAvProp.SetMaterial(BluePlayerIcon)
+                
             if(GameStarted = false):
                 set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
                 for(BluePawnForBlueJoined : AllBluePawn):
@@ -411,6 +452,13 @@ LudoManager := class(creative_device):
             set GreenPlayer = option{Agent}
             GreenChair.DisableExit()
             GreenCamera.AddTo(Agent)
+            if:
+                FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
+                Player := player[Agent]
+            then:
+                set GreenPlayerIcon.TexParam = FcIcon
+                GreenAvProp.SetMaterial(GreenPlayerIcon)
+                
             if(GameStarted = false):
                 set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
                 for(GreenPawnForGreenJoined : AllGreenPawn):
@@ -426,6 +474,13 @@ LudoManager := class(creative_device):
             set YellowPlayer = option{Agent}
             YellowCamera.AddTo(Agent)
             YellowChair.DisableExit()
+            if:
+                FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
+                Player := player[Agent]
+            then:
+                set YellowPlayerIcon.TexParam = FcIcon
+                YellowAvProp.SetMaterial(YellowPlayerIcon)
+
             if(GameStarted = false):
                 set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
                 for(YellowPawnForYellowJoined : AllYellowPawn):
@@ -451,6 +506,7 @@ LudoManager := class(creative_device):
                 Sleep(6.0)
                 PlayerUI.RemoveWidget(WidgetLeaving)
     )
+
     ExitingTheArena(Agent:agent):void=(
 
         if(RedPlayer = option{Agent}):
@@ -469,6 +525,11 @@ LudoManager := class(creative_device):
             if(not FinishedOrder.Find[0]):
                 set ActivePlayerCount -= 1
 
+            set RedPlayerIcon.TexParam = NormAv
+            RedAvProp.SetMaterial(RedPlayerIcon)
+            
+            
+
         else if(BluePlayer = option{Agent}):
             set BluePlayer = false # for PlayTesting.... was "#"# there not now
             spawn{LeaveWidget(Agent)}
@@ -484,6 +545,9 @@ LudoManager := class(creative_device):
             BlueIndexInitialSetter()
             if(not FinishedOrder.Find[1]):
                 set ActivePlayerCount -= 1
+            
+            set BluePlayerIcon.TexParam = NormAv
+            BlueAvProp.SetMaterial(BluePlayerIcon)
 
         else if(YellowPlayer = option{Agent}):
             set YellowPlayer = false
@@ -500,6 +564,9 @@ LudoManager := class(creative_device):
             YellowIndexInitialSetter()
             if(not FinishedOrder.Find[2]):
                 set ActivePlayerCount -= 1
+            
+            set YellowPlayerIcon.TexParam = NormAv
+            YellowAvProp.SetMaterial(YellowPlayerIcon)
 
         else if(GreenPlayer = option{Agent}):
             set GreenPlayer = false
@@ -516,6 +583,10 @@ LudoManager := class(creative_device):
             GreenIndexInitialSetter()
             if(not FinishedOrder.Find[3]):
                 set ActivePlayerCount -= 1
+
+            
+            set GreenPlayerIcon.TexParam = NormAv
+            GreenAvProp.SetMaterial(GreenPlayerIcon)
 
         if(ActivePlayerCount <= 1 and GameStarted = true):
             GameResetForPlayerLeft()
@@ -1931,16 +2002,19 @@ LudoManager := class(creative_device):
                         if(FinishedOrder.Length = 1):
                             RedVictoryProp.SetMaterial(MICrownOne)
                             Accolade1.Award(RedAgent)
+                            GameRewardGranter(Agent, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
                             RedVictoryProp.SetMaterial(MICrownTwo)
                             Accolade2.Award(RedAgent)
+                            GameRewardGranter(Agent, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
                             RedVictoryProp.SetMaterial(MICrownThree)
                             Accolade3.Award(RedAgent)
+                            GameRewardGranter(Agent, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
@@ -1956,16 +2030,19 @@ LudoManager := class(creative_device):
                         if(FinishedOrder.Length = 1):
                             BlueVictoryProp.SetMaterial(MICrownOne)
                             Accolade1.Award(BlueAgent)
+                            GameRewardGranter(Agent, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
                             BlueVictoryProp.SetMaterial(MICrownTwo)
                             Accolade2.Award(BlueAgent)
+                            GameRewardGranter(Agent, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
                             BlueVictoryProp.SetMaterial(MICrownThree)
                             Accolade3.Award(BlueAgent)
+                            GameRewardGranter(Agent, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
@@ -1981,16 +2058,19 @@ LudoManager := class(creative_device):
                         if(FinishedOrder.Length = 1):
                             YellowVictoryProp.SetMaterial(MICrownOne)
                             Accolade1.Award(YellowAgent)
+                            GameRewardGranter(Agent, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
                             YellowVictoryProp.SetMaterial(MICrownTwo)
                             Accolade2.Award(YellowAgent)
+                            GameRewardGranter(Agent, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
                             YellowVictoryProp.SetMaterial(MICrownThree)
                             Accolade3.Award(YellowAgent)
+                            GameRewardGranter(Agent, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
@@ -2006,16 +2086,19 @@ LudoManager := class(creative_device):
                         if(FinishedOrder.Length = 1):
                             GreenVictoryProp.SetMaterial(MICrownOne)
                             Accolade1.Award(GreenAgent)
+                            GameRewardGranter(GreenAgent, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
                             GreenVictoryProp.SetMaterial(MICrownTwo)
                             Accolade2.Award(GreenAgent)
+                            GameRewardGranter(Agent, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
                             GreenVictoryProp.SetMaterial(MICrownThree)
                             Accolade3.Award(GreenAgent)
+                            GameRewardGranter(Agent, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
@@ -2032,8 +2115,8 @@ LudoManager := class(creative_device):
             if(not FinishedOrder.Find[3] and GreenPlayer?):
                 set FinishedOrder += array{3}
             Print("Game Over")
-
-            spawn{GameOverReset()}
+            
+            spawn. GameOverReset()
 
     )
 
@@ -2070,8 +2153,9 @@ LudoManager := class(creative_device):
         GreenChair.EnableExit()
         
         spawn{CameraDisEn()}
-        
-        
+
+        DefaultAvSetter()
+
         set RedDiceRollValue = 0
         set BlueDiceRollValue = 0
         set YellowDiceRollValue = 0
@@ -2193,7 +2277,8 @@ LudoManager := class(creative_device):
         if(GreenAgent := tempGreenPlayer?):
             spawn{LeaveWidget(GreenAgent)}
             GreenCamera.RemoveFrom(GreenAgent)
-
+        
+        DefaultAvSetter()
 
         spawn{CameraDisEn()} #this wont be needed if above AllPlayers works.. 
         
@@ -2287,6 +2372,19 @@ LudoManager := class(creative_device):
         Print("Match reset complete")
     )
 
+    DefaultAvSetter():void=(
+
+        
+        set RedPlayerIcon.TexParam = NormAv
+        set BluePlayerIcon.TexParam = NormAv
+        set YellowPlayerIcon.TexParam = NormAv
+        set GreenPlayerIcon.TexParam = NormAv
+        RedAvProp.SetMaterial(RedPlayerIcon)
+        BlueAvProp.SetMaterial(BluePlayerIcon)
+        YellowAvProp.SetMaterial(YellowPlayerIcon)
+        GreenAvProp.SetMaterial(GreenPlayerIcon)
+    )
+
     CameraDisEn()<suspends>:void=(
         RedChair.Disable()
         BlueChair.Disable()
@@ -2346,6 +2444,7 @@ LudoManager := class(creative_device):
         set BluePlayerTurn= false
         set GreenPlayerTurn = false
         set YellowPlayerTurn = false
+        set GameFormat = 0
     )
     FalsingTempPlayer():void=(
         set tempRedPlayer = false
@@ -2381,6 +2480,34 @@ LudoManager := class(creative_device):
         set GreenPawnTwoIndex = -1
         set GreenPawnThreeIndex = -1
     )
+
+    GameCostDeductor():void=
+        if(RedAgent := RedPlayer?):
+            CurrencySystem.GrantCurrency(RedAgent, currency_type.Coins, -PerGameCost)
+        if(BlueAgent := BluePlayer?):
+            CurrencySystem.GrantCurrency(BlueAgent, currency_type.Coins, -PerGameCost)
+        if(YellowAgent := YellowPlayer?):
+            CurrencySystem.GrantCurrency(YellowAgent, currency_type.Coins, -PerGameCost)
+        if(GreenAgent := GreenPlayer?):
+            CurrencySystem.GrantCurrency(GreenAgent, currency_type.Coins, -PerGameCost)
+
+    GameRewardGranter(Agent:agent, Rank : int):void=
+        if(GameFormat = 2):
+            if(Rank = 1):
+                CurrencySystem.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 2)
+        else if(GameFormat = 3):
+            if(Rank = 1):
+                CurrencySystem.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 2.5)
+            else if(Rank = 2):
+                CurrencySystem.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 2)
+        else if(GameFormat = 4):
+            if(Rank = 1):
+                CurrencySystem.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 3)
+            else if(Rank = 2):
+                CurrencySystem.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 2.5)
+            else if(Rank = 3):
+                CurrencySystem.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 1.5)
+
 
 
 
