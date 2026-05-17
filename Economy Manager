@@ -1,0 +1,124 @@
+
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /UnrealEngine.com/Temporary/SpatialMath }
+using { /UnrealEngine.com/Temporary/UI }
+
+currency_type := enum{Coins, Gems}
+
+trigger_config := class<concrete>:
+    @editable Trigger : trigger_device = trigger_device{}
+    @editable Type : currency_type = currency_type.Coins
+
+currency_handler := class:
+    @editable Type : currency_type = currency_type.Coins
+
+    var Device : display_currency_device = display_currency_device{}
+
+    var CoinFunction : float = 10.0
+
+    OnTriggered(Agent : ?agent):void=
+        if:
+            HarvestingPlayerRef := player[Agent?]
+            ExistingPlayerData := GetPlayerData[HarvestingPlayerRef]?
+
+        then:
+            var CoinsToAdd : float = 0.0
+            var GemsTOAdd : float = 0.0
+
+            case(Type):
+                currency_type.Coins => set CoinsToAdd = 1000.0
+                currency_type.Gems => set GemsTOAdd = 0.0
+
+            UpdatedPlayerData := player_data:
+                Coins := ExistingPlayerData.Coins + CoinsToAdd
+                Gems := ExistingPlayerData.Gems + GemsTOAdd
+                MakePlayerProfileData<constructor>(ExistingPlayerData)
+
+            if. SetPlayerData[HarvestingPlayerRef, UpdatedPlayerData]
+            Device.UpdatePlayerWidget(HarvestingPlayerRef)
+            
+
+display_currency_device := class(creative_device):
+
+    @editable GameManager : game_manager = game_manager{}
+    @editable CurrencyTriggers : []trigger_config = array{}
+    
+    var CurrencyWidgetMap : [player]UI.WBP_CurrencyHUD = map{}
+
+    # Runs when the device is started in a running game
+    OnBegin<override>()<suspends>:void=
+        for(PlayerSpawner : GameManager.PlayerSpawners):
+            PlayerSpawner.SpawnedEvent.Subscribe(SpawnedEvent)
+        
+        # For each configured trigger, create a handler and subscribe it
+        for(Config : CurrencyTriggers):
+            Handler := currency_handler{Device := Self, Type := Config.Type}
+            Config.Trigger.TriggeredEvent.Subscribe(Handler.OnTriggered)
+
+        GameManager.GetPlayspace().PlayerRemovedEvent().Subscribe(OnPlayerRemoved)
+
+
+    GrantCurrency<public>(Agent:agent, Type : currency_type, Amount:float) : void =
+        if:
+            PlayerRef := player[Agent]
+            ExistingData := GetPlayerData[PlayerRef]?
+        then:
+            var NewCoins : float = ExistingData.Coins
+            var NewGems : float = ExistingData.Gems
+
+            case (Type):
+                currency_type.Coins =>
+                    if(Amount < 0.0):
+                        if(ExistingData.Coins + Amount >= 0.0):
+                            set NewCoins = ExistingData.Coins + Amount
+                    else:
+                        set NewCoins = ExistingData.Coins + Amount
+                currency_type.Gems =>
+                    if(Amount < 0.0):
+                        if(ExistingData.Gems + Amount >= 0.0):
+                            set NewGems = ExistingData.Gems + Amount
+                    else:
+                        set NewGems = ExistingData.Gems + Amount
+            
+            UpdatePlayerData := player_data:
+                Coins := NewCoins
+                Gems := NewGems
+                MakePlayerProfileData<constructor>(ExistingData)
+
+            if(SetPlayerData[PlayerRef, UpdatePlayerData]?):
+                UpdatePlayerWidget(PlayerRef)
+
+    SpawnedEvent(SpawnedAgent : agent):void=
+        if(PlayerRef := player[SpawnedAgent]). spawn. InitPlayerWidget(PlayerRef)
+            
+    InitPlayerWidget(PlayerRef : player)<suspends>:void=
+        Sleep(0.33)
+        if(ExistingWidget := CurrencyWidgetMap[PlayerRef]):
+            UpdatePlayerWidget(PlayerRef)
+            
+        else if(PlayerUI := GetPlayerUI[PlayerRef]):
+            NewWidget := UI.WBP_CurrencyHUD{}
+            if. set CurrencyWidgetMap[PlayerRef] = NewWidget
+            PlayerUI.AddWidget(NewWidget)
+            UpdatePlayerWidget(PlayerRef)
+    
+    UpdatePlayerWidget(PlayerRef : player):void=
+        if:
+            PlayerData := GetPlayerData[PlayerRef]?
+            ExistingWidget := CurrencyWidgetMap[PlayerRef]
+
+        then:
+            set ExistingWidget.Coins = FToNormalMessage(PlayerData.Coins)
+            set ExistingWidget.Gems = FToNormalMessage(PlayerData.Gems)
+    
+    OnPlayerRemoved(RemovedPlayerRef : player):void=
+        if(Widget := CurrencyWidgetMap[RemovedPlayerRef]):
+            
+            var NewWidgetMap : [player]UI.WBP_CurrencyHUD = map{}
+            for(key -> value : CurrencyWidgetMap, key <> RemovedPlayerRef):
+                set NewWidgetMap = ConcatenateMaps(NewWidgetMap, map{key => value})
+
+            set CurrencyWidgetMap = NewWidgetMap
+        
