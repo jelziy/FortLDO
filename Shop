@@ -1,0 +1,47 @@
+
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /UnrealEngine.com/Temporary/UI}
+using { /Fortnite.com/UI}
+
+
+Shop := class(creative_device):
+
+    WidgetRef : UI.WBP_Shop = UI.WBP_Shop{}
+
+    var MyUIPerPlayer : [player]?UI.WBP_Shop = map{}
+
+    @editable Button : button_device = button_device{}
+
+    # Runs when the device is started in a running game
+    OnBegin<override>()<suspends>:void=
+        Button.InteractedWithEvent.Subscribe(CreatePlayerWidget)
+        GetPlayspace().PlayerRemovedEvent().Subscribe(OnPlayerRemoved)
+    
+    CreatePlayerWidget(Agent:agent):void=
+        if(Player := player[Agent]):
+            NewWidget := WidgetRef
+            if(PlayerUI := GetPlayerUI[Player], set MyUIPerPlayer[Player] = option{NewWidget}):
+                PlayerUI.AddWidget(NewWidget, player_ui_slot{InputMode := ui_input_mode.All})
+
+    WaitForPlayer(Player : player, UIInstance : UI.WBP_Shop)<suspends>:void=
+        var Close : logic = false
+        loop:
+            if(Close = false): #race later
+                block:
+                    UIInstance.CloseClicked.Await()
+                    OnPlayerRemoved(Player)
+                    set Close = true
+            else:
+                break
+    
+    OnPlayerRemoved(Player : player):void=
+        if(WidgetOpt := MyUIPerPlayer[Player], Widget:= WidgetOpt?):
+            if(PlayerUI := GetPlayerUI[Player]):
+                PlayerUI.RemoveWidget(Widget)
+        
+        var NewMap : [player]?UI.WBP_Shop = map{}
+        for(Key -> Value : MyUIPerPlayer, Key <> Player):
+            if(set NewMap[Key] = Value):
+                set MyUIPerPlayer = NewMap
