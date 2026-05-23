@@ -1,0 +1,89 @@
+
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /Fortnite.com/Characters }
+
+VolTip<localizes>:message = "Player Volumes"
+TpTip<localizes>:message = "Tps"
+TpTip2<localizes>:message = "TPS2"
+
+LobbyMaker := class(creative_device):
+
+    @editable LudoDevice : LudoManager = LudoManager{}
+
+    @editable {Categories := array{VolTip}} RedVol : volume_device = volume_device{}
+    @editable {Categories := array{VolTip}}BlueVol : volume_device = volume_device{}
+    @editable {Categories := array{VolTip}}YellowVol : volume_device = volume_device{}
+    @editable {Categories := array{VolTip}} GreenVol :  volume_device = volume_device{}
+    @editable LobbyCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
+
+    @editable {Categories := array{TpTip}} RedTp : teleporter_device = teleporter_device{}
+    @editable {Categories := array{TpTip}} BlueTp : teleporter_device = teleporter_device{}
+    @editable {Categories := array{TpTip}} YellowTp : teleporter_device = teleporter_device{}
+    @editable {Categories := array{TpTip}} GreenTp : teleporter_device = teleporter_device{}
+
+    @editable {Categories := array{TpTip2}} RedTp2 : teleporter_device = teleporter_device{}
+    @editable {Categories := array{TpTip2}} BlueTp2 : teleporter_device = teleporter_device{}
+    @editable {Categories := array{TpTip2}} YellowTp2 : teleporter_device = teleporter_device{}
+    @editable {Categories := array{TpTip2}} GreenTp2 : teleporter_device = teleporter_device{}
+
+
+    # Runs when the device is started in a running game
+    OnBegin<override>()<suspends>:void=
+        RedVol.AgentEntersEvent.Subscribe(RedEnEx)
+        BlueVol.AgentEntersEvent.Subscribe(BlueEnEx)
+        YellowVol.AgentEntersEvent.Subscribe(YellowEnEx)
+        GreenVol.AgentEntersEvent.Subscribe(GreenEnEx)
+        RedVol.AgentExitsEvent.Subscribe(RedEnEx)
+        BlueVol.AgentExitsEvent.Subscribe(BlueEnEx)
+        YellowVol.AgentExitsEvent.Subscribe(YellowEnEx)
+        GreenVol.AgentExitsEvent.Subscribe(GreenEnEx)
+    
+    RedEnEx(Agent:agent):void=
+        if(LudoDevice.RedPlayer? and Agent = LudoDevice.RedPlayer): #this means that the agent exited who was granted before
+            LudoDevice.ExitingTheArena(Agent)
+            RedTp2.Teleport(Agent)
+            LobbyCamera.RemoveFrom(Agent)
+
+        else if(LudoDevice.GameStarted = false and LudoDevice.RedPlayer = false):
+            RedTp.Teleport(Agent)
+            LudoDevice.RedOneJoined(Agent)
+            LobbyCamera.AddTo(Agent)
+
+    BlueEnEx(Agent : agent):void=
+        if(LudoDevice.BluePlayer? and Agent = LudoDevice.RedPlayer):
+            LudoDevice.ExitingTheArena(Agent)
+            BlueTp2.Teleport(Agent)
+            LobbyCamera.RemoveFrom(Agent)
+        
+        else if(LudoDevice.GameStarted = false and LudoDevice.BluePlayer = false):
+            BlueTp.Teleport(Agent)
+            LudoDevice.BlueOneJoined(Agent)
+            LobbyCamera.AddTo(Agent)
+    
+    YellowEnEx(Agent:agent):void=
+        if(LudoDevice.YellowPlayer? and Agent = LudoDevice.YellowPlayer):
+            LudoDevice.ExitingTheArena(Agent)
+            YellowTp2.Teleport(Agent)
+            LobbyCamera.RemoveFrom(Agent)
+        
+        else if(LudoDevice.GameStarted = false and LudoDevice.YellowPlayer = false):
+            BlueTp.Teleport(Agent)
+            LudoDevice.YellowOneJoined(Agent)
+            LobbyCamera.AddTo(Agent)
+
+    GreenEnEx(Agent:agent):void=
+        if(LudoDevice.GreenPlayer? and Agent = LudoDevice.GreenPlayer):
+            LudoDevice.ExitingTheArena(Agent)
+            GreenTp2.Teleport(Agent)
+            LobbyCamera.RemoveFrom(Agent)
+
+        else if(LudoDevice.GameStarted = false and LudoDevice.GreenPlayer = false):
+            GreenTp.Teleport(Agent)
+            LudoDevice.GreenOneJoined(Agent)
+            LobbyCamera.AddTo(Agent)
+
+
+            
+     
