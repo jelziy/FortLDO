@@ -27,6 +27,8 @@ ChairTip<localizes>:message = "Chairs"
 WidgetTip<localizes>:message = "Widgets"
 PRFTip<localizes>:message = "Player References Devices"
 AvTip<localizes>:message = "Player Icons"
+PrTip<localizes>:message = "Lobby Prs"
+TpTip2<localizes>:message = "TPS2"
 
 PathProps<localizes>:message = "Paths For Each"
 XPTip<localizes>:message = "XP Devices"
@@ -34,10 +36,10 @@ XPTip<localizes>:message = "XP Devices"
 
 
 LudoManager := class(creative_device):
-    
     @editable  var CoolDownTime : float = 24.0
     
     @editable CurrencySystem : display_currency_device = display_currency_device{}
+
 
     var PerGameCost : float = 100.0
 
@@ -119,6 +121,19 @@ LudoManager := class(creative_device):
     @editable{Categories := array{ChairTip}} GreenChair : chair_device = chair_device{}
     @editable{Categories := array{ChairTip}} BlueChair : chair_device = chair_device{}
     @editable{Categories := array{ChairTip}} YellowChair : chair_device = chair_device{}
+
+
+
+    @editable {Categories := array{PrTip}} RedPr : player_reference_device = player_reference_device{}
+    @editable {Categories := array{PrTip}} BluePr : player_reference_device = player_reference_device{}
+    @editable {Categories := array{PrTip}} YellowPr : player_reference_device = player_reference_device{}
+    @editable {Categories := array{PrTip}} GreenPr : player_reference_device = player_reference_device{}
+
+
+    @editable {Categories := array{TpTip2}} RedTp2 : teleporter_device = teleporter_device{}
+    @editable {Categories := array{TpTip2}} BlueTp2 : teleporter_device = teleporter_device{}
+    @editable {Categories := array{TpTip2}} YellowTp2 : teleporter_device = teleporter_device{}
+    @editable {Categories := array{TpTip2}} GreenTp2 : teleporter_device = teleporter_device{}
 
     var RedZeroHighlight : MI_RedPawn = MI_RedPawn{}
     var RedOneHighlight : MI_RedPawn1 = MI_RedPawn1{}
@@ -236,7 +251,7 @@ LudoManager := class(creative_device):
     var BlueConsecutiveSixes : int = 0
     var YellowConsecutiveSixes : int = 0
 
-    var RedPlayer : ?agent = false
+    var RedPlayer: ?agent = false
     var GreenPlayer : ?agent = false
     var BluePlayer : ?agent = false
     var YellowPlayer : ?agent = false
@@ -313,10 +328,13 @@ LudoManager := class(creative_device):
         SelectOne.PressedEvent.Subscribe(ExitingTheArena)
         GetPlayspace().PlayerRemovedEvent().Subscribe(ExitingTheArena)
 
+       
         Sleep(7.0)
         for(Mdevice : APEnvOg):
             Mdevice.Play()
+
     )
+    
 
     InitialInitiator():void=(
         set RedPawnInitialTransform = RedPawn.GetTransform()
@@ -359,6 +377,7 @@ LudoManager := class(creative_device):
                 
         if(TwoPlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 2):
+                CamChairGranter()
                 set GameStarted = true
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
@@ -368,6 +387,7 @@ LudoManager := class(creative_device):
 
         else if(ThreePlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 3):
+                CamChairGranter()
                 set GameStarted = true
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
@@ -377,6 +397,7 @@ LudoManager := class(creative_device):
 
         else if(FourPlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 4):
+                CamChairGranter()
                 set GameStarted = true
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
@@ -401,99 +422,135 @@ LudoManager := class(creative_device):
             set GreenPlayerTurn = true
     )
 
-
-    RedOneJoined(Agent : agent) : void = (
-        if(RedPlayer = false):
-            spawn{LoadWidget(Agent)}
-            RedCamera.AddTo(Agent)   #just to check hash
-            set RedPlayer = option{Agent}
+    CamChairGranter():void= #probably should just disable exit always
+        if(RedAgent := RedPlayer?):
+            spawn. LoadWidget(RedAgent)
+            RedCamera.AddTo(RedAgent)
+            RedChair.Seat(RedAgent)
             RedChair.DisableExit()
-            if:
-                FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
-                Player := player[Agent]
-            then:
-                set RedPlayerIcon.TexParam = FcIcon
-                RedAvProp.SetMaterial(RedPlayerIcon)
-            
-            if(GameStarted = false):
-                set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
-                for(RedPawnForRedJoined : AllRedPawn):
-                    RedPawnForRedJoined.Show()
-                    spawn{GameStartInitiator()}
-            else if(GameStarted = true):
-                Print("Game has already started. You cannot join now.")
+        if(BlueAgent := BluePlayer?):
+            spawn. LoadWidget(BlueAgent)
+            BlueCamera.AddTo(BlueAgent)
+            BlueChair.Seat(BlueAgent)
+            BlueChair.DisableExit()
+        if(YellowAgent := YellowPlayer?):
+            spawn. LoadWidget(YellowAgent)
+            YellowCamera.AddTo(YellowAgent)
+            YellowChair.Seat(YellowAgent)
+            YellowChair.DisableExit()
+        if(GreenAgent := GreenPlayer?):
+            spawn. LoadWidget(GreenAgent)
+            GreenCamera.AddTo(GreenAgent)
+            GreenChair.Seat(GreenAgent)
+            GreenChair.DisableExit
+
+        RedPr.Clear()
+        BluePr.Clear()
+        GreenPr.Clear()
+        YellowPr.Clear()
+
+        
+    RedOneJoined(Agent : agent) : void = (
+        if(RedPlayer = false and GameStarted = false):
+            if(Agent <> BluePlayer? or Agent <> YellowPlayer or Agent <> GreenPlayer):
+                #spawn{LoadWidget(Agent)}
+                #RedCamera.AddTo(Agent)   #just to check hash
+                set RedPlayer = option{Agent}
+                #RedChair.DisableExit()
+                RedPr.Register(Agent)
+                if:
+                    FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
+                    Player := player[Agent]
+                then:
+                    set RedPlayerIcon.TexParam = FcIcon
+                    RedAvProp.SetMaterial(RedPlayerIcon)
+                
+                if(GameStarted = false):
+                    set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+                    for(RedPawnForRedJoined : AllRedPawn):
+                        RedPawnForRedJoined.Show()
+                        spawn{GameStartInitiator()}
+                else if(GameStarted = true):
+                    Print("Game has already started. You cannot join now.")
     )
 
     BlueOneJoined(Agent : agent) : void = (
-        if(BluePlayer = false):
-            spawn{LoadWidget(Agent)}
-            set BluePlayer = option{Agent}
-            BlueChair.DisableExit() #hash for playtest
-            BlueCamera.AddTo(Agent)
-            if:
-                FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
-                Player := player[Agent]
-            then:
-                set BluePlayerIcon.TexParam = FcIcon
-                BlueAvProp.SetMaterial(BluePlayerIcon)
-                
-            if(GameStarted = false):
-                set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
-                for(BluePawnForBlueJoined : AllBluePawn):
-                    BluePawnForBlueJoined.Show()
-                    spawn{GameStartInitiator()}
-            else if(GameStarted = true):
-                Print("Game has already started. You cannot join now.")
+        if(BluePlayer = false and GameStarted = false):
+            if(Agent <> RedPlayer? or Agent <> GreenPlayer? or Agent <> YellowPlayer?):
+                #spawn{LoadWidget(Agent)}
+                set BluePlayer = option{Agent}
+                #BlueChair.DisableExit() #hash for playtest
+                #BlueCamera.AddTo(Agent)
+                BluePr.Register(Agent)
+                if:
+                    FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
+                    Player := player[Agent]
+                then:
+                    set BluePlayerIcon.TexParam = FcIcon
+                    BlueAvProp.SetMaterial(BluePlayerIcon)
+                    
+                if(GameStarted = false):
+                    set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
+                    for(BluePawnForBlueJoined : AllBluePawn):
+                        BluePawnForBlueJoined.Show()
+                        spawn{GameStartInitiator()}
+                else if(GameStarted = true):
+                    Print("Game has already started. You cannot join now.")
     )
 
     GreenOneJoined(Agent : agent) : void = (
-        if(GreenPlayer = false):
-            spawn{LoadWidget(Agent)}
-            set GreenPlayer = option{Agent}
-            GreenChair.DisableExit()
-            GreenCamera.AddTo(Agent)
-            if:
-                FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
-                Player := player[Agent]
-            then:
-                set GreenPlayerIcon.TexParam = FcIcon
-                GreenAvProp.SetMaterial(GreenPlayerIcon)
-                
-            if(GameStarted = false):
-                set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
-                for(GreenPawnForGreenJoined : AllGreenPawn):
-                    GreenPawnForGreenJoined.Show()
-                    spawn{GameStartInitiator()}
-            else if(GameStarted = true):
-                Print("Game has already started. You cannot join now.")
+        if(GreenPlayer = false and GameStarted = false):
+            if(Agent <> RedPlayer? or Agent <> BluePlayer? or Agent <> YellowPlayer?):
+                #spawn{LoadWidget(Agent)}
+                set GreenPlayer = option{Agent}
+                #GreenChair.DisableExit()
+                #GreenCamera.AddTo(Agent)
+                GreenPr.Register(Agent)
+                if:
+                    FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
+                    Player := player[Agent]
+                then:
+                    set GreenPlayerIcon.TexParam = FcIcon
+                    GreenAvProp.SetMaterial(GreenPlayerIcon)
+                    
+                if(GameStarted = false):
+                    set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
+                    for(GreenPawnForGreenJoined : AllGreenPawn):
+                        GreenPawnForGreenJoined.Show()
+                        spawn{GameStartInitiator()}
+                else if(GameStarted = true):
+                    Print("Game has already started. You cannot join now.")
     )
 
     YellowOneJoined(Agent : agent) : void = (
-        if(YellowPlayer = false):
-            spawn{LoadWidget(Agent)}
-            set YellowPlayer = option{Agent}
-            YellowCamera.AddTo(Agent)
-            YellowChair.DisableExit()
-            if:
-                FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
-                Player := player[Agent]
-            then:
-                set YellowPlayerIcon.TexParam = FcIcon
-                YellowAvProp.SetMaterial(YellowPlayerIcon)
+        if(YellowPlayer = false and GameStarted = false):
+            if(Agent <> RedPlayer? or Agent <> BluePlayer? or Agent <> GreenPlayer?):
+                #spawn{LoadWidget(Agent)}
+                set YellowPlayer = option{Agent}
+                #YellowCamera.AddTo(Agent)
+                #YellowChair.DisableExit()
+                YellowPr.Register(Agent)
+                if:
+                    FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
+                    Player := player[Agent]
+                then:
+                    set YellowPlayerIcon.TexParam = FcIcon
+                    YellowAvProp.SetMaterial(YellowPlayerIcon)
 
-            if(GameStarted = false):
-                set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
-                for(YellowPawnForYellowJoined : AllYellowPawn):
-                    YellowPawnForYellowJoined.Show()
-                    spawn{GameStartInitiator()}
-            else if(GameStarted = true):
-                Print("Game has already started. You cannot join now.")
+                if(GameStarted = false):
+                    set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+                    for(YellowPawnForYellowJoined : AllYellowPawn):
+                        YellowPawnForYellowJoined.Show()
+                        spawn{GameStartInitiator()}
+                else if(GameStarted = true):
+                    Print("Game has already started. You cannot join now.")
     )
     
     LoadWidget(Agent:agent)<suspends>:void=(
         if(Player := player[Agent]):
             if(PlayerUI := GetPlayerUI[Player]):
-                PlayerUI.AddWidget(WidgetLoading)
+                PlayerUI.AddWidget(WidgetLoading, player_ui_slot{InputMode := ui_input_mode.All})
+                PlayerUI.SetFocus(WidgetLoading)
                 Sleep(6.0)
                 PlayerUI.RemoveWidget(WidgetLoading)
             
@@ -502,7 +559,8 @@ LudoManager := class(creative_device):
     LeaveWidget(Agent:agent)<suspends>:void=(
         if(Player := player[Agent]):
             if(PlayerUI := GetPlayerUI[Player]):
-                PlayerUI.AddWidget(WidgetLeaving)
+                PlayerUI.AddWidget(WidgetLeaving, player_ui_slot{InputMode := ui_input_mode.All})
+                PlayerUI.SetFocus(WidgetLoading)
                 Sleep(6.0)
                 PlayerUI.RemoveWidget(WidgetLeaving)
     )
@@ -527,6 +585,9 @@ LudoManager := class(creative_device):
 
             set RedPlayerIcon.TexParam = NormAv
             RedAvProp.SetMaterial(RedPlayerIcon)
+
+            RedTp2.Teleport(Agent)
+            RedPr.Clear()
             
             
 
@@ -549,6 +610,9 @@ LudoManager := class(creative_device):
             set BluePlayerIcon.TexParam = NormAv
             BlueAvProp.SetMaterial(BluePlayerIcon)
 
+            BlueTp2.Teleport(Agent)
+            BluePr.Clear()
+
         else if(YellowPlayer = option{Agent}):
             set YellowPlayer = false
             spawn{LeaveWidget(Agent)}
@@ -567,6 +631,9 @@ LudoManager := class(creative_device):
             
             set YellowPlayerIcon.TexParam = NormAv
             YellowAvProp.SetMaterial(YellowPlayerIcon)
+
+            YellowTp2.Teleport(Agent)
+            YellowPr.Clear()
 
         else if(GreenPlayer = option{Agent}):
             set GreenPlayer = false
@@ -587,6 +654,9 @@ LudoManager := class(creative_device):
             
             set GreenPlayerIcon.TexParam = NormAv
             GreenAvProp.SetMaterial(GreenPlayerIcon)
+
+            GreenTp2.Teleport(Agent)
+            GreenPr.Clear()
 
         if(ActivePlayerCount <= 1 and GameStarted = true):
             GameResetForPlayerLeft()
@@ -2134,18 +2204,22 @@ LudoManager := class(creative_device):
         if(RedAgent := tempRedPlayer?):
             spawn{LeaveWidget(RedAgent)}
             RedCamera.RemoveFrom(RedAgent)
+            RedTp2.Teleport(RedAgent)
 
         if(BlueAgent := tempBluePlayer?):
             spawn{LeaveWidget(BlueAgent)}
             BlueCamera.RemoveFrom(BlueAgent)
+            BlueTp2.Teleport(BlueAgent)
 
         if(YellowAgent := tempYellowPlayer?):
             spawn{LeaveWidget(YellowAgent)}
             YellowCamera.RemoveFrom(YellowAgent)
+            YellowTp2.Teleport(YellowAgent)
 
         if(GreenAgent := tempGreenPlayer?):
             spawn{LeaveWidget(GreenAgent)}
             GreenCamera.RemoveFrom(GreenAgent)
+            GreenTp2.Teleport(GreenAgent)
 
         RedChair.EnableExit()
         BlueChair.EnableExit()
@@ -2265,18 +2339,22 @@ LudoManager := class(creative_device):
         if(RedAgent := tempRedPlayer?):
             spawn{LeaveWidget(RedAgent)}
             RedCamera.RemoveFrom(RedAgent)
+            RedTp2.Teleport(RedAgent)
 
         if(BlueAgent := tempBluePlayer?):
             spawn{LeaveWidget(BlueAgent)}
             BlueCamera.RemoveFrom(BlueAgent)
+            BlueTp2.Teleport(BlueAgent)
 
         if(YellowAgent := tempYellowPlayer?):
             spawn{LeaveWidget(YellowAgent)}
             YellowCamera.RemoveFrom(YellowAgent)
+            YellowTp2.Teleport(YellowAgent)
 
         if(GreenAgent := tempGreenPlayer?):
             spawn{LeaveWidget(GreenAgent)}
             GreenCamera.RemoveFrom(GreenAgent)
+            GreenTp2.Teleport(GreenAgent)
         
         DefaultAvSetter()
 
