@@ -367,7 +367,7 @@ LudoManager := class(creative_device):
         if(GreenPlayer?):
             set PlayerCount += 1
         
-        Sleep(4.0) # Small delay to ensure all players are registered before starting the game
+        Sleep(2.0) # Small delay to ensure all players are registered before starting the game
         if(OnePlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 1):
                 set GameStarted = true
@@ -375,7 +375,7 @@ LudoManager := class(creative_device):
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
                 
-        if(TwoPlayerSwitch.GetCurrentState[]):
+        if(TwoPlayerSwitch.GetCurrentState[] and GameStarted = false):
             if(PlayerCount = 2):
                 CamChairGranter()
                 set GameStarted = true
@@ -385,7 +385,7 @@ LudoManager := class(creative_device):
                 spawn{HelperPlayerProfileTurn()}
                 GameCostDeductor()
 
-        else if(ThreePlayerSwitch.GetCurrentState[]):
+        else if(ThreePlayerSwitch.GetCurrentState[] and GameStarted = false):
             if(PlayerCount = 3):
                 CamChairGranter()
                 set GameStarted = true
@@ -395,7 +395,7 @@ LudoManager := class(creative_device):
                 spawn{HelperPlayerProfileTurn()}
                 GameCostDeductor()
 
-        else if(FourPlayerSwitch.GetCurrentState[]):
+        else if(FourPlayerSwitch.GetCurrentState[] and GameStarted = false):
             if(PlayerCount = 4):
                 CamChairGranter()
                 set GameStarted = true
@@ -452,7 +452,11 @@ LudoManager := class(creative_device):
         
     RedOneJoined(Agent : agent) : void = (
         if(RedPlayer = false and GameStarted = false):
-            if(Agent <> BluePlayer? or Agent <> YellowPlayer or Agent <> GreenPlayer):
+            if:
+                option{Agent} <> BluePlayer
+                option{Agent} <> YellowPlayer
+                option{Agent} <> GreenPlayer
+            then:
                 #spawn{LoadWidget(Agent)}
                 #RedCamera.AddTo(Agent)   #just to check hash
                 set RedPlayer = option{Agent}
@@ -476,7 +480,11 @@ LudoManager := class(creative_device):
 
     BlueOneJoined(Agent : agent) : void = (
         if(BluePlayer = false and GameStarted = false):
-            if(Agent <> RedPlayer? or Agent <> GreenPlayer? or Agent <> YellowPlayer?):
+            if:
+                option{Agent} <> RedPlayer
+                option{Agent} <> YellowPlayer
+                option{Agent} <> GreenPlayer
+            then:
                 #spawn{LoadWidget(Agent)}
                 set BluePlayer = option{Agent}
                 #BlueChair.DisableExit() #hash for playtest
@@ -500,7 +508,11 @@ LudoManager := class(creative_device):
 
     GreenOneJoined(Agent : agent) : void = (
         if(GreenPlayer = false and GameStarted = false):
-            if(Agent <> RedPlayer? or Agent <> BluePlayer? or Agent <> YellowPlayer?):
+            if:
+                option{Agent} <> RedPlayer
+                option{Agent} <> BluePlayer
+                option{Agent} <> YellowPlayer
+            then:
                 #spawn{LoadWidget(Agent)}
                 set GreenPlayer = option{Agent}
                 #GreenChair.DisableExit()
@@ -524,7 +536,11 @@ LudoManager := class(creative_device):
 
     YellowOneJoined(Agent : agent) : void = (
         if(YellowPlayer = false and GameStarted = false):
-            if(Agent <> RedPlayer? or Agent <> BluePlayer? or Agent <> GreenPlayer?):
+            if:
+                option{Agent} <> RedPlayer
+                option{Agent} <> BluePlayer
+                option{Agent} <> GreenPlayer
+            then:
                 #spawn{LoadWidget(Agent)}
                 set YellowPlayer = option{Agent}
                 #YellowCamera.AddTo(Agent)
