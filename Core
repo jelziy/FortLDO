@@ -452,11 +452,11 @@ LudoManager := class(creative_device):
         
     RedOneJoined(Agent : agent) : void = (
         if(RedPlayer = false and GameStarted = false):
-            if:
-                option{Agent} <> BluePlayer
-                option{Agent} <> YellowPlayer
-                option{Agent} <> GreenPlayer
-            then:
+            #if:
+                #option{Agent} <> BluePlayer
+                #option{Agent} <> YellowPlayer
+                #option{Agent} <> GreenPlayer
+            #then:
                 #spawn{LoadWidget(Agent)}
                 #RedCamera.AddTo(Agent)   #just to check hash
                 set RedPlayer = option{Agent}
@@ -2237,6 +2237,8 @@ LudoManager := class(creative_device):
             GreenCamera.RemoveFrom(GreenAgent)
             GreenTp2.Teleport(GreenAgent)
 
+        
+
         RedChair.EnableExit()
         BlueChair.EnableExit()
         YellowChair.EnableExit()
@@ -2540,6 +2542,7 @@ LudoManager := class(creative_device):
         set YellowPlayerTurn = false
         set GameFormat = 0
     )
+    
     FalsingTempPlayer():void=(
         set tempRedPlayer = false
         set tempBluePlayer = false
