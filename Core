@@ -40,7 +40,6 @@ LudoManager := class(creative_device):
     
     @editable CurrencySystem : display_currency_device = display_currency_device{}
 
-
     var PerGameCost : float = 100.0
 
     @editable {Categories := array{CamerasTip}}
@@ -332,7 +331,6 @@ LudoManager := class(creative_device):
         Sleep(7.0)
         for(Mdevice : APEnvOg):
             Mdevice.Play()
-
     )
     
 
@@ -2092,112 +2090,112 @@ LudoManager := class(creative_device):
     )
 
     IsItTheEnd(Agent:agent):void=(
-        if(RedEnd >= 4):
-            if(not FinishedOrder.Find[0]):
-                set FinishedOrder += array{0}
-                Print("rank {FinishedOrder.Length}")
-                if(RedVictoryProp := VictoryProps[0]):
-                    if(RedAgent := RedPlayer?):
+        if(RedEnd >= 4 and RedPlayer = option{Agent}):
+            if(Player := player[Agent]):
+                if(not FinishedOrder.Find[0]):
+                    set FinishedOrder += array{0}
+                    Print("rank {FinishedOrder.Length}")
+                    if(RedVictoryProp := VictoryProps[0]):
                         if(FinishedOrder.Length = 1):
                             RedVictoryProp.SetMaterial(MICrownOne)
-                            Accolade1.Award(RedAgent)
-                            GameRewardGranter(Agent, 1)
+                            Accolade1.Award(Player)
+                            GameRewardGranter(Player, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
                             RedVictoryProp.SetMaterial(MICrownTwo)
-                            Accolade2.Award(RedAgent)
-                            GameRewardGranter(Agent, 2)
+                            Accolade2.Award(Player)
+                            GameRewardGranter(Player, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
                             RedVictoryProp.SetMaterial(MICrownThree)
-                            Accolade3.Award(RedAgent)
-                            GameRewardGranter(Agent, 3)
+                            Accolade3.Award(Player)
+                            GameRewardGranter(Player, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
                         set tempRedPlayer = RedPlayer
                         set RedPlayer = false
 
-        if(BlueEnd >= 4):
-            if(not FinishedOrder.Find[1]):
-                set FinishedOrder += array{1}
-                Print("rank {FinishedOrder.Length}")
-                if(BlueVictoryProp := VictoryProps[1]):
-                    if(BlueAgent := BluePlayer?):
+        if(BlueEnd >= 4 and BluePlayer = option{Agent}):
+            if(Player := player[Agent]):
+                if(not FinishedOrder.Find[1]):
+                    set FinishedOrder += array{1}
+                    Print("rank {FinishedOrder.Length}")
+                    if(BlueVictoryProp := VictoryProps[1]):
                         if(FinishedOrder.Length = 1):
                             BlueVictoryProp.SetMaterial(MICrownOne)
-                            Accolade1.Award(BlueAgent)
-                            GameRewardGranter(Agent, 1)
+                            Accolade1.Award(Player)
+                            GameRewardGranter(Player, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
                             BlueVictoryProp.SetMaterial(MICrownTwo)
-                            Accolade2.Award(BlueAgent)
-                            GameRewardGranter(Agent, 2)
+                            Accolade2.Award(Player)
+                            GameRewardGranter(Player, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
                             BlueVictoryProp.SetMaterial(MICrownThree)
-                            Accolade3.Award(BlueAgent)
-                            GameRewardGranter(Agent, 3)
+                            Accolade3.Award(Player)
+                            GameRewardGranter(Player, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
                         set tempBluePlayer = BluePlayer
                         set BluePlayer = false
 
-        if(YellowEnd >= 4):
-            if(not FinishedOrder.Find[2]):
-                set  FinishedOrder += array{2}
-                Print("rank {FinishedOrder.Length}")
-                if(YellowVictoryProp := VictoryProps[2]):
-                    if(YellowAgent := YellowPlayer?):
-                        if(FinishedOrder.Length = 1):
-                            YellowVictoryProp.SetMaterial(MICrownOne)
-                            Accolade1.Award(YellowAgent)
-                            GameRewardGranter(Agent, 1)
-                            if(PRF := PlayerReferences[0]):
-                                PRF.Register(Agent)
-                        else if(FinishedOrder.Length = 2):
-                            YellowVictoryProp.SetMaterial(MICrownTwo)
-                            Accolade2.Award(YellowAgent)
-                            GameRewardGranter(Agent, 2)
-                            if(PRF := PlayerReferences[1]):
-                                PRF.Register(Agent)
-                        else if(FinishedOrder.Length = 3):
-                            YellowVictoryProp.SetMaterial(MICrownThree)
-                            Accolade3.Award(YellowAgent)
-                            GameRewardGranter(Agent, 3)
-                            if(PRF := PlayerReferences[2]):
-                                PRF.Register(Agent)
-                        APVic.Play()
-                        set tempYellowPlayer = YellowPlayer
-                        set YellowPlayer = false
+        if(YellowEnd >= 4 and YellowPlayer = option{Agent}):
+            if(Player := player[Agent]):
+                if(not FinishedOrder.Find[2]):
+                    set  FinishedOrder += array{2}
+                    Print("rank {FinishedOrder.Length}")
+                    if(YellowVictoryProp := VictoryProps[2]):
+                            if(FinishedOrder.Length = 1):
+                                YellowVictoryProp.SetMaterial(MICrownOne)
+                                Accolade1.Award(Player)
+                                GameRewardGranter(Player, 1)
+                                if(PRF := PlayerReferences[0]):
+                                    PRF.Register(Agent)
+                            else if(FinishedOrder.Length = 2):
+                                YellowVictoryProp.SetMaterial(MICrownTwo)
+                                Accolade2.Award(Player)
+                                GameRewardGranter(Player, 2)
+                                if(PRF := PlayerReferences[1]):
+                                    PRF.Register(Agent)
+                            else if(FinishedOrder.Length = 3):
+                                YellowVictoryProp.SetMaterial(MICrownThree)
+                                Accolade3.Award(Player)
+                                GameRewardGranter(Player, 3)
+                                if(PRF := PlayerReferences[2]):
+                                    PRF.Register(Agent)
+                            APVic.Play()
+                            set tempYellowPlayer = YellowPlayer
+                            set YellowPlayer = false
 
-        if(GreenEnd >= 4):
-            if(not FinishedOrder.Find[3]):
-                set FinishedOrder += array{3}
-                Print("rank {FinishedOrder.Length}")
-                if(GreenVictoryProp := VictoryProps[3]):
-                    if(GreenAgent := GreenPlayer?):
+        if(GreenEnd >= 4 and GreenPlayer = option{Agent}):
+            if(Player := player[Agent]):
+                if(not FinishedOrder.Find[3]):
+                    set FinishedOrder += array{3}
+                    Print("rank {FinishedOrder.Length}")
+                    if(GreenVictoryProp := VictoryProps[3]):
                         if(FinishedOrder.Length = 1):
                             GreenVictoryProp.SetMaterial(MICrownOne)
-                            Accolade1.Award(GreenAgent)
-                            GameRewardGranter(GreenAgent, 1)
+                            Accolade1.Award(Player)
+                            GameRewardGranter(Player, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
                             GreenVictoryProp.SetMaterial(MICrownTwo)
-                            Accolade2.Award(GreenAgent)
-                            GameRewardGranter(Agent, 2)
+                            Accolade2.Award(Player)
+                            GameRewardGranter(Player, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
                             GreenVictoryProp.SetMaterial(MICrownThree)
-                            Accolade3.Award(GreenAgent)
-                            GameRewardGranter(Agent, 3)
+                            Accolade3.Award(Player)
+                            GameRewardGranter(Player, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
                         APVic.Play()
@@ -2468,7 +2466,7 @@ LudoManager := class(creative_device):
             CurrencySystem.GrantCurrency(YellowAgent, currency_type.Coins, -PerGameCost)
         if(GreenAgent := GreenPlayer?):
             CurrencySystem.GrantCurrency(GreenAgent, currency_type.Coins, -PerGameCost)
-            
+
 
     GameRewardGranter(Agent:agent, Rank : int):void=
         if(GameFormat = 2):
