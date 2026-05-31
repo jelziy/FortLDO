@@ -42,7 +42,6 @@ LudoManager := class(creative_device):
 
     var PerGameCost : float = 100.0
 
-
     @editable {Categories := array{CamerasTip}}
     RedCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
     @editable {Categories := array{CamerasTip}}
@@ -454,14 +453,15 @@ LudoManager := class(creative_device):
 
         
     RedOneJoined(Agent : agent) : void = (
+
         if(RedPlayer = false and GameStarted = false):
             if:
                 option{Agent} <> BluePlayer
                 option{Agent} <> YellowPlayer
                 option{Agent} <> GreenPlayer
             then:
-                spawn{LoadWidget(Agent)}
-                RedCamera.AddTo(Agent)   #just to check hash
+                #spawn{LoadWidget(Agent)}
+                #RedCamera.AddTo(Agent)   #just to check hash
                 set RedPlayer = option{Agent}
                 RedChair.DisableExit()
                 RedPr.Register(Agent)
@@ -488,7 +488,7 @@ LudoManager := class(creative_device):
                 option{Agent} <> YellowPlayer
                 option{Agent} <> GreenPlayer
             then:
-                #spawn{LoadWidget(Agent)}
+                #spawn{LoadWidget(Agent)} #remove the lines with hashes .... Later It creates confusion
                 set BluePlayer = option{Agent}
                 BlueChair.DisableExit() #hash for playtest
                 #BlueCamera.AddTo(Agent)
@@ -2369,7 +2369,7 @@ LudoManager := class(creative_device):
         if(T = 0):
             Sleep(7.0)
             EndGameCD.Play()
-            Sleep(7.0)
+            Sleep(7.0) #sleep for the lenght of sequence
             for(PRFS : PlayerReferences):
                 PRFS.Clear()
 
@@ -2510,7 +2510,4 @@ LudoManager := class(creative_device):
                 CurrencySystem.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 2.5)
             else if(Rank = 3):
                 CurrencySystem.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 1.5)
-
-
-
 
