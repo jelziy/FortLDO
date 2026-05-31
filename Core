@@ -42,6 +42,7 @@ LudoManager := class(creative_device):
 
     var PerGameCost : float = 100.0
 
+
     @editable {Categories := array{CamerasTip}}
     RedCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
     @editable {Categories := array{CamerasTip}}
@@ -326,13 +327,13 @@ LudoManager := class(creative_device):
         DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
         SelectOne.PressedEvent.Subscribe(ExitingTheArena)
         GetPlayspace().PlayerRemovedEvent().Subscribe(ExitingTheArena)
-
-       
+        
+    
         Sleep(7.0)
         for(Mdevice : APEnvOg):
             Mdevice.Play()
     )
-    
+
 
     InitialInitiator():void=(
         set RedPawnInitialTransform = RedPawn.GetTransform()
@@ -379,7 +380,7 @@ LudoManager := class(creative_device):
                 set GameStarted = true
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
-                set GameFormat = PlayerCount
+                set GameFormat = 2
                 spawn{HelperPlayerProfileTurn()}
                 GameCostDeductor()
 
@@ -389,7 +390,7 @@ LudoManager := class(creative_device):
                 set GameStarted = true
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
-                set GameFormat = PlayerCount
+                set GameFormat = 3
                 spawn{HelperPlayerProfileTurn()}
                 GameCostDeductor()
 
@@ -399,7 +400,7 @@ LudoManager := class(creative_device):
                 set GameStarted = true
                 RedTurnSetter()
                 set ActivePlayerCount = PlayerCount
-                set GameFormat = PlayerCount
+                set GameFormat = 4
                 spawn{HelperPlayerProfileTurn()}
                 GameCostDeductor()
 
@@ -459,8 +460,8 @@ LudoManager := class(creative_device):
                 option{Agent} <> YellowPlayer
                 option{Agent} <> GreenPlayer
             then:
-                #spawn{LoadWidget(Agent)}
-                #RedCamera.AddTo(Agent)   #just to check hash
+                spawn{LoadWidget(Agent)}
+                RedCamera.AddTo(Agent)   #just to check hash
                 set RedPlayer = option{Agent}
                 RedChair.DisableExit()
                 RedPr.Register(Agent)
@@ -1421,7 +1422,7 @@ LudoManager := class(creative_device):
         Print("move playing")
     )
 
-    MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void= (
+    MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void= ( #mentioned in confirm input pressed function
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
@@ -1824,7 +1825,7 @@ LudoManager := class(creative_device):
         set ConfirmFlag = false
     )
 
-    PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int, Agent:agent)<suspends>:void=(
+    PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int, Agent:agent)<suspends>:void=( #move pawn red and else
         #1 -- color. 2 -- which pawn from that color. 3. Position that pawns position index. All int Yes.
         #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
         
@@ -2086,10 +2087,12 @@ LudoManager := class(creative_device):
             TimerCheckerHelper()
         else:
             Print("Blahhhh")
+
         IsItTheEnd(Agent)
     )
 
-    IsItTheEnd(Agent:agent):void=(
+    IsItTheEnd(Agent:agent):void=( #mention in possible elim Checker
+        
         if(RedEnd >= 4 and RedPlayer = option{Agent}):
             if(Player := player[Agent]):
                 if(not FinishedOrder.Find[0]):
@@ -2248,7 +2251,28 @@ LudoManager := class(creative_device):
             GreenCamera.RemoveFrom(GreenAgent)
             GreenTp2.Teleport(GreenAgent)
 
+        if(RedAgent := RedPlayer?): #got it the player that has not reached the end was not setting up to templayer hence it was not working
+            spawn{LeaveWidget(RedAgent)}
+            RedCamera.RemoveFrom(RedAgent)
+            RedTp2.Teleport(RedAgent)
+
+        if(BlueAgent := BluePlayer?):
+            spawn{LeaveWidget(BlueAgent)}
+            BlueCamera.RemoveFrom(BlueAgent)
+            BlueTp2.Teleport(BlueAgent)
+
+        if(YellowAgent := YellowPlayer?):
+            spawn{LeaveWidget(YellowAgent)}
+            YellowCamera.RemoveFrom(YellowAgent)
+            YellowTp2.Teleport(YellowAgent)
+
+        if(GreenAgent := GreenPlayer?):
+            spawn{LeaveWidget(GreenAgent)}
+            GreenCamera.RemoveFrom(GreenAgent)
+            GreenTp2.Teleport(GreenAgent)
+
         
+
 
         RedChair.EnableExit()
         BlueChair.EnableExit()
@@ -2274,11 +2298,6 @@ LudoManager := class(creative_device):
         set RollerForYellow = 0
         set RollerForGreen = 0
         
-        set RedPlayer = false 
-        set BluePlayer = false
-        set GreenPlayer = false
-        set YellowPlayer = false
-
         set DoubleRollFlagRed = false
         set DoubleRollFlagBlue = false
         set DoubleRollFlagYellow = false
@@ -2343,13 +2362,16 @@ LudoManager := class(creative_device):
         set MInbYellow.HowManyNumbers = 0.0
         set MInbGreen.HowManyNumbers = 0.0
         
-        FalsingTempPlayer()
+        FalsingTempPlayerandNormalPlayers()
         PawnFinishStateResetter()
         ResetPlayerDrainerProfile()
 
         if(T = 0):
             Sleep(7.0)
             EndGameCD.Play()
+            Sleep(7.0)
+            for(PRFS : PlayerReferences):
+                PRFS.Clear()
 
 
         Print("Match reset complete")
@@ -2381,8 +2403,7 @@ LudoManager := class(creative_device):
         YellowCamera.Disable()
         GreenCamera.Disable()
 
-        for(PRFS : PlayerReferences):
-            PRFS.Clear()
+        
     )
     
     PawnFinishStateResetter():void=(
@@ -2422,11 +2443,16 @@ LudoManager := class(creative_device):
         set GameFormat = 0
     )
 
-    FalsingTempPlayer():void=(
+    FalsingTempPlayerandNormalPlayers():void=(
         set tempRedPlayer = false
         set tempBluePlayer = false
         set tempYellowPlayer = false
         set tempGreenPlayer = false
+
+        set RedPlayer = false
+        set BluePlayer = false
+        set YellowPlayer = false
+        set GreenPlayer = false
     )
 
     RedIndexInitialSetter():void=( #will add sturct later if better
