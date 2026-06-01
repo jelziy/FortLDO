@@ -2369,10 +2369,10 @@ LudoManager := class(creative_device):
         if(T = 0):
             Sleep(7.0)
             EndGameCD.Play()
-            Sleep(7.0) #sleep for the lenght of sequence
+            Sleep(7.0) #sleep for the length of sequence
             for(PRFS : PlayerReferences):
                 PRFS.Clear()
-
+            set GameFormat = 0
 
         Print("Match reset complete")
     )
@@ -2440,7 +2440,6 @@ LudoManager := class(creative_device):
         set BluePlayerTurn= false
         set GreenPlayerTurn = false
         set YellowPlayerTurn = false
-        set GameFormat = 0
     )
 
     FalsingTempPlayerandNormalPlayers():void=(
