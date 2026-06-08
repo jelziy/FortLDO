@@ -121,8 +121,6 @@ LudoManager := class(creative_device):
     @editable{Categories := array{ChairTip}} BlueChair : chair_device = chair_device{}
     @editable{Categories := array{ChairTip}} YellowChair : chair_device = chair_device{}
 
-
-
     @editable {Categories := array{PrTip}} RedPr : player_reference_device = player_reference_device{}
     @editable {Categories := array{PrTip}} BluePr : player_reference_device = player_reference_device{}
     @editable {Categories := array{PrTip}} YellowPr : player_reference_device = player_reference_device{}
