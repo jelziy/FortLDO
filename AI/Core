@@ -1,10 +1,11 @@
 
-
 using { /Fortnite.com/Devices }
 using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 using { /Verse.org/Assets }
 using { /UnrealEngine.com/Temporary/SpatialMath}
+using { /Fortnite.com/Characters }
+using {/Verse.org/SceneGraph}
 using {AIMInstance}
 using {F_WIdget}
 using {PawnMInstance}
@@ -98,6 +99,7 @@ LudoManagerAi := class(creative_device):
 
     var PlayerIcon : MaI_NormPI = MaI_NormPI{}
     NormAv : texture = Pawn1
+    @editable {Categories := array{AvTip}} var PlayerAvProp : creative_prop = creative_prop{}
 
     var RollingDice : MI_DiceRolls = MI_DiceRolls{}
     var Dice1Value : MI_DiceValue1 = MI_DiceValue1{}
@@ -218,7 +220,7 @@ LudoManagerAi := class(creative_device):
     var YellowEnd : int = 0
 
     var FinishedOrder :[]int =array{} 
-    #var ActivePlayerCount : int = 0  always 4 or none
+    ActivePlayerCount : int = 4
     var ConfirmFlag : logic = false
     #var GameFormat : int = 0 always 4 or none
 
@@ -257,8 +259,33 @@ LudoManagerAi := class(creative_device):
         set GreenPawnThreeInitialTransform = GreenPawnThree.GetTransform()
         ResetPlayerDrainerProfile()
     
+    GameStartInitiator()<suspends>:void=
+        set GameStarted = true
+        set RedPlayerTurn = true
+        spawn{HelperPlayerProfileTurn()}
+        
     PlayerJoined(Agent : agent):void=
-        ()
+        if(LdoPlayer = false and GameStarted = false):
+            set LdoPlayer = option{Agent}
+            PlayerCamera.AddTo(Agent)
+            PlayerChair.Seat(Agent)
+            PlayerChair.DisableExit()
+            if:
+                FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
+                Player := player[Agent]
+            then:
+                set PlayerIcon.TexParam = FcIcon
+                PlayerAvProp.SetMaterial(PlayerIcon)
+            
+            if(GameStarted = false):
+                set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree, BluePawn, BluePawnOne,
+                                    BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
+                                    YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+                for(Pawns : AllPlayersPawns):
+                    Pawns.Show()
+                    spawn. GameStartInitiator()
+            else:
+                Print("Game Started")
 
     SelectPressed(Agent:agent):void=
         ()
@@ -283,5 +310,45 @@ LudoManagerAi := class(creative_device):
             YellowPropProfile.Hide()
     )
 
+    HelperPlayerProfileTurn()<suspends>:void=
+        if(RedPlayerTurn = true):
+            if(RedPropProfile := RedDiceProp[1]):
+                ResetPlayerDrainerProfile()
+                Sleep(1.0)
+                RedPropProfile.Show()
+            Print("Red Player's Turn")
+            spawn{CheckTimerForRed()}
+        else if(BluePlayerTurn = true):
+            if(BluePropProfile := BlueDiceProp[1]):
+                ResetPlayerDrainerProfile()
+                Sleep(1.0)
+                BluePropProfile.Show()
+            Print("Blue Player's Turn")
+            spawn{CheckTimerForBlue()}
+        else if(GreenPlayerTurn = true):
+            if(GreenPropProfile := GreenDiceProp[1]):
+                ResetPlayerDrainerProfile()
+                Sleep(1.0)
+                GreenPropProfile.Show()
+            Print("Green Player's Turn")
+            spawn{CheckTimerForGreen()}
+        else if(YellowPlayerTurn = true):
+            if(YellowPropProfile := YellowDiceProp[1]):
+                ResetPlayerDrainerProfile()
+                Sleep(1.0)
+                YellowPropProfile.Show()
+            Print("Yellow Player's Turn")
+            spawn{CheckTimerForYellow()}
 
-       
+    CheckTimerForRed()<suspends>:void=
+        ()
+    
+    CheckTimerForBlue()<suspends>:void=
+        ()
+
+    CheckTimerForGreen()<suspends>:void=
+        ()
+
+    CheckTimerForYellow()<suspends>:void=
+        ()
+        
