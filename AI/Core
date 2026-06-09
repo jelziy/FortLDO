@@ -1,1 +1,287 @@
 
+
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /Verse.org/Assets }
+using { /UnrealEngine.com/Temporary/SpatialMath}
+using {AIMInstance}
+using {F_WIdget}
+using {PawnMInstance}
+using {Pawn2MInstance}
+
+LudoManagerAi := class(creative_device):
+
+    @editable var CoolDownTime : float = 24.0
+
+    @editable {Categories := array{CamerasTip}}PlayerCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
+
+    @editable {Categories := array{CamerasTip}} JoinButton  : button_device = button_device{} #will always be 4 player game
+
+    @editable {Categories := array{InputTip}}
+    ConfirmInput : input_trigger_device = input_trigger_device{}
+    @editable {Categories := array{InputTip}}
+    Select : input_trigger_device = input_trigger_device{}
+    @editable {Categories := array{InputTip}}
+    Leave : input_trigger_device = input_trigger_device{}
+    @editable {Categories := array{InputTip}}
+    DiceRoll : input_trigger_device = input_trigger_device{}
+
+    @editable {Categories := array{WidgetTip}} WidgetLoading : Ldo_Loading = Ldo_Loading{}
+    @editable {Categories := array{WidgetTip}} WidgetLeaving : Ldo_Leaving = Ldo_Leaving{}
+
+    @editable {Categories := array{RedPawnTip}} RedPawn : creative_prop = creative_prop{}
+    @editable {Categories := array{RedPawnTip}} RedPawnOne : creative_prop = creative_prop{}
+    @editable {Categories := array{RedPawnTip}} RedPawnTwo : creative_prop = creative_prop{}
+    @editable {Categories := array{RedPawnTip}} RedPawnThree : creative_prop = creative_prop{}
+
+    @editable {Categories := array{GreenPawnTip}} GreenPawn : creative_prop = creative_prop{}
+    @editable {Categories := array{GreenPawnTip}} GreenPawnOne : creative_prop = creative_prop{}
+    @editable {Categories := array{GreenPawnTip}} GreenPawnTwo : creative_prop = creative_prop{}
+    @editable {Categories := array{GreenPawnTip}} GreenPawnThree : creative_prop = creative_prop{}
+
+    @editable {Categories := array{BluePawnTip}} BluePawn : creative_prop = creative_prop{}
+    @editable {Categories := array{BluePawnTip}} BluePawnOne : creative_prop = creative_prop{}
+    @editable {Categories := array{BluePawnTip}} BluePawnTwo : creative_prop = creative_prop{}
+    @editable {Categories := array{BluePawnTip}} BluePawnThree : creative_prop = creative_prop{}
+    
+    @editable {Categories := array{YellowPawnTip}} YellowPawn : creative_prop = creative_prop{}
+    @editable {Categories := array{YellowPawnTip}} YellowPawnOne : creative_prop = creative_prop{}
+    @editable {Categories := array{YellowPawnTip}} YellowPawnTwo : creative_prop = creative_prop{}
+    @editable {Categories := array{YellowPawnTip}} YellowPawnThree : creative_prop = creative_prop{}
+
+    @editable { Categories := array{PathProps}} RedPaths : []creative_prop = array{}
+    @editable { Categories := array{PathProps}} GreenPaths : []creative_prop = array{}
+    @editable { Categories := array{PathProps}} BluePaths : []creative_prop = array{}
+    @editable { Categories := array{PathProps}} YellowPaths : []creative_prop = array{}
+
+    @editable {Categories := array{DicesRollTip}} RedDiceProp : []creative_prop = array{}
+    @editable {Categories := array{DicesRollTip}} GreenDiceProp : []creative_prop = array{}
+    @editable {Categories := array{DicesRollTip}} BlueDiceProp : []creative_prop = array{}
+    @editable {Categories := array{DicesRollTip}} YellowDiceProp : []creative_prop = array{}
+
+    @editable {Categories := array{EndPlanesPropTip}} VictoryProps : []creative_prop = array{}
+    @editable {Categories := array{EndPlanesPropTip}} NumbersProp :[]creative_prop = array{} #0r1b2y3g
+
+    @editable{Categories := array{AudioTip}} APMove :audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APDice :audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APVic :audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APEnd :audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APEliminated :audio_player_device = audio_player_device{} 
+    @editable{Categories := array{AudioTip}} APHighlight :audio_player_device = audio_player_device{} #Agent
+    @editable{Categories := array{AudioTip}} APInGame : audio_player_device = audio_player_device{}
+    @editable{Categories := array{AudioTip}} APEnvOg : []audio_player_device = array{}
+
+    @editable{Categories := array{ChairTip}} PlayerChair : chair_device = chair_device{}
+
+    @editable {Categories := array{TpTip2}} PlayerTp : teleporter_device = teleporter_device{}
+
+    var RedZeroHighlight : MI_HighRed = MI_HighRed{}
+    var RedOneHighlight : MI_HighRed1 = MI_HighRed1{}
+    var RedTwoHighlight : MI_HighRed2 = MI_HighRed2{}
+    var RedThreeHighlight : MI_HighRed3 = MI_HighRed3{}
+
+    var GreenZeroHighlight : MI_HighGreen = MI_HighGreen{}
+    var GreenOneHighlight : MI_HighGreen1 = MI_HighGreen1{}
+    var GreenTwoHighlight : MI_HighGreen2 = MI_HighGreen2{}
+    var GreenThreeHighlight : MI_HighGreen3 = MI_HighGreen3{}
+
+    var BlueZeroHighlight : MI_HighBlue = MI_HighBlue{}
+    var BlueOneHighlight : MI_HighBlue1 = MI_HighBlue1{}
+    var BlueTwoHighlight : MI_HighBlue2 = MI_HighBlue2{}
+    var BlueThreeHighlight : MI_HighBlue3 = MI_HighBlue3{}
+
+    var YellowZeroHighlight : MI_HighYellow = MI_HighYellow{}
+    var YellowOneHighlight : MI_HighYellow1 = MI_HighYellow1{}
+    var YellowTwoHighlight : MI_HighYellow2 = MI_HighYellow2{}
+    var YellowThreeHighlight : MI_HighYellow3 = MI_HighYellow3{}
+
+    var PlayerIcon : MaI_NormPI = MaI_NormPI{}
+    NormAv : texture = Pawn1
+
+    var RollingDice : MI_DiceRolls = MI_DiceRolls{}
+    var Dice1Value : MI_DiceValue1 = MI_DiceValue1{}
+    var Dice2Value : MI_DiceValue2 = MI_DiceValue2{}
+    var Dice3Value : MI_DiceValue3 = MI_DiceValue3{}
+    var Dice4Value : MI_DiceValue4 = MI_DiceValue4{}
+    var Dice5Value : MI_DiceValue5 = MI_DiceValue5{}
+    var Dice6Value : MI_DiceValue6 = MI_DiceValue6{}
+    var MICrownOne : MI_CrownOne = MI_CrownOne{}
+    var MICrownTwo : MI_CrownTwo = MI_CrownTwo{}
+    var MICrownThree : MI_CrownThree = MI_CrownThree{}
+    var MInbRed : MI_NumerRed = MI_NumerRed{}
+    var MInbBlue : MI_NumerBlue = MI_NumerBlue{}
+    var MInbYellow : MI_NumerYellow = MI_NumerYellow{}
+    var MInbGreen : MI_NumerGreen = MI_NumerGreen{}
+    var MIInv : MI_Invisible = MI_Invisible{}
+
+    var RedDiceRollValue : int = 0
+    var BlueDiceRollValue : int = 0
+    var GreenDiceRollValue : int = 0
+    var YellowDiceRollValue : int = 0
+
+    var GameStarted:logic = false 
+    var AllPlayersPawns : []creative_prop = array{}
+
+    var AllRedPawn : []creative_prop = array{}
+    var AllBluePawn : []creative_prop = array{}
+    var AllYellowPawn : []creative_prop = array{}
+    var AllGreenPawn : []creative_prop = array{}
+
+    # Track current path index for each pawn
+    var RedPawnIndex : int = -1 #-1 indicates the pawn is not yet on the path
+    var RedPawnOneIndex : int = -1
+    var RedPawnTwoIndex : int = -1
+    var RedPawnThreeIndex : int = -1
+
+    var BluePawnIndex : int = -1
+    var BluePawnOneIndex : int = -1
+    var BluePawnTwoIndex : int = -1
+    var BluePawnThreeIndex : int = -1
+
+    var YellowPawnIndex : int = -1
+    var YellowPawnOneIndex : int = -1
+    var YellowPawnTwoIndex : int = -1
+    var YellowPawnThreeIndex : int = -1
+
+    var GreenPawnIndex : int = -1
+    var GreenPawnOneIndex : int = -1
+    var GreenPawnTwoIndex : int = -1
+    var GreenPawnThreeIndex : int = -1
+
+    # Store initial transforms for respawn
+    var RedPawnInitialTransform : transform = transform{}
+    var RedPawnOneInitialTransform : transform = transform{}
+    var RedPawnTwoInitialTransform : transform = transform{}
+    var RedPawnThreeInitialTransform : transform = transform{}
+
+    var BluePawnInitialTransform : transform = transform{}
+    var BluePawnOneInitialTransform : transform = transform{}
+    var BluePawnTwoInitialTransform : transform = transform{}
+    var BluePawnThreeInitialTransform : transform = transform{}
+
+    var YellowPawnInitialTransform : transform = transform{}
+    var YellowPawnOneInitialTransform : transform = transform{}
+    var YellowPawnTwoInitialTransform : transform = transform{}
+    var YellowPawnThreeInitialTransform : transform = transform{}
+    
+    var GreenPawnInitialTransform : transform = transform{}
+    var GreenPawnOneInitialTransform : transform = transform{}
+    var GreenPawnTwoInitialTransform : transform = transform{}
+    var GreenPawnThreeInitialTransform : transform = transform{}
+
+    @editable {Categories := array{XPTip}} Accolade1 : accolades_device = accolades_device{}
+    @editable {Categories := array{XPTip}} Accolade2 : accolades_device = accolades_device{}
+    @editable {Categories := array{XPTip}} Accolade3 : accolades_device = accolades_device{}
+
+    var RedConsecutiveSixes : int = 0       
+    var GreenConsecutiveSixes : int = 0
+    var BlueConsecutiveSixes : int = 0
+    var YellowConsecutiveSixes : int = 0
+
+    var LdoPlayer : ?agent = false
+    var tempLdoPlayer : ?agent = false
+
+    var RedPlayerTurn : logic = false
+    var GreenPlayerTurn : logic = false
+    var BluePlayerTurn : logic = false
+    var YellowPlayerTurn : logic = false
+
+    var RedFinished : logic = false
+    var RedOneFinished : logic = false
+    var RedTwoFinished : logic = false
+    var RedThreeFinished : logic = false
+
+    var BlueFinished : logic = false
+    var BlueOneFinished : logic = false
+    var BlueTwoFinished : logic = false
+    var BlueThreeFinished : logic = false
+
+    var YellowFinished : logic = false
+    var YellowOneFinished : logic = false
+    var YellowTwoFinished : logic = false
+    var YellowThreeFinished : logic = false
+
+    var GreenFinished : logic = false
+    var GreenOneFinished : logic = false
+    var GreenTwoFinished : logic = false
+    var GreenThreeFinished : logic = false
+
+    var WhichColorElim : int = -1 #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
+
+    var RollerForPlayer : int = 0
+    var DoubleRollFlagPlayer : logic = false
+
+    var RedEnd : int = 0
+    var BlueEnd : int = 0 
+    var GreenEnd : int = 0
+    var YellowEnd : int = 0
+
+    var FinishedOrder :[]int =array{} 
+    #var ActivePlayerCount : int = 0  always 4 or none
+    var ConfirmFlag : logic = false
+    #var GameFormat : int = 0 always 4 or none
+
+    # Runs when the device is started in a running game
+    OnBegin<override>()<suspends>:void=
+        InitialInitiator()     
+        set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree, BluePawn, BluePawnOne,
+                                    BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
+                                    YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+        for(PlayerPawn : AllPlayersPawns):
+            PlayerPawn.Hide()
+
+        JoinButton.InteractedWithEvent.Subscribe(PlayerJoined)
+        Select.PressedEvent.Subscribe(SelectPressed)
+        ConfirmInput.PressedEvent.Subscribe(ConfirmPressed)
+        Leave.PressedEvent.Subscribe(PlayerExiting)
+        DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
+        GetPlayspace().PlayerRemovedEvent().Subscribe(PlayerExiting)
+
+    InitialInitiator():void=
+        set RedPawnInitialTransform = RedPawn.GetTransform()
+        set RedPawnOneInitialTransform = RedPawnOne.GetTransform()
+        set RedPawnTwoInitialTransform = RedPawnTwo.GetTransform()
+        set RedPawnThreeInitialTransform = RedPawnThree.GetTransform()
+        set BluePawnInitialTransform = BluePawn.GetTransform()
+        set BluePawnOneInitialTransform = BluePawnOne.GetTransform()
+        set BluePawnTwoInitialTransform = BluePawnTwo.GetTransform()
+        set BluePawnThreeInitialTransform = BluePawnThree.GetTransform()
+        set YellowPawnInitialTransform = YellowPawn.GetTransform()
+        set YellowPawnOneInitialTransform = YellowPawnOne.GetTransform()
+        set YellowPawnTwoInitialTransform = YellowPawnTwo.GetTransform()
+        set YellowPawnThreeInitialTransform = YellowPawnThree.GetTransform()
+        set GreenPawnInitialTransform = GreenPawn.GetTransform()
+        set GreenPawnOneInitialTransform = GreenPawnOne.GetTransform()
+        set GreenPawnTwoInitialTransform = GreenPawnTwo.GetTransform()
+        set GreenPawnThreeInitialTransform = GreenPawnThree.GetTransform()
+        ResetPlayerDrainerProfile()
+    
+    PlayerJoined(Agent : agent):void=
+        ()
+
+    SelectPressed(Agent:agent):void=
+        ()
+
+    DiceRollPressed(Agent:agent):void=
+        ()
+
+    ConfirmPressed(Agent:agent):void=
+        ()
+
+    PlayerExiting(Agent:agent):void=
+        ()
+
+    ResetPlayerDrainerProfile():void=(
+        if(RedPropProfile := RedDiceProp[1]): #the blinking ones
+            RedPropProfile.Hide()
+        if(BluePropProfile := BlueDiceProp[1]):
+            BluePropProfile.Hide()
+        if(GreenPropProfile := GreenDiceProp[1]):
+            GreenPropProfile.Hide()
+        if(YellowPropProfile := YellowDiceProp[1]):
+            YellowPropProfile.Hide()
+    )
+
+
+       
