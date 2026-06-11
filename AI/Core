@@ -6,6 +6,7 @@ using { /Verse.org/Assets }
 using { /UnrealEngine.com/Temporary/SpatialMath}
 using { /Fortnite.com/Characters }
 using {/Verse.org/SceneGraph}
+using { /Verse.org/Random }
 using {AIMInstance}
 using {F_WIdget}
 using {PawnMInstance}
@@ -288,9 +289,103 @@ LudoManagerAi := class(creative_device):
                 Print("Game Started")
 
     SelectPressed(Agent:agent):void=
-        ()
+        var Attempts:int = 0
+        
+        if(LdoPlayer = option{Agent} and RedPlayerTurn = true  and ConfirmFlag = false):
+            loop:
+                if(Attempts >= 4):
+                    break
+                if (RollerForPlayer = 0 and RedFinished = false):
+                    ResetAllHighlights()
+                    set RedZeroHighlight.HIghlightIntensity = 20.0
+                    RedPawn.SetMaterial(RedZeroHighlight)
+                    set RollerForPlayer += 1
+                    APHighlight.Play(Agent)
+                    Print("Higlidhting Red Pawn 0")
+                    break
+                else if (RollerForPlayer = 1 and RedOneFinished = false):
+                    ResetAllHighlights()
+                    set RedOneHighlight.HIghlightIntensity = 20.0
+                    RedPawnOne.SetMaterial(RedOneHighlight)
+                    set RollerForPlayer += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if (RollerForPlayer = 2 and RedTwoFinished = false):
+                    ResetAllHighlights()
+                    set RedTwoHighlight.HIghlightIntensity = 20.0
+                    RedPawnTwo.SetMaterial(RedTwoHighlight)
+                    set RollerForPlayer += 1
+                    APHighlight.Play(Agent)
+                    break
+                else if ( RollerForPlayer = 3 and RedThreeFinished = false):
+                    ResetAllHighlights()
+                    set RedThreeHighlight.HIghlightIntensity = 20.0
+                    RedPawnThree.SetMaterial(RedThreeHighlight)
+                    set RollerForPlayer = 0
+                    APHighlight.Play(Agent)
+                    break
+                else:
+                    if(RollerForPlayer = 0 and RedFinished = true):
+                        set RollerForPlayer = 1
+                    else if(RollerForPlayer = 1 and RedOneFinished = true):
+                        set RollerForPlayer = 2
+                    else if(RollerForPlayer = 2 and RedTwoFinished = true):
+                        set RollerForPlayer = 3
+                    else if(RollerForPlayer = 3 and RedThreeFinished = true):
+                        set RollerForPlayer = 0
+                    set Attempts += 1
+        
 
     DiceRollPressed(Agent:agent):void=
+        if(LdoPlayer = option{Agent} and RedPlayerTurn = true): #removes else if from this function for PlayTesting
+            Print("Red Pressing")
+            if(DoubleRollFlagPlayer = false):
+                RollValue := GetRandomInt(1,6)
+                set RedDiceRollValue = RollValue
+                APDice.Play(Agent)
+                if(DiceProp := RedDiceProp[0]):
+                    DiceProp.SetMaterial(RollingDice)  
+                    spawn{HelperDiceRoll(Agent)}
+                    spawn{PossibleMoveChecker(Agent)}
+                set DoubleRollFlagPlayer = true
+                set ConfirmFlag = false
+                Print("Dice Rolled: {RollValue}")
+
+        else if(BluePlayerTurn = true):
+                RollValue := GetRandomInt(1,6)
+                set BlueDiceRollValue = RollValue
+                APDice.Play(Agent)
+                if(DiceProp := BlueDiceProp[0]):
+                    DiceProp.SetMaterial(RollingDice)
+                    spawn{HelperDiceRoll(Agent)}
+                    spawn{PossibleMoveChecker(Agent)}
+                set ConfirmFlag = false
+                Print("Dice Rolled: {RollValue} ")
+
+        else if(GreenPlayerTurn = true):
+                RollValue := GetRandomInt(1,6)
+                set GreenDiceRollValue = RollValue
+                APDice.Play(Agent)
+                if(DiceProp := GreenDiceProp[0]):
+                    DiceProp.SetMaterial(RollingDice)
+                    spawn{HelperDiceRoll(Agent)}
+                    spawn{PossibleMoveChecker(Agent)}
+                set ConfirmFlag = false
+                Print("Dice Rolled: {RollValue} ")
+                
+        else if(YellowPlayerTurn = true):
+            Print("Agent yellow found")
+                RollValue := GetRandomInt(1,6)
+                set YellowDiceRollValue = RollValue
+                APDice.Play(Agent)
+                if(DiceProp := YellowDiceProp[0]):
+                    DiceProp.SetMaterial(RollingDice)
+                    spawn{HelperDiceRoll(Agent)}
+                    spawn{PossibleMoveChecker(Agent)}
+                set ConfirmFlag = false
+                Print("Dice Rolled: {RollValue} ")
+    
+    HelperDiceRoll(Agent : agent)<suspends>:void=
         ()
 
     ConfirmPressed(Agent:agent):void=
@@ -351,4 +446,136 @@ LudoManagerAi := class(creative_device):
 
     CheckTimerForYellow()<suspends>:void=
         ()
+
+    ResetAllHighlights():void=(
+        #red
+            set RedZeroHighlight.HIghlightIntensity = 0.0
+            RedPawn.SetMaterial(RedZeroHighlight)
+            set RedOneHighlight.HIghlightIntensity = 0.0
+            RedPawnOne.SetMaterial(RedOneHighlight)
+            set RedTwoHighlight.HIghlightIntensity = 0.0
+            RedPawnTwo.SetMaterial(RedTwoHighlight)
+            set RedThreeHighlight.HIghlightIntensity = 0.0
+            RedPawnThree.SetMaterial(RedThreeHighlight)
+        #blue
+            set BlueZeroHighlight.HIghlightIntensity = 0.0
+            BluePawn.SetMaterial(BlueZeroHighlight)
+            set BlueOneHighlight.HIghlightIntensity = 0.0
+            BluePawnOne.SetMaterial(BlueOneHighlight)
+            set BlueTwoHighlight.HIghlightIntensity = 0.0
+            BluePawnTwo.SetMaterial(BlueTwoHighlight)
+            set BlueThreeHighlight.HIghlightIntensity = 0.0
+            BluePawnThree.SetMaterial(BlueThreeHighlight)
+        #green
+            set GreenZeroHighlight.HIghlightIntensity = 0.0
+            GreenPawn.SetMaterial(GreenZeroHighlight)
+            set GreenOneHighlight.HIghlightIntensity = 0.0
+            GreenPawnOne.SetMaterial(GreenOneHighlight)
+            set GreenTwoHighlight.HIghlightIntensity = 0.0
+            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
+            set GreenThreeHighlight.HIghlightIntensity = 0.0
+            GreenPawnThree.SetMaterial(GreenThreeHighlight)
+        #yellow
+            set YellowZeroHighlight.HIghlightIntensity = 0.0
+            YellowPawn.SetMaterial(YellowZeroHighlight)
+            set YellowOneHighlight.HIghlightIntensity = 0.0
+            YellowPawnOne.SetMaterial(YellowOneHighlight)
+            set YellowTwoHighlight.HIghlightIntensity = 0.0
+            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
+            set YellowThreeHighlight.HIghlightIntensity = 0.0
+            YellowPawnThree.SetMaterial(YellowThreeHighlight)
+    )
+
+    PossibleMoveChecker(Agent:agent)<suspends>:void=(
+        ###after a dice roll, for perticular player check if the player can make a move with any of its pawn, 
+        ##if not then switch the turm to the next player###
+        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
+        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
+        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
+        var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
+        var CanMove : logic = false
+        PathLenght := RedPaths.Length #same number for each
+        
+        if(LdoPlayer = option{Agent} and RedPlayerTurn = true):
+            for(PawnIdx : RedPawnIndices):
+                if(PawnIdx = -1 and RedDiceRollValue = 6):
+                    set CanMove = true
+                else if(PawnIdx >= 0 and PawnIdx + RedDiceRollValue < PathLenght):
+                    set CanMove = true
+                
+            if(CanMove = true):
+                Print("nothing to do stay as it is")
+                if(RedPlayerTurn = true):
+                    spawn{CheckTimerForRed()}
+            else:
+                Sleep(1.0)
+                set RedPlayerTurn = false
+                set BluePlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
+                set DoubleRollFlagPlayer = false
+                set ConfirmFlag = false
+                TimerCheckerHelper()
+                Print("False cant move")
+
+        else if( BluePlayerTurn = true):
+            for(PawnIdx : BluePawnIndices):
+                if(PawnIdx = -1 and BlueDiceRollValue = 6):
+                    set CanMove = true
+                else if(PawnIdx >= 0 and PawnIdx + BlueDiceRollValue < PathLenght):
+                    set CanMove = true
+
+            if(CanMove = true):
+                Print("nothing to do stay as it is")
+                if(BluePlayerTurn = true):
+                    spawn{CheckTimerForBlue()}
+            else:
+                Sleep(1.0)
+                set BluePlayerTurn = false
+                set YellowPlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
+                set ConfirmFlag = false
+                TimerCheckerHelper()
+                Print("False cant move")
+
+        else if(YellowPlayerTurn = true):
+            for(PawnIdx : YellowPawnIndices):
+                if(PawnIdx = -1 and YellowDiceRollValue = 6):
+                    set CanMove = true
+                else if(PawnIdx >= 0 and PawnIdx + YellowDiceRollValue < PathLenght):
+                    set CanMove = true
+
+            if(CanMove = true):
+                Print("nothing to do stay as it is")
+                if(YellowPlayerTurn = true):
+                    spawn{CheckTimerForYellow()}
+            else:
+                Sleep(1.0)
+                set YellowPlayerTurn = false
+                set GreenPlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
+                set ConfirmFlag = false
+                TimerCheckerHelper()
+                Print("False cant move")
+
+        else if(GreenPlayerTurn = true):
+            for(PawnIdx : GreenPawnIndices):
+                if(PawnIdx = -1 and GreenDiceRollValue = 6):
+                    set CanMove = true
+                else if(PawnIdx >= 0 and PawnIdx + GreenDiceRollValue < PathLenght):
+                    set CanMove = true
+
+            if(CanMove = true):
+                Print("nothing to do stay as it is")
+                if(GreenPlayerTurn = true):
+                    spawn{CheckTimerForGreen()}
+            else:
+                Sleep(1.0)
+                set GreenPlayerTurn = false
+                set RedPlayerTurn = true
+                spawn{HelperPlayerProfileTurn()}
+                set ConfirmFlag = false
+                TimerCheckerHelper()
+                Print("False cant move")
+    )
+        
         
