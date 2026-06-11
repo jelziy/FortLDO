@@ -182,7 +182,10 @@ LudoManagerAi := class(creative_device):
     var BlueConsecutiveSixes : int = 0
     var YellowConsecutiveSixes : int = 0
 
-    var LdoPlayer : ?agent = false
+    var RedPlayer : ?agent = false
+    var BluePlayer : logic = false
+    var YellowPlayer : logic = false
+    var GreenPlayer : logic = false
     var tempLdoPlayer : ?agent = false
 
     var RedPlayerTurn : logic = false
@@ -221,7 +224,7 @@ LudoManagerAi := class(creative_device):
     var YellowEnd : int = 0
 
     var FinishedOrder :[]int =array{} 
-    ActivePlayerCount : int = 4
+    var ActivePlayerCount : int = 0
     var ConfirmFlag : logic = false
     #var GameFormat : int = 0 always 4 or none
 
@@ -261,13 +264,18 @@ LudoManagerAi := class(creative_device):
         ResetPlayerDrainerProfile()
     
     GameStartInitiator()<suspends>:void=
+        set BluePlayer = true
+        set GreenPlayer = true
+        set YellowPlayer = true
+        #only 4 player game for now
         set GameStarted = true
         set RedPlayerTurn = true
+        set ActivePlayerCount = 4
         spawn{HelperPlayerProfileTurn()}
         
     PlayerJoined(Agent : agent):void=
-        if(LdoPlayer = false and GameStarted = false):
-            set LdoPlayer = option{Agent}
+        if(RedPlayer = false and GameStarted = false):
+            set RedPlayer = option{Agent}
             PlayerCamera.AddTo(Agent)
             PlayerChair.Seat(Agent)
             PlayerChair.DisableExit()
@@ -291,7 +299,7 @@ LudoManagerAi := class(creative_device):
     SelectPressed(Agent:agent):void=
         var Attempts:int = 0
         
-        if(LdoPlayer = option{Agent} and RedPlayerTurn = true  and ConfirmFlag = false):
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true  and ConfirmFlag = false):
             loop:
                 if(Attempts >= 4):
                     break
@@ -337,7 +345,7 @@ LudoManagerAi := class(creative_device):
         
 
     DiceRollPressed(Agent:agent):void=
-        if(LdoPlayer = option{Agent} and RedPlayerTurn = true): #removes else if from this function for PlayTesting
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true): #removes else if from this function for PlayTesting
             Print("Red Pressing")
             if(DoubleRollFlagPlayer = false):
                 RollValue := GetRandomInt(1,6)
@@ -405,7 +413,7 @@ LudoManagerAi := class(creative_device):
             YellowPropProfile.Hide()
     )
 
-    HelperPlayerProfileTurn()<suspends>:void=
+    HelperPlayerProfileTurn()<suspends>:void=(
         if(RedPlayerTurn = true):
             if(RedPropProfile := RedDiceProp[1]):
                 ResetPlayerDrainerProfile()
@@ -434,6 +442,7 @@ LudoManagerAi := class(creative_device):
                 YellowPropProfile.Show()
             Print("Yellow Player's Turn")
             spawn{CheckTimerForYellow()}
+    )
 
     CheckTimerForRed()<suspends>:void=
         var StartTime: float = GetSimulationElapsedTime()
@@ -446,16 +455,26 @@ LudoManagerAi := class(creative_device):
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set RedPlayerTurn = false
-                set BluePlayerTurn = true
+                if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
                 set DoubleRollFlagPlayer = false
                 set RedConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
 
-            else if(LdoPlayer = false):
+            else if(RedPlayer = false):
                 set RedPlayerTurn = false
-                set BluePlayerTurn = true
+                if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
                 set DoubleRollFlagPlayer = false
                 set RedConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
@@ -474,13 +493,31 @@ LudoManagerAi := class(creative_device):
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set BluePlayerTurn = false
-                set YellowPlayerTurn = true
+                if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+                set DoubleRollFlagPlayer = false
                 set BlueConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
-            
-            #since its ai every player is always there when playing
+
+            else if(BluePlayer = false):
+                set BluePlayerTurn = false
+                if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+                set BlueConsecutiveSixes = 0
+                set DoubleRollFlagPlayer = false
+                spawn{HelperPlayerProfileTurn()}
+                TimerCheckerHelper()
+                return
 
 
     CheckTimerForGreen()<suspends>:void=
@@ -494,16 +531,35 @@ LudoManagerAi := class(creative_device):
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set GreenPlayerTurn = false
-                set RedPlayerTurn = true
-                set GreenConsecutiveSixes = 0
+                if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
                 set DoubleRollFlagPlayer = false
+                set GreenConsecutiveSixes = 0
+                spawn{HelperPlayerProfileTurn()}
+                TimerCheckerHelper()
+                return
+
+            else if(GreenPlayer = false):
+                set GreenPlayerTurn = false
+                if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                set DoubleRollFlagPlayer = false
+                set GreenConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
 
 
     CheckTimerForYellow()<suspends>:void=
-        var StartTime: float = GetSimulationElapsedTime()
+         var StartTime: float = GetSimulationElapsedTime()
         loop:
             Sleep(0.2)
             if(YellowPlayerTurn = false):
@@ -513,7 +569,26 @@ LudoManagerAi := class(creative_device):
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
                 set YellowPlayerTurn = false
-                set GreenPlayerTurn = true
+                if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                set YellowConsecutiveSixes = 0
+                set DoubleRollFlagPlayer = false
+                spawn{HelperPlayerProfileTurn()}
+                TimerCheckerHelper()
+                return
+            else if(YellowPlayer = false):
+                set YellowPlayerTurn = false
+                if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                set DoubleRollFlagPlayer = false
                 set YellowConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
@@ -569,7 +644,7 @@ LudoManagerAi := class(creative_device):
         var CanMove : logic = false
         PathLenght := RedPaths.Length #same number for each
         
-        if(LdoPlayer = option{Agent} and RedPlayerTurn = true):
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
             for(PawnIdx : RedPawnIndices):
                 if(PawnIdx = -1 and RedDiceRollValue = 6):
                     set CanMove = true
@@ -583,14 +658,19 @@ LudoManagerAi := class(creative_device):
             else:
                 Sleep(1.0)
                 set RedPlayerTurn = false
-                set BluePlayerTurn = true
+                if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set DoubleRollFlagPlayer = false
                 set ConfirmFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
-        else if( BluePlayerTurn = true):
+        else if( BluePlayer = true and BluePlayerTurn = true):
             for(PawnIdx : BluePawnIndices):
                 if(PawnIdx = -1 and BlueDiceRollValue = 6):
                     set CanMove = true
@@ -604,13 +684,18 @@ LudoManagerAi := class(creative_device):
             else:
                 Sleep(1.0)
                 set BluePlayerTurn = false
-                set YellowPlayerTurn = true
+                if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set ConfirmFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
-        else if(YellowPlayerTurn = true):
+        else if(YellowPlayer = true and YellowPlayerTurn = true):
             for(PawnIdx : YellowPawnIndices):
                 if(PawnIdx = -1 and YellowDiceRollValue = 6):
                     set CanMove = true
@@ -624,13 +709,18 @@ LudoManagerAi := class(creative_device):
             else:
                 Sleep(1.0)
                 set YellowPlayerTurn = false
-                set GreenPlayerTurn = true
+                if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set ConfirmFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
-        else if(GreenPlayerTurn = true):
+        else if(GreenPlayer = true and GreenPlayerTurn = true):
             for(PawnIdx : GreenPawnIndices):
                 if(PawnIdx = -1 and GreenDiceRollValue = 6):
                     set CanMove = true
@@ -644,7 +734,12 @@ LudoManagerAi := class(creative_device):
             else:
                 Sleep(1.0)
                 set GreenPlayerTurn = false
-                set RedPlayerTurn = true
+                if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
                 spawn{HelperPlayerProfileTurn()}
                 set ConfirmFlag = false
                 TimerCheckerHelper()
