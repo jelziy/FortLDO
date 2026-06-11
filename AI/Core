@@ -444,7 +444,7 @@ LudoManagerAi := class(creative_device):
             spawn{CheckTimerForYellow()}
     )
 
-    CheckTimerForRed()<suspends>:void=
+    CheckTimerForRed()<suspends>:void=(
         var StartTime: float = GetSimulationElapsedTime()
         loop:
             Sleep(0.2)
@@ -481,8 +481,9 @@ LudoManagerAi := class(creative_device):
                 TimerCheckerHelper()
 
                 return
+    )
     
-    CheckTimerForBlue()<suspends>:void=
+    CheckTimerForBlue()<suspends>:void=(
         var StartTime: float = GetSimulationElapsedTime()
         loop:
             Sleep(0.2)
@@ -518,9 +519,9 @@ LudoManagerAi := class(creative_device):
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
+    )
 
-
-    CheckTimerForGreen()<suspends>:void=
+    CheckTimerForGreen()<suspends>:void=(
         var StartTime: float = GetSimulationElapsedTime()
         loop:
             Sleep(0.2)
@@ -556,9 +557,9 @@ LudoManagerAi := class(creative_device):
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
+    )
 
-
-    CheckTimerForYellow()<suspends>:void=
+    CheckTimerForYellow()<suspends>:void=(
          var StartTime: float = GetSimulationElapsedTime()
         loop:
             Sleep(0.2)
@@ -593,7 +594,7 @@ LudoManagerAi := class(creative_device):
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
-
+    )
                 
     ResetAllHighlights():void=(
         #red
