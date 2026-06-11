@@ -1282,7 +1282,45 @@ LudoManager := class(creative_device):
             else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
     )
-
+    
+    TurnChanger(Turn:int):void=(
+        if(Turn = 1): #1 red false , 2 blue false and so on
+            set RedPlayerTurn = false
+            if(BluePlayer?):
+                set BluePlayerTurn = true
+            else if(YellowPlayer?):
+                set YellowPlayerTurn = true
+            else if(GreenPlayer?):
+                set GreenPlayerTurn = true
+            spawn . HelperPlayerProfileTurn()
+        else if(Turn = 2):
+            set BluePlayerTurn = false
+            if(YellowPlayer?):
+                set YellowPlayerTurn = true
+            else if(GreenPlayer?):
+                set GreenPlayerTurn = true
+            else if(RedPlayer?):
+                set RedPlayerTurn = true
+            spawn . HelperPlayerProfileTurn()
+        else if(Turn = 3):
+            set YellowPlayerTurn = false
+            if(GreenPlayer?):
+                set GreenPlayerTurn = true
+            else if(RedPlayer?):
+                set RedPlayerTurn = true
+            else if(BluePlayer?):
+                set BluePlayerTurn = true
+            spawn. HelperPlayerProfileTurn()
+        else if(Turn = 4):
+            set GreenPlayerTurn = false
+            if(RedPlayer?):
+                set RedPlayerTurn = true
+            else if(BluePlayer?):
+                set BluePlayerTurn = true
+            else if(YellowPlayer?):
+                set YellowPlayerTurn = true
+            spawn. HelperPlayerProfileTurn()
+    )
 
     TimerCheckerHelper():void=(
         spawn{CheckTimerForBlue()}
@@ -1314,14 +1352,7 @@ LudoManager := class(creative_device):
                     spawn{CheckTimerForRed()}
             else:
                 Sleep(1.0)
-                set RedPlayerTurn = false
-                if(BluePlayer?):
-                    set BluePlayerTurn = true
-                else if(YellowPlayer?):
-                    set YellowPlayerTurn = true
-                else if(GreenPlayer?):
-                    set GreenPlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
+                TurnChanger(1)
                 set DoubleRollFlagRed = false
                 set ConfirmFlag = false
                 TimerCheckerHelper()
@@ -1340,14 +1371,7 @@ LudoManager := class(creative_device):
                     spawn{CheckTimerForBlue()}
             else:
                 Sleep(1.0)
-                set BluePlayerTurn = false
-                if(YellowPlayer?):
-                    set YellowPlayerTurn = true
-                else if(GreenPlayer?):
-                    set GreenPlayerTurn = true
-                else if(RedPlayerTurn = true):
-                    set RedPlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
+                TurnChanger(2)
                 set DoubleRollFlagBlue = false
                 set ConfirmFlag = false
                 TimerCheckerHelper()
@@ -1366,14 +1390,7 @@ LudoManager := class(creative_device):
                     spawn{CheckTimerForYellow()}
             else:
                 Sleep(1.0)
-                set YellowPlayerTurn = false
-                if(GreenPlayer?):
-                    set GreenPlayerTurn = true
-                else if(RedPlayer?):
-                    set RedPlayerTurn = true
-                else if(BluePlayer?):
-                    set BluePlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
+                TurnChanger(3)
                 set DoubleRollFlagYellow = false
                 set ConfirmFlag = false
                 TimerCheckerHelper()
@@ -1392,14 +1409,7 @@ LudoManager := class(creative_device):
                     spawn{CheckTimerForGreen()}
             else:
                 Sleep(1.0)
-                set GreenPlayerTurn = false
-                if(RedPlayer?):
-                    set RedPlayerTurn = true
-                else if(BluePlayer?):
-                    set BluePlayerTurn = true
-                else if(YellowPlayer?):
-                    set YellowPlayerTurn = true
-                spawn{HelperPlayerProfileTurn()}
+                TurnChanger(4)
                 set DoubleRollFlagGreen = false
                 set ConfirmFlag = false
                 TimerCheckerHelper()
@@ -1407,14 +1417,6 @@ LudoManager := class(creative_device):
         
     )
     
-    ConfirmFlagfalseSetter():void=(
-        set ConfirmFlag = false
-    )
-
-    ConfirmFlagTrueSetter():void=(
-        set ConfirmFlag = true
-    )
-
     SoundPlayMove()<suspends>:void=(
         APMove.Play() 
         Print("move playing")
@@ -1425,7 +1427,7 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
         var WhichPawn : int = -1
-        ConfirmFlagTrueSetter()
+        set ConfirmFlag = true
 
         if(CurrentIndex = -1 and RedDiceRollValue = 6):
             if(Path := RedPaths[0]):
@@ -1437,13 +1439,7 @@ LudoManager := class(creative_device):
                     set CurrentIndex = 0
                     set RedConsecutiveSixes += 1
                     if(RedConsecutiveSixes >= 3):
-                        set RedPlayerTurn = false
-                        if(BluePlayer?):
-                            set BluePlayerTurn = true
-                        else if(YellowPlayer?):
-                            set YellowPlayerTurn = true
-                        else if(GreenPlayer?):
-                            set GreenPlayerTurn = true
+                        TurnChanger(1)
                         set RedConsecutiveSixes = 0
                     # else keep turn
                     set RedDiceRollValue = 0
@@ -1470,24 +1466,12 @@ LudoManager := class(creative_device):
                     if(RedDiceRollValue = 6):
                         set RedConsecutiveSixes += 1
                         if(RedConsecutiveSixes >= 3):
-                            set RedPlayerTurn = false
-                            if(BluePlayer?):
-                                set BluePlayerTurn = true
-                            else if(YellowPlayer?):
-                                set YellowPlayerTurn = true
-                            else if(GreenPlayer?):
-                                set GreenPlayerTurn = true
+                            TurnChanger(1)
                             set RedConsecutiveSixes = 0
                         # else keep turn
                     else:
                         set RedConsecutiveSixes = 0
-                        set RedPlayerTurn = false
-                        if(BluePlayer?):
-                            set BluePlayerTurn = true
-                        else if(YellowPlayer?):
-                            set YellowPlayerTurn = true
-                        else if(GreenPlayer?):
-                            set GreenPlayerTurn = true
+                        TurnChanger(1)
                     set RedDiceRollValue = 0
                     set DoubleRollFlagRed = false
 
@@ -1516,7 +1500,7 @@ LudoManager := class(creative_device):
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
-        ConfirmFlagfalseSetter()
+        set ConfirmFlag = false
     )
 
     MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1524,7 +1508,7 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
         var WhichPawn : int = -1
-        ConfirmFlagTrueSetter()
+        set ConfirmFlag = true
         
         if(CurrentIndex = -1 and BlueDiceRollValue = 6):
             if(Path := BluePaths[0]):
@@ -1536,13 +1520,7 @@ LudoManager := class(creative_device):
                     set CurrentIndex = 0
                     set BlueConsecutiveSixes += 1
                     if(BlueConsecutiveSixes >= 3):
-                        set BluePlayerTurn = false
-                        if(YellowPlayer?):
-                            set YellowPlayerTurn = true
-                        else if(GreenPlayer?):
-                            set GreenPlayerTurn = true
-                        else if(RedPlayer?):
-                            set RedPlayerTurn = true
+                        TurnChanger(2)
                         set BlueConsecutiveSixes = 0
                     # else keep turn
                     set BlueDiceRollValue = 0
@@ -1569,26 +1547,14 @@ LudoManager := class(creative_device):
                         set BlueConsecutiveSixes += 1
                         if(BlueConsecutiveSixes >= 3):
                             # Switch to Green turn, reset counter
-                            set BluePlayerTurn = false
-                            if(YellowPlayer?):
-                                set YellowPlayerTurn = true
-                            else if(GreenPlayer?):
-                                set GreenPlayerTurn = true
-                            else if(RedPlayer?):
-                                set RedPlayerTurn = true
+                            TurnChanger(2)
                             set BlueConsecutiveSixes = 0
                         else:
                             # Keep turn
                             set BluePlayerTurn = true
                     else:
                         set BlueConsecutiveSixes = 0
-                        set BluePlayerTurn = false
-                        if(YellowPlayer?):
-                            set YellowPlayerTurn = true
-                        else if(GreenPlayer?):
-                            set GreenPlayerTurn = true
-                        else if(RedPlayer?):
-                            set RedPlayerTurn = true
+                        TurnChanger(2)
                     set BlueDiceRollValue = 0
                     set DoubleRollFlagBlue = false
             else:
@@ -1615,7 +1581,7 @@ LudoManager := class(creative_device):
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
-        ConfirmFlagfalseSetter()
+        set ConfirmFlag = false
     )
 
     MovePawnYellow(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1623,7 +1589,7 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
         var WhichPawn : int = -1
-        ConfirmFlagTrueSetter()
+        set ConfirmFlag = true
 
         if(CurrentIndex = -1 and YellowDiceRollValue = 6):
             if(Path := YellowPaths[0]):
@@ -1635,13 +1601,7 @@ LudoManager := class(creative_device):
                     set CurrentIndex = 0
                     set YellowConsecutiveSixes += 1
                     if(YellowConsecutiveSixes >= 3):
-                        set YellowPlayerTurn = false
-                        if(GreenPlayer?):
-                            set GreenPlayerTurn = true
-                        else if(RedPlayer?):
-                            set RedPlayerTurn = true
-                        else if(BluePlayer?):
-                            set BluePlayerTurn = true
+                        TurnChanger(3)
                         set YellowConsecutiveSixes = 0
                     # else keep turn
                     set YellowDiceRollValue = 0
@@ -1668,26 +1628,14 @@ LudoManager := class(creative_device):
                         set YellowConsecutiveSixes += 1
                         if(YellowConsecutiveSixes >= 3):
                             # Switch to Red turn, reset counter
-                            set YellowPlayerTurn = false
-                            if(GreenPlayer?):
-                                set GreenPlayerTurn = true
-                            else if(RedPlayer?):
-                                set RedPlayerTurn = true
-                            else if(BluePlayer?):
-                                set BluePlayerTurn = true
+                            TurnChanger(3)
                             set YellowConsecutiveSixes = 0
                         else:
                             # Keep turn
                             set YellowPlayerTurn = true
                     else:
                         set YellowConsecutiveSixes = 0
-                        set YellowPlayerTurn = false
-                        if(GreenPlayer?):
-                            set GreenPlayerTurn = true
-                        else if(RedPlayer?):
-                            set RedPlayerTurn = true
-                        else if(BluePlayer?):
-                            set BluePlayerTurn = true
+                        TurnChanger(3)
                     set YellowDiceRollValue = 0
                     set DoubleRollFlagYellow = false
             else:
@@ -1714,7 +1662,7 @@ LudoManager := class(creative_device):
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         spawn{CheckTimerForGreen()}
-        ConfirmFlagfalseSetter()
+        set ConfirmFlag = false
     )
 
     MovePawnGreen(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1722,6 +1670,7 @@ LudoManager := class(creative_device):
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
         var WhichPawn :int = -1
+        set ConfirmFlag = true
 
         if(CurrentIndex = -1 and GreenDiceRollValue = 6):
             if(Path := GreenPaths[0]):
@@ -1733,13 +1682,7 @@ LudoManager := class(creative_device):
                     set CurrentIndex = 0
                     set GreenConsecutiveSixes += 1
                     if(GreenConsecutiveSixes >= 3):
-                        set GreenPlayerTurn = false
-                        if(RedPlayer?):
-                            set RedPlayerTurn = true
-                        else if(BluePlayer?):
-                            set BluePlayerTurn = true
-                        else if(YellowPlayer?):
-                            set YellowPlayerTurn = true
+                        TurnChanger(4)
                         set GreenConsecutiveSixes = 0
 
                     set GreenDiceRollValue = 0
@@ -1768,26 +1711,14 @@ LudoManager := class(creative_device):
                         set GreenConsecutiveSixes += 1
                         if(GreenConsecutiveSixes >= 3):
                             # Switch to Red turn, reset counter
-                            set GreenPlayerTurn = false
-                            if(RedPlayer?):
-                                set RedPlayerTurn = true
-                            else if(BluePlayer?):
-                                set BluePlayerTurn = true
-                            else if(YellowPlayer?):
-                                set YellowPlayerTurn = true
+                            TurnChanger(4)
                             set GreenConsecutiveSixes = 0
                         else:
                             # Keep turn
                             set GreenPlayerTurn = true
                     else:
                         set GreenConsecutiveSixes = 0
-                        set GreenPlayerTurn = false
-                        if(RedPlayer?):
-                            set RedPlayerTurn = true
-                        else if(BluePlayer?):
-                            set BluePlayerTurn = true
-                        else if(YellowPlayer?):
-                            set YellowPlayerTurn = true
+                        TurnChanger(4)
                     set GreenDiceRollValue = 0
                     set DoubleRollFlagGreen = false
                 set ConfirmFlag = false
@@ -1800,24 +1731,20 @@ LudoManager := class(creative_device):
             set GreenPawnIndex = CurrentIndex
             set WhichPawn = 0
             spawn{PossibleElimChecker(GreenPawnIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         else if (GreenOneHighlight.HIghlightIntensity = 20.0):
             set GreenPawnOneIndex = CurrentIndex
             set WhichPawn = 1
             spawn{PossibleElimChecker(GreenPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
             set GreenPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
             spawn{PossibleElimChecker(GreenPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
         else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
             set GreenPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
             spawn{PossibleElimChecker(GreenPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
-            set ConfirmFlag = false
 
-        spawn{HelperPlayerProfileTurn()}
+        spawn{HelperPlayerProfileTurn()} #keep this dont remove
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
         set ConfirmFlag = false
