@@ -244,7 +244,7 @@ LudoManagerAi := class(creative_device):
         DiceRoll.PressedEvent.Subscribe(DiceRollPressed)
         GetPlayspace().PlayerRemovedEvent().Subscribe(PlayerExiting)
 
-    InitialInitiator():void=
+    InitialInitiator():void=(
         set RedPawnInitialTransform = RedPawn.GetTransform()
         set RedPawnOneInitialTransform = RedPawnOne.GetTransform()
         set RedPawnTwoInitialTransform = RedPawnTwo.GetTransform()
@@ -262,6 +262,7 @@ LudoManagerAi := class(creative_device):
         set GreenPawnTwoInitialTransform = GreenPawnTwo.GetTransform()
         set GreenPawnThreeInitialTransform = GreenPawnThree.GetTransform()
         ResetPlayerDrainerProfile()
+    )
     
     GameStartInitiator()<suspends>:void=
         set BluePlayer = true
@@ -273,7 +274,7 @@ LudoManagerAi := class(creative_device):
         set ActivePlayerCount = 4
         spawn{HelperPlayerProfileTurn()}
         
-    PlayerJoined(Agent : agent):void=
+    PlayerJoined(Agent : agent):void=(
         if(RedPlayer = false and GameStarted = false):
             set RedPlayer = option{Agent}
             PlayerCamera.AddTo(Agent)
@@ -295,8 +296,9 @@ LudoManagerAi := class(creative_device):
                     spawn. GameStartInitiator()
             else:
                 Print("Game Started")
+    )
 
-    SelectPressed(Agent:agent):void=
+    SelectPressed(Agent:agent):void=(
         var Attempts:int = 0
         
         if(RedPlayer = option{Agent} and RedPlayerTurn = true  and ConfirmFlag = false):
@@ -341,10 +343,10 @@ LudoManagerAi := class(creative_device):
                         set RollerForPlayer = 3
                     else if(RollerForPlayer = 3 and RedThreeFinished = true):
                         set RollerForPlayer = 0
-                    set Attempts += 1
-        
+                    set Attempts += 1     
+    )
 
-    DiceRollPressed(Agent:agent):void=
+    DiceRollPressed(Agent:agent):void=(
         if(RedPlayer = option{Agent} and RedPlayerTurn = true): #removes else if from this function for PlayTesting
             Print("Red Pressing")
             if(DoubleRollFlagPlayer = false):
@@ -359,7 +361,7 @@ LudoManagerAi := class(creative_device):
                 set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue}")
 
-        else if(BluePlayerTurn = true):
+        else if(BluePlayer? and BluePlayerTurn = true):
                 RollValue := GetRandomInt(1,6)
                 set BlueDiceRollValue = RollValue
                 APDice.Play(Agent)
@@ -370,7 +372,7 @@ LudoManagerAi := class(creative_device):
                 set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue} ")
 
-        else if(GreenPlayerTurn = true):
+        else if(GreenPlayer? and GreenPlayerTurn = true):
                 RollValue := GetRandomInt(1,6)
                 set GreenDiceRollValue = RollValue
                 APDice.Play(Agent)
@@ -381,7 +383,7 @@ LudoManagerAi := class(creative_device):
                 set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue} ")
                 
-        else if(YellowPlayerTurn = true):
+        else if(YellowPlayer? and YellowPlayerTurn = true):
             Print("Agent yellow found")
                 RollValue := GetRandomInt(1,6)
                 set YellowDiceRollValue = RollValue
@@ -392,9 +394,91 @@ LudoManagerAi := class(creative_device):
                     spawn{PossibleMoveChecker(Agent)}
                 set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue} ")
+    )
     
-    HelperDiceRoll(Agent : agent)<suspends>:void=
-        ()
+    HelperDiceRoll(Agent : agent)<suspends>:void=(
+        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
+            Sleep(1.0)
+            if(RedDiceRollValue = 1):
+                if(DiceProp := RedDiceProp[0]):
+                    DiceProp.SetMaterial(Dice1Value)
+            else if(RedDiceRollValue = 2):
+                if(DiceProp := RedDiceProp[0]):
+                    DiceProp.SetMaterial(Dice2Value)
+            else if(RedDiceRollValue = 3):
+                if(DiceProp := RedDiceProp[0]):
+                    DiceProp.SetMaterial(Dice3Value)
+            else if(RedDiceRollValue = 4):
+                if(DiceProp := RedDiceProp[0]):
+                    DiceProp.SetMaterial(Dice4Value)
+            else if(RedDiceRollValue = 5):
+                if(DiceProp := RedDiceProp[0]):
+                    DiceProp.SetMaterial(Dice5Value)
+            else if(RedDiceRollValue = 6):
+                if(DiceProp := RedDiceProp[0]):
+                    DiceProp.SetMaterial(Dice6Value)
+        else if(BluePlayer? and BluePlayerTurn = true):
+            Sleep(1.0)
+            if(BlueDiceRollValue = 1):
+                if(DiceProp := BlueDiceProp[0]):
+                    DiceProp.SetMaterial(Dice1Value)
+            else if(BlueDiceRollValue = 2):
+                if(DiceProp := BlueDiceProp[0]):
+                    DiceProp.SetMaterial(Dice2Value)
+            else if(BlueDiceRollValue = 3):
+                if(DiceProp := BlueDiceProp[0]):
+                    DiceProp.SetMaterial(Dice3Value)
+            else if(BlueDiceRollValue = 4):
+                if(DiceProp := BlueDiceProp[0]):
+                    DiceProp.SetMaterial(Dice4Value)
+            else if(BlueDiceRollValue = 5):
+                if(DiceProp := BlueDiceProp[0]):
+                    DiceProp.SetMaterial(Dice5Value)
+            else if(BlueDiceRollValue = 6):
+                if(DiceProp := BlueDiceProp[0]):
+                    DiceProp.SetMaterial(Dice6Value)
+        else if(GreenPlayer? and GreenPlayerTurn = true):
+            Sleep(1.0)
+            if(GreenDiceRollValue = 1):
+                if(DiceProp := GreenDiceProp[0]):
+                    DiceProp.SetMaterial(Dice1Value)
+            else if(GreenDiceRollValue = 2):
+                if(DiceProp := GreenDiceProp[0]):
+                    DiceProp.SetMaterial(Dice2Value)
+            else if(GreenDiceRollValue = 3):
+                if(DiceProp := GreenDiceProp[0]):
+                    DiceProp.SetMaterial(Dice3Value)
+            else if(GreenDiceRollValue = 4):
+                if(DiceProp := GreenDiceProp[0]):
+                    DiceProp.SetMaterial(Dice4Value)
+            else if(GreenDiceRollValue = 5):
+                if(DiceProp := GreenDiceProp[0]):
+                    DiceProp.SetMaterial(Dice5Value)
+            else if(GreenDiceRollValue = 6):
+                if(DiceProp := GreenDiceProp[0]):
+                    DiceProp.SetMaterial(Dice6Value)
+        else if(YellowPlayer? and YellowPlayerTurn = true):
+            Sleep(1.0)
+            if(YellowDiceRollValue = 1):
+                if(DiceProp := YellowDiceProp[0]):
+                    DiceProp.SetMaterial(Dice1Value)
+            else if(YellowDiceRollValue = 2):
+                if(DiceProp := YellowDiceProp[0]):
+                    DiceProp.SetMaterial(Dice2Value)
+            else if(YellowDiceRollValue = 3):
+                if(DiceProp := YellowDiceProp[0]):
+                    DiceProp.SetMaterial(Dice3Value)
+            else if(YellowDiceRollValue = 4):
+                if(DiceProp := YellowDiceProp[0]):
+                    DiceProp.SetMaterial(Dice4Value)
+            else if(YellowDiceRollValue = 5):
+                if(DiceProp := YellowDiceProp[0]):
+                    DiceProp.SetMaterial(Dice5Value)
+            else if(YellowDiceRollValue = 6):
+                if(DiceProp := YellowDiceProp[0]):
+                    DiceProp.SetMaterial(Dice6Value)
+    )
+        
 
     ConfirmPressed(Agent:agent):void=
         ()
