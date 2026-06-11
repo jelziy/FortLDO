@@ -436,17 +436,90 @@ LudoManagerAi := class(creative_device):
             spawn{CheckTimerForYellow()}
 
     CheckTimerForRed()<suspends>:void=
-        ()
+        var StartTime: float = GetSimulationElapsedTime()
+        loop:
+            Sleep(0.2)
+            if(RedPlayerTurn = false):
+                return
+            var Elapsed : float = GetSimulationElapsedTime() - StartTime
+            #Print("Timer {Elapsed}")
+            if(Elapsed >= CoolDownTime):
+                Print("Time Out! Moving to next player.")
+                set RedPlayerTurn = false
+                set BluePlayerTurn = true
+                set DoubleRollFlagPlayer = false
+                set RedConsecutiveSixes = 0
+                spawn{HelperPlayerProfileTurn()}
+                TimerCheckerHelper()
+                return
+
+            else if(LdoPlayer = false):
+                set RedPlayerTurn = false
+                set BluePlayerTurn = true
+                set DoubleRollFlagPlayer = false
+                set RedConsecutiveSixes = 0
+                spawn{HelperPlayerProfileTurn()}
+                TimerCheckerHelper()
+
+                return
     
     CheckTimerForBlue()<suspends>:void=
-        ()
+        var StartTime: float = GetSimulationElapsedTime()
+        loop:
+            Sleep(0.2)
+            if(BluePlayerTurn = false):
+                return
+            var Elapsed : float = GetSimulationElapsedTime() - StartTime
+            Print("Timer {Elapsed}")
+            if(Elapsed >= CoolDownTime):
+                Print("Time Out! Moving to next player.")
+                set BluePlayerTurn = false
+                set YellowPlayerTurn = true
+                set BlueConsecutiveSixes = 0
+                spawn{HelperPlayerProfileTurn()}
+                TimerCheckerHelper()
+                return
+            
+            #since its ai every player is always there when playing
+
 
     CheckTimerForGreen()<suspends>:void=
-        ()
+        var StartTime: float = GetSimulationElapsedTime()
+        loop:
+            Sleep(0.2)
+            if(GreenPlayerTurn = false):
+                return
+            var Elapsed : float = GetSimulationElapsedTime() - StartTime
+            Print("Timer {Elapsed}")
+            if(Elapsed >= CoolDownTime):
+                Print("Time Out! Moving to next player.")
+                set GreenPlayerTurn = false
+                set RedPlayerTurn = true
+                set GreenConsecutiveSixes = 0
+                set DoubleRollFlagPlayer = false
+                spawn{HelperPlayerProfileTurn()}
+                TimerCheckerHelper()
+                return
+
 
     CheckTimerForYellow()<suspends>:void=
-        ()
+        var StartTime: float = GetSimulationElapsedTime()
+        loop:
+            Sleep(0.2)
+            if(YellowPlayerTurn = false):
+                return
+            var Elapsed : float = GetSimulationElapsedTime() - StartTime
+            #Print("Timer {Elapsed}")
+            if(Elapsed >= CoolDownTime):
+                Print("Time Out! Moving to next player.")
+                set YellowPlayerTurn = false
+                set GreenPlayerTurn = true
+                set YellowConsecutiveSixes = 0
+                spawn{HelperPlayerProfileTurn()}
+                TimerCheckerHelper()
+                return
 
+                
     ResetAllHighlights():void=(
         #red
             set RedZeroHighlight.HIghlightIntensity = 0.0
@@ -576,6 +649,13 @@ LudoManagerAi := class(creative_device):
                 set ConfirmFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
+    )
+
+    TimerCheckerHelper():void=(
+        spawn. CheckTimerForRed()
+        spawn. CheckTimerForBlue()
+        spawn. CheckTimerForGreen()
+        spawn. CheckTimerForYellow()
     )
         
         
