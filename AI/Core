@@ -266,7 +266,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         ResetPlayerDrainerProfile()
     )
     
-    GameStartInitiator()<suspends>:void=
+    GameStartInitiator()<suspends>:void=(
         set BluePlayer = true
         set GreenPlayer = true
         set YellowPlayer = true
@@ -275,6 +275,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         set RedPlayerTurn = true
         set ActivePlayerCount = 4
         spawn{HelperPlayerProfileTurn()}
+    )
         
     PlayerJoined(Agent : agent):void=(
         if(RedPlayer = false and GameStarted = false):
@@ -359,44 +360,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 if(DiceProp := RedDiceProp[0]):
                     DiceProp.SetMaterial(RollingDice)  
                     spawn{HelperDiceRoll(Agent)}
-                    spawn{PossibleMoveChecker(Agent)}
+                    spawn{PossibleMoveChecker()}
                 set DoubleRollFlagPlayer = true
                 set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue}")
 
-        else if(BluePlayer? and BluePlayerTurn = true):
-                RollValue := GetRandomInt(1,6)
-                set BlueDiceRollValue = RollValue
-                APDice.Play(Agent)
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
-                    spawn{HelperDiceRoll(Agent)}
-                    spawn{PossibleMoveChecker(Agent)}
-                set ConfirmFlag = false
-                Print("Dice Rolled: {RollValue} ")
-
-        else if(GreenPlayer? and GreenPlayerTurn = true):
-                RollValue := GetRandomInt(1,6)
-                set GreenDiceRollValue = RollValue
-                APDice.Play(Agent)
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
-                    spawn{HelperDiceRoll(Agent)}
-                    spawn{PossibleMoveChecker(Agent)}
-                set ConfirmFlag = false
-                Print("Dice Rolled: {RollValue} ")
-                
-        else if(YellowPlayer? and YellowPlayerTurn = true):
-            Print("Agent yellow found")
-                RollValue := GetRandomInt(1,6)
-                set YellowDiceRollValue = RollValue
-                APDice.Play(Agent)
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
-                    spawn{HelperDiceRoll(Agent)}
-                    spawn{PossibleMoveChecker(Agent)}
-                set ConfirmFlag = false
-                Print("Dice Rolled: {RollValue} ")
+        
     )
     
     HelperDiceRoll(Agent : agent)<suspends>:void=(
@@ -420,7 +389,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             else if(RedDiceRollValue = 6):
                 if(DiceProp := RedDiceProp[0]):
                     DiceProp.SetMaterial(Dice6Value)
-        else if(BluePlayer? and BluePlayerTurn = true):
+
+    )
+
+    HelperDiceRollForBots()<suspends>:void=(
+
+        if(BluePlayer? and BluePlayerTurn = true):
             Sleep(1.0)
             if(BlueDiceRollValue = 1):
                 if(DiceProp := BlueDiceProp[0]):
@@ -521,8 +495,34 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
     )
 
-    PlayerExiting(Agent:agent):void=
-        ()
+    PlayerExiting(Agent:agent):void=(
+         if(RedPlayer = option{Agent} and GameStarted = true): #in this case gamestarted will always be true, because the if the agent has joined the game has started as it only requires one player.
+            set RedPlayer = false
+            spawn{LeaveWidget(Agent)}           
+            PlayerCamera.RemoveFrom(Agent)
+            PlayerCamera.Disable()
+            PlayerChair.EnableExit()
+            if(RedPawn.TeleportTo[RedPawnInitialTransform]):
+            if(RedPawnOne.TeleportTo[RedPawnOneInitialTransform]): 
+            if(RedPawnTwo.TeleportTo[RedPawnTwoInitialTransform]): 
+            if(RedPawnThree.TeleportTo[RedPawnThreeInitialTransform]):
+            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+            for(Pawns : AllRedPawn):
+                Pawns.Hide()
+            RedIndexInitialSetter()
+            if(not FinishedOrder.Find[0]):
+                set ActivePlayerCount -= 1
+
+            set RedPlayerIcon.TexParam = NormAv
+            RedPlayerAvProp.SetMaterial(RedPlayerIcon)
+
+            PlayerTp.Teleport(Agent)
+            
+            spawn. GameOverReset(1)
+
+            PlayerCamera.RemoveFrom(Agent) #temporary solution
+    )
+        
 
     ResetPlayerDrainerProfile():void=(
         if(RedPropProfile := RedDiceProp[1]): #the blinking ones
@@ -703,7 +703,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             YellowPawnThree.SetMaterial(YellowThreeHighlight)
     )
 
-    PossibleMoveChecker(Agent:agent)<suspends>:void=(
+    PossibleMoveChecker()<suspends>:void=(
         ###after a dice roll, for perticular player check if the player can make a move with any of its pawn, 
         ##if not then switch the turm to the next player###
         var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
@@ -713,7 +713,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         var CanMove : logic = false
         PathLenght := RedPaths.Length #same number for each
         
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
+        if(RedPlayer = true and RedPlayerTurn = true):
             for(PawnIdx : RedPawnIndices):
                 if(PawnIdx = -1 and RedDiceRollValue = 6):
                     set CanMove = true
@@ -804,6 +804,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             else if(GreenPlayer?):
                 set GreenPlayerTurn = true
             spawn{HelperPlayerProfileTurn()}
+            spawn. BotPawnSelector("Blue")
         else if(Index = 2):
             set BluePlayerTurn = false
             if(YellowPlayer?):
@@ -813,6 +814,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             else if(RedPlayer?):
                 set RedPlayerTurn = true
             spawn{HelperPlayerProfileTurn()}
+            spawn. BotPawnSelector("Yellow")
         else if(Index = 4):
             set GreenPlayerTurn = false
             if(RedPlayer?):
@@ -831,6 +833,51 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             else if(BluePlayer?):
                 set BluePlayerTurn = true
             spawn{HelperPlayerProfileTurn()}
+            spawn. BotPawnSelector("Green")
+    )
+
+    BotPawnSelector(Color:[]char)<suspends>:void=( #for audio we can make a function 
+        if(Color = "Blue"):  
+            Print("BLueeeeeeeeeeeeeeeeeee")
+            if(BluePlayer? and BluePlayerTurn = true):
+                RollValue := GetRandomInt(1,6)
+                set BlueDiceRollValue = RollValue
+                AudioPlayer("Dice")
+                if(DiceProp := BlueDiceProp[0]):
+                    DiceProp.SetMaterial(RollingDice)
+                    spawn{HelperDiceRollForBots()}
+                    spawn{PossibleMoveChecker()}
+                set ConfirmFlag = false
+                Print("Dice Rolled: {RollValue} ")
+
+        else if(Color = "Yellow"):
+            if(YellowPlayer? and YellowPlayerTurn = true):
+            Print("Agent yellow found")
+                RollValue := GetRandomInt(1,6)
+                set YellowDiceRollValue = RollValue
+                AudioPlayer("Dice")
+                if(DiceProp := YellowDiceProp[0]):
+                    DiceProp.SetMaterial(RollingDice)
+                    spawn{HelperDiceRollForBots()}
+                    spawn{PossibleMoveChecker()}
+                set ConfirmFlag = false
+                Print("Dice Rolled: {RollValue} ")
+
+        else if(Color = "Green"):
+            if(GreenPlayer? and GreenPlayerTurn = true):
+                RollValue := GetRandomInt(1,6)
+                set GreenDiceRollValue = RollValue
+                AudioPlayer("Dice")
+                if(DiceProp := GreenDiceProp[0]):
+                    DiceProp.SetMaterial(RollingDice)
+                    spawn{HelperDiceRollForBots()}
+                    spawn{PossibleMoveChecker()}
+                set ConfirmFlag = false
+                Print("Dice Rolled: {RollValue} ")
+        else:
+            Print("bruhh")
+
+                
     )
 
     MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
@@ -1516,7 +1563,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     )
 
-    GameOverReset(T:int)<suspends>:void=(
+    GameOverReset(T:int)<suspends>:void=( #dont really need int in this scenario
         Sleep(7.0)
         APInGame.Stop()
         for(Music : APEnvOg):
@@ -1711,6 +1758,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         #BlueAvProp.SetMaterial(BluePlayerIcon)
         #YellowAvProp.SetMaterial(YellowPlayerIcon)
         #GreenAvProp.SetMaterial(GreenPlayerIcon)
+    )
+
+    AudioPlayer(Aud:[]char):void=(
+        if(RedAgent := RedPlayer?):
+            if(Aud = "Dice"):
+                APDice.Play(RedAgent)
     )
     
     GameRewardGranter(Agent:agent, Rank:int):void=(
