@@ -312,7 +312,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 if(Attempts >= 4):
                     break
                 if (RollerForPlayer = 0 and RedFinished = false):
-                    ResetAllHighlights(Agent)
+                    ResetAllHighlights()
                     set RedZeroHighlight.HIghlightIntensity = 20.0
                     RedPawn.SetMaterial(RedZeroHighlight)
                     set RollerForPlayer += 1
@@ -320,21 +320,21 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     Print("Higlidhting Red Pawn 0")
                     break
                 else if (RollerForPlayer = 1 and RedOneFinished = false):
-                    ResetAllHighlights(Agent)
+                    ResetAllHighlights()
                     set RedOneHighlight.HIghlightIntensity = 20.0
                     RedPawnOne.SetMaterial(RedOneHighlight)
                     set RollerForPlayer += 1
                     APHighlight.Play(Agent)
                     break
                 else if (RollerForPlayer = 2 and RedTwoFinished = false):
-                    ResetAllHighlights(Agent)
+                    ResetAllHighlights()
                     set RedTwoHighlight.HIghlightIntensity = 20.0
                     RedPawnTwo.SetMaterial(RedTwoHighlight)
                     set RollerForPlayer += 1
                     APHighlight.Play(Agent)
                     break
                 else if ( RollerForPlayer = 3 and RedThreeFinished = false):
-                    ResetAllHighlights(Agent)
+                    ResetAllHighlights()
                     set RedThreeHighlight.HIghlightIntensity = 20.0
                     RedPawnThree.SetMaterial(RedThreeHighlight)
                     set RollerForPlayer = 0
@@ -468,33 +468,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
                 spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
-        if(BluePlayer? and BluePlayerTurn = true and BlueDiceRollValue > 0):
-            if (BlueZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
-            else if (BlueOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawnOne, BluePawnOneIndex, Agent)}
-            else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawnTwo, BluePawnTwoIndex, Agent)}
-            else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawnThree, BluePawnThreeIndex, Agent)}
-        if(YellowPlayer? and YellowPlayerTurn = true and YellowDiceRollValue > 0):
-            if (YellowZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawn, YellowPawnIndex, Agent)}
-            else if (YellowOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawnOne, YellowPawnOneIndex, Agent)}
-            else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, Agent)}
-            else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, Agent)}
-        if(GreenPlayer? and GreenPlayerTurn = true and GreenDiceRollValue > 0):
-            if (GreenZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawn, GreenPawnIndex, Agent)}
-            else if (GreenOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawnOne, GreenPawnOneIndex, Agent)}
-            else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex, Agent)}
-            else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
+            #byg are bots
     )
 
     PlayerExiting(Agent:agent):void=(
@@ -666,8 +640,8 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 return
     )
                 
-    ResetAllHighlights(Agent:agent):void=(
-        #red
+    ResetAllHighlights():void=(
+        if(RedPlayer?):
             set RedZeroHighlight.HIghlightIntensity = 0.0
             RedPawn.SetMaterial(RedZeroHighlight)
             set RedOneHighlight.HIghlightIntensity = 0.0
@@ -676,7 +650,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             RedPawnTwo.SetMaterial(RedTwoHighlight)
             set RedThreeHighlight.HIghlightIntensity = 0.0
             RedPawnThree.SetMaterial(RedThreeHighlight)
-        #blue
+        else if(BluePlayer?):
             set BlueZeroHighlight.HIghlightIntensity = 0.0
             BluePawn.SetMaterial(BlueZeroHighlight)
             set BlueOneHighlight.HIghlightIntensity = 0.0
@@ -685,7 +659,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             BluePawnTwo.SetMaterial(BlueTwoHighlight)
             set BlueThreeHighlight.HIghlightIntensity = 0.0
             BluePawnThree.SetMaterial(BlueThreeHighlight)
-        #green
+        else if(GreenPlayer?):
             set GreenZeroHighlight.HIghlightIntensity = 0.0
             GreenPawn.SetMaterial(GreenZeroHighlight)
             set GreenOneHighlight.HIghlightIntensity = 0.0
@@ -694,7 +668,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             GreenPawnTwo.SetMaterial(GreenTwoHighlight)
             set GreenThreeHighlight.HIghlightIntensity = 0.0
             GreenPawnThree.SetMaterial(GreenThreeHighlight)
-        #yellow
+        else if(YellowPlayer?):
             set YellowZeroHighlight.HIghlightIntensity = 0.0
             YellowPawn.SetMaterial(YellowZeroHighlight)
             set YellowOneHighlight.HIghlightIntensity = 0.0
@@ -759,12 +733,32 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 if(TurnNumber = 1):
                     #dont need it
                 else if(TurnNumber = 2):
-                    BotMoveBluePawn(ChoosenPawn):
+                    if(ChoosenPawn = 0):
+                        spawn. BotMovePawnBlue(BluePawn, BluePawnIndex)
+                    else if(ChoosenPawn = 1):
+                        spawn. BotMovePawnBlue(BluePawnOne, BluePawnOneIndex)
+                    else if(ChoosenPawn = 2):
+                        spawn. BotMovePawnBlue(BluePawnTwo, BluePawnTwoIndex)
+                    else if(ChoosenPawn = 3):
+                        spawn. BotMovePawnBlue(BluePawnThree, BluePawnThreeIndex)
                 else if(TurnNumber = 3):
-                    BotMoveYellowPawn(ChoosenPawn):
+                    if(ChoosenPawn = 0):
+                        spawn. BotMovePawnYellow(YellowPawn, YellowPawnIndex)
+                    else if(ChoosenPawn = 1):
+                        spawn. BotMovePawnYellow(YellowPawnOne, YellowPawnOneIndex)
+                    else if(ChoosenPawn = 2):
+                        spawn. BotMovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex)
+                    else if(ChoosenPawn = 3):
+                        spawn. BotMovePawnYellow(YellowPawnThree, YellowPawnThreeIndex)
                 else if(TurnNumber = 4):
-                    BOtMoveGreenPawn(ChoosenPawn):
-
+                    if(ChoosenPawn = 0):
+                        spawn. BotMovePawnGreen(GreenPawn, GreenPawnIndex)
+                    else if(ChoosenPawn = 1):
+                        spawn. BotMovePawnGreen(GreenPawnOne, GreenPawnOneIndex)
+                    else if(ChoosenPawn = 2):
+                        spawn. BotMovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex)
+                    else if(ChoosenPawn = 3):
+                        spawn. BotMovePawnGreen(GreenPawnThree, GreenPawnThreeIndex)
 
         else: #no bot can move
             Sleep(1.0)
@@ -942,27 +936,27 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         if (RedZeroHighlight.HIghlightIntensity = 20.0):
             set RedPawnIndex = CurrentIndex
             set WhichPawn = 0
-            spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, WhichColorElim)}
         else if (RedOneHighlight.HIghlightIntensity = 20.0):
             set WhichPawn = 1
             set RedPawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, WhichColorElim)}
         else if (RedTwoHighlight.HIghlightIntensity = 20.0):
             set RedPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
-            spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, WhichColorElim)}
         else if (RedThreeHighlight.HIghlightIntensity = 20.0):
             set RedPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
-            spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, WhichColorElim)}
         
         spawn{HelperPlayerProfileTurn()}
-        ResetAllHighlights(Agent)
+        ResetAllHighlights()
         TimerCheckerHelper()
         set ConfirmFlag = true
     )
 
-    MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+    BotMovePawnBlue(Pawn:creative_prop, Index:int)<suspends>:void=(
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
@@ -1021,27 +1015,27 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         if (BlueZeroHighlight.HIghlightIntensity = 20.0):
             set BluePawnIndex = CurrentIndex
             set WhichPawn = 0
-            spawn{PossibleElimChecker(BluePawnIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(BluePawnIndex, WhichPawn, WhichColorElim)}
         else if (BlueOneHighlight.HIghlightIntensity = 20.0):
             set BluePawnOneIndex = CurrentIndex
             set WhichPawn = 1
-            spawn{PossibleElimChecker(BluePawnOneIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(BluePawnOneIndex, WhichPawn, WhichColorElim)}
         else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
             set BluePawnTwoIndex = CurrentIndex
             set WhichPawn = 2
-            spawn{PossibleElimChecker(BluePawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(BluePawnTwoIndex, WhichPawn, WhichColorElim)}
         else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
             set BluePawnThreeIndex = CurrentIndex
             set WhichPawn = 3
-            spawn{PossibleElimChecker(BluePawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(BluePawnThreeIndex, WhichPawn, WhichColorElim)}
 
         spawn{HelperPlayerProfileTurn()}
-        ResetAllHighlights(Agent)
+        ResetAllHighlights()
         TimerCheckerHelper()
         set ConfirmFlag = false
     )
 
-    MovePawnGreen(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+    BotMovePawnGreen(Pawn:creative_prop, Index:int)<suspends>:void=(
        var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
@@ -1104,31 +1098,31 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         if (GreenZeroHighlight.HIghlightIntensity = 20.0):
             set GreenPawnIndex = CurrentIndex
             set WhichPawn = 0
-            spawn{PossibleElimChecker(GreenPawnIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(GreenPawnIndex, WhichPawn, WhichColorElim)}
             set ConfirmFlag = false
         else if (GreenOneHighlight.HIghlightIntensity = 20.0):
             set GreenPawnOneIndex = CurrentIndex
             set WhichPawn = 1
-            spawn{PossibleElimChecker(GreenPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(GreenPawnOneIndex, WhichPawn, WhichColorElim)}
             set ConfirmFlag = false
         else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
             set GreenPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
-            spawn{PossibleElimChecker(GreenPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(GreenPawnTwoIndex, WhichPawn, WhichColorElim)}
             set ConfirmFlag = false
         else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
             set GreenPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
-            spawn{PossibleElimChecker(GreenPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(GreenPawnThreeIndex, WhichPawn, WhichColorElim)}
             set ConfirmFlag = false
 
         spawn{HelperPlayerProfileTurn()}
-        ResetAllHighlights(Agent)
+        ResetAllHighlights()
         TimerCheckerHelper()
         set ConfirmFlag = false 
     )
 
-    MovePawnYellow(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+    BotMovePawnYellow(Pawn:creative_prop, Index:int)<suspends>:void=(
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
@@ -1187,27 +1181,27 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         if (YellowZeroHighlight.HIghlightIntensity = 20.0):
             set YellowPawnIndex = CurrentIndex
             set WhichPawn = 0
-            spawn{PossibleElimChecker(YellowPawnIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(YellowPawnIndex, WhichPawn, WhichColorElim)}
         else if (YellowOneHighlight.HIghlightIntensity = 20.0):
             set YellowPawnOneIndex = CurrentIndex
             set WhichPawn = 1
-            spawn{PossibleElimChecker(YellowPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(YellowPawnOneIndex, WhichPawn, WhichColorElim)}
         else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
             set YellowPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
-            spawn{PossibleElimChecker(YellowPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(YellowPawnTwoIndex, WhichPawn, WhichColorElim)}
         else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
             set YellowPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
-            spawn{PossibleElimChecker(YellowPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+            spawn{PossibleElimChecker(YellowPawnThreeIndex, WhichPawn, WhichColorElim)}
         
         spawn{HelperPlayerProfileTurn()}
-        ResetAllHighlights(Agent)
+        ResetAllHighlights()
         spawn{CheckTimerForGreen()}
         set ConfirmFlag = false
     )
 
-    PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int, Agent:agent)<suspends>:void=(
+    PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int)<suspends>:void=(
         #1 -- color. 2 -- which pawn from that color. 3. Position that pawns position index. All int Yes.
         #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
         
@@ -1469,8 +1463,9 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             TimerCheckerHelper()
         else:
             Print("Blahhhh")
-
-        IsItTheEnd(Agent)
+        
+        if(RedAgent := RedPlayer?):
+            IsItTheEnd(RedAgent)
     )
 
     FalsingPlayerTurn():void=(
@@ -1480,7 +1475,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         set GreenPlayerTurn = false
     )
 
-    IsItTheEnd(Agent:agent):void=(
+    IsItTheEnd(Agent:agent):void=( # dont need accolades and stuff for ygb
 
         if(RedEnd >= 4 and RedPlayer = option{Agent}):
             if(Player := player[Agent]):
@@ -1505,7 +1500,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                         set RedPlayer = false
 
         if(BlueEnd >= 4 and BluePlayer?):
-            if(Player := player[Agent]):
                 if(not FinishedOrder.Find[1]):
                     set FinishedOrder += array{1}
                     Print("rank {FinishedOrder.Length}")
@@ -1520,7 +1514,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                         set BluePlayer = false
 
         if(YellowEnd >= 4 and YellowPlayer?):
-            if(Player := player[Agent]):
                 if(not FinishedOrder.Find[2]):
                     set  FinishedOrder += array{2}
                     Print("rank {FinishedOrder.Length}")
@@ -1535,7 +1528,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             set YellowPlayer = false
 
         if(GreenEnd >= 4 and GreenPlayer?):
-            if(Player := player[Agent]):
                 if(not FinishedOrder.Find[3]):
                     set FinishedOrder += array{3}
                     Print("rank {FinishedOrder.Length}")
