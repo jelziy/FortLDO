@@ -887,7 +887,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 PathTransform:= Path.GetTransform()
                 PathTranslation:= PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                APMove.Play()
+                AudioPlayer("Move")
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
                     set RedConsecutiveSixes += 1
@@ -912,7 +912,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            APMove.Play()
+                            AudioPlayer("Move")
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
@@ -968,7 +968,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                APMove.Play()
+                AudioPlayer("Move")
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):   
                     set CurrentIndex = 0
                     set BlueConsecutiveSixes += 1
@@ -991,7 +991,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            APMove.Play()
+                            AudioPlayer("Move")
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
@@ -1047,7 +1047,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                APMove.Play()
+                AudioPlayer("Move")
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
                     set GreenConsecutiveSixes += 1
@@ -1072,7 +1072,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            APMove.Play()
+                            AudioPlayer("Move")
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
@@ -1134,7 +1134,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                APMove.Play()
+                AudioPlayer("Move")
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
                     set YellowConsecutiveSixes += 1
@@ -1157,7 +1157,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            APMove.Play()
+                            AudioPlayer("Move")
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
@@ -1268,7 +1268,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     if(NumbersProp[0].SetMaterial(MInbRed)):
                 else if(RedEnd >= 4):
                     if(NumbersProp[0].SetMaterial(MIInv)):
-                APEnd.Play()
+                AudioPlayer("End")
 
         else if(Color = 1): # Blue
             set DynamicOffset = OffsetResToBlue
@@ -1304,7 +1304,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     if(NumbersProp[1].SetMaterial(MInbBlue)):
                 else if(BlueEnd >= 4):
                     if(NumbersProp[1].SetMaterial(MIInv)):
-                APEnd.Play()
+                AudioPlayer("End")
 
         else if(Color = 2): #Yellow
             set DynamicOffset = OffsetResToYellow
@@ -1340,7 +1340,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     if(NumbersProp[2].SetMaterial(MInbYellow)):
                 else if(YellowEnd >= 4):
                     if(NumbersProp[2].SetMaterial(MIInv)):
-                APEnd.Play()
+                AudioPlayer("End")
 
         else if(Color = 3): # Green
             set DynamicOffset = OffsetResToGreen
@@ -1376,7 +1376,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     if(NumbersProp[3].SetMaterial(MInbGreen)):
                 else if(GreenEnd >= 4):
                     if(NumbersProp[3].SetMaterial(MIInv)):
-                APEnd.Play()
+                AudioPlayer("End")
         
         #Formula newIndex=(index−targetOffset+52)mod52
         #for ELim
@@ -1385,7 +1385,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 for(PawnIdx := 0..RedPawnIndices.Length -1):
                     if(X = RedPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(RedPawns[PawnIdx].TeleportTo[RedPawnTransforms[PawnIdx]]):
-                            APEliminated.Play()
+                            AudioPlayer("Elim")
                             if(PawnIdx = 0):
                                 set RedPawnIndex = -1
                             else if(PawnIdx = 1):
@@ -1402,7 +1402,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 for(PawnIdx := 0..BluePawnIndices.Length - 1):
                     if(X = BluePawnIndices[PawnIdx] and EliminationOccured = false):
                         if(BluePawns[PawnIdx].TeleportTo[BluePawnTransforms[PawnIdx]]):
-                            APEliminated.Play()
+                            AudioPlayer("Elim")
                             if(PawnIdx = 0):
                                 set BluePawnIndex = -1
                             else if(PawnIdx = 1):
@@ -1419,7 +1419,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 for(PawnIdx := 0..YellowPawnIndices.Length -1):
                     if(X = YellowPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(YellowPawns[PawnIdx].TeleportTo[YellowPawnTransforms[PawnIdx]]):
-                            APEliminated.Play()
+                            AudioPlayer("Elim")
                             if(PawnIdx = 0):
                                 set YellowPawnIndex = -1
                             else if(PawnIdx = 1):
@@ -1436,7 +1436,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 for(PawnIdx := 0..GreenPawnIndices.Length - 1):
                     if(X = GreenPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(GreenPawns[PawnIdx].TeleportTo[GreenPawnTransforms[PawnIdx]]):
-                            APEliminated.Play()
+                            AudioPlayer("Elim")
                             if(PawnIdx = 0):
                                 set GreenPawnIndex = -1
                             else if(PawnIdx = 1):
@@ -1475,7 +1475,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         set GreenPlayerTurn = false
     )
 
-    IsItTheEnd(Agent:agent):void=( # dont need accolades and stuff for ygb
+    IsItTheEnd(Agent:agent):void=( # dont need accolades and stuff for ygb 
 
         if(RedEnd >= 4 and RedPlayer = option{Agent}):
             if(Player := player[Agent]):
@@ -1495,7 +1495,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             RedVictoryProp.SetMaterial(MICrownThree)
                             Accolade3.Award(Player)
                             GameRewardGranter(Player, 3)
-                        APVic.Play(Player)
+                        AudioPlayer("Vic")
                         set tempRedPlayer = RedPlayer
                         set RedPlayer = false
 
@@ -1510,7 +1510,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             BlueVictoryProp.SetMaterial(MICrownTwo)
                         else if(FinishedOrder.Length = 3):
                             BlueVictoryProp.SetMaterial(MICrownThree)
-                        APVic.Play()
+                        AudioPlayer("Vic")
                         set BluePlayer = false
 
         if(YellowEnd >= 4 and YellowPlayer?):
@@ -1524,7 +1524,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                                 YellowVictoryProp.SetMaterial(MICrownTwo)
                             else if(FinishedOrder.Length = 3):
                                 YellowVictoryProp.SetMaterial(MICrownThree)
-                            APVic.Play()
+                            AudioPlayer("Vic")
                             set YellowPlayer = false
 
         if(GreenEnd >= 4 and GreenPlayer?):
@@ -1538,7 +1538,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             GreenVictoryProp.SetMaterial(MICrownTwo)
                         else if(FinishedOrder.Length = 3):
                             GreenVictoryProp.SetMaterial(MICrownThree)
-                        APVic.Play()
+                        AudioPlayer("Vic")
                         set GreenPlayer = false
 
         if(FinishedOrder.Length = ActivePlayerCount - 1):
@@ -1753,10 +1753,21 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         #GreenAvProp.SetMaterial(GreenPlayerIcon)
     )
 
-    AudioPlayer(Aud:[]char):void=(
-        if(RedAgent := RedPlayer?):
+    AudioPlayer(Aud:[]char):void=( #dont need select aud cuz bot wont use that
+        if:
+            RedAgent := RedPlayer?
+
+        then:
             if(Aud = "Dice"):
                 APDice.Play(RedAgent)
+            if(Aud = "Move"):
+                APMove.Play(RedAgent)
+            if(Aud = "Vic"):
+                APVic.Play(RedAgent)
+            if(Aud = "Elim"):
+                APEliminated.Play(RedAgent)
+            if(Aud = "End"):
+                APEnd.Play(RedAgent)
     )
     
     GameRewardGranter(Agent:agent, Rank:int):void=(
