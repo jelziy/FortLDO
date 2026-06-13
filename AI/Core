@@ -18,6 +18,8 @@ using {Pawn2MInstance}
 LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     @editable var CoolDownTime : float = 24.0
+    @editable var PerGameCost : float = 100.0
+    @editable CurrencyDevice : display_currency_device = display_currency_device{}
 
     @editable {Categories := array{CamerasTip}}PlayerCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
 
@@ -1771,7 +1773,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     )
     
     GameRewardGranter(Agent:agent, Rank:int):void=(
-
+            if(Rank = 1):
+                CurrencyDevice.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 3)
+            else if(Rank = 2):
+                CurrencyDevice.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 2.5)
+            else if(Rank = 3):
+                CurrencyDevice.GrantCurrency(Agent, currency_type.Coins, PerGameCost * 1.5)
     )
         
         
