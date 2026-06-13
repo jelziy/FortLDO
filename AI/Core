@@ -13,6 +13,8 @@ using {F_WIdget}
 using {PawnMInstance}
 using {Pawn2MInstance}
 
+#UNR = unnecessary.. Just tryping random shii for fun
+
 LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     @editable var CoolDownTime : float = 24.0
@@ -707,11 +709,11 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         ###after a dice roll, for perticular player check if the player can make a move with any of its pawn, 
         ##if not then switch the turm to the next player###
         var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
-        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
-        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
-        var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
         var CanMove : logic = false
         PathLenght := RedPaths.Length #same number for each
+        var PawnIndices : []int = array{}
+        var TurnNumber : int = 0
+        var DiceValue : int = 0
         
         if(RedPlayer = true and RedPlayerTurn = true):
             for(PawnIdx : RedPawnIndices):
@@ -732,59 +734,43 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 TimerCheckerHelper()
                 Print("False cant move")
 
-        else if( BluePlayer = true and BluePlayerTurn = true):
-            for(PawnIdx : BluePawnIndices):
-                if(PawnIdx = -1 and BlueDiceRollValue = 6):
-                    set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + BlueDiceRollValue < PathLenght):
-                    set CanMove = true
-
-            if(CanMove = true):
-                Print("nothing to do stay as it is")
-                if(BluePlayerTurn = true):
-                    spawn{CheckTimerForBlue()}
-            else:
-                Sleep(1.0)
-                TurnChanger(2)
-                set ConfirmFlag = false
-                TimerCheckerHelper()
-                Print("False cant move")
+        else if( BluePlayer = true and BluePlayerTurn = true): #check timer perticular color is being removed, just keep in mind if any bugs happen this can be the cause
+            set PawnIndices = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
+            set DiceValue = BlueDiceRollValue
+            set TurnNumber = 2
 
         else if(YellowPlayer = true and YellowPlayerTurn = true):
-            for(PawnIdx : YellowPawnIndices):
-                if(PawnIdx = -1 and YellowDiceRollValue = 6):
-                    set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + YellowDiceRollValue < PathLenght):
-                    set CanMove = true
-
-            if(CanMove = true):
-                Print("nothing to do stay as it is")
-                if(YellowPlayerTurn = true):
-                    spawn{CheckTimerForYellow()}
-            else:
-                Sleep(1.0)
-                TurnChanger(3)
-                set ConfirmFlag = false
-                TimerCheckerHelper()
-                Print("False cant move")
+            set PawnIndices = array{YellowPawnIndex, YellowPawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
+            set DiceValue = YellowDiceRollValue
+            set TurnNumber = 3
 
         else if(GreenPlayer = true and GreenPlayerTurn = true):
-            for(PawnIdx : GreenPawnIndices):
-                if(PawnIdx = -1 and GreenDiceRollValue = 6):
-                    set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + GreenDiceRollValue < PathLenght):
-                    set CanMove = true
+            set PawnIndices = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
+            set DiceValue = GreenDiceRollValue
+            set TurnNumber = 4
+        
+        PossiblePawns := GetPossiblePawns(PawnIndices, DiceValue, RedPaths.Length) #pathlength giving unknown identifier
 
-            if(CanMove = true):
-                Print("nothing to do stay as it is")
-                if(GreenPlayerTurn = true):
-                    spawn{CheckTimerForGreen()}
-            else:
-                Sleep(1.0)
-                TurnChanger(4)
-                set ConfirmFlag = false
-                TimerCheckerHelper()
-                Print("False cant move")
+        if(PossiblePawns.Length > 0):
+            RandomIndex := GetRandomInt(0, PossiblePawns.Length - 1)
+            if(ChoosenPawn := PossiblePawns[RandomIndex]):
+                Print("Bot selected pawn : {ChoosenPawn}")
+
+                if(TurnNumber = 1):
+                    #dont need it
+                else if(TurnNumber = 2):
+                    BotMoveBluePawn(ChoosenPawn):
+                else if(TurnNumber = 3):
+                    BotMoveYellowPawn(ChoosenPawn):
+                else if(TurnNumber = 4):
+                    BOtMoveGreenPawn(ChoosenPawn):
+
+
+        else: #no bot can move
+            Sleep(1.0)
+            TurnChanger(TurnNumber)
+            TimerCheckerHelper()
+            Print("BotsCannotMove")
     )
 
     TimerCheckerHelper():void=(
@@ -804,7 +790,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             else if(GreenPlayer?):
                 set GreenPlayerTurn = true
             spawn{HelperPlayerProfileTurn()}
-            spawn. BotPawnSelector("Blue")
         else if(Index = 2):
             set BluePlayerTurn = false
             if(YellowPlayer?):
@@ -814,7 +799,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             else if(RedPlayer?):
                 set RedPlayerTurn = true
             spawn{HelperPlayerProfileTurn()}
-            spawn. BotPawnSelector("Yellow")
         else if(Index = 4):
             set GreenPlayerTurn = false
             if(RedPlayer?):
@@ -833,10 +817,17 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             else if(BluePlayer?):
                 set BluePlayerTurn = true
             spawn{HelperPlayerProfileTurn()}
-            spawn. BotPawnSelector("Green")
+
+        if(BluePlayerTurn = true): #UNR 
+            spawn. BotDiceRoller("Blue")
+        else if(YellowPlayerTurn = true):
+            spawn. BotDiceRoller("Yellow")
+        else if(GreenPlayerTurn = true):
+            spawn. BotDiceRoller("Green")
+
     )
 
-    BotPawnSelector(Color:[]char)<suspends>:void=( #for audio we can make a function 
+    BotDiceRoller(Color:[]char)<suspends>:void=( #for audio we can make a function 
         if(Color = "Blue"):  
             Print("BLueeeeeeeeeeeeeeeeeee")
             if(BluePlayer? and BluePlayerTurn = true):
@@ -879,7 +870,17 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
                 
     )
+    
+    GetPossiblePawns(PawnIndices : []int, DiceValue:int, PathLength:int):[]int=(
+        var PossiblePawns : []int = array{}
+        for (PawnNumber -> PawnIdx : PawnIndices):
+            if(PawnIdx = -1 and DiceValue = 6):
+                set PossiblePawns += array{PawnNumber}
+            else if(PawnIdx >= 0 and PawnIdx + DiceValue < PathLength):
+                set PossiblePawns += array{PawnNumber}
 
+        return PossiblePawns
+    )
     MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
