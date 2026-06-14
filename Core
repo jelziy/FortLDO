@@ -2408,15 +2408,9 @@ LudoManager := class(creative_device):
     )
 
     AudioPlayerMain(Aud:audio_player_device):void=(
-        if:
-            RedAgent := RedPlayer?
-            BlueAgent := BluePlayer?
-            YellowAgent := YellowPlayer?
-            GreenAgent := GreenPlayer?
-        then:
-            Agents : []agent = array{RedAgent, BlueAgent, YellowAgent, GreenAgent}
-            for(Agent:Agents):
-                Aud.Play(Agent)
+        Agents : []?agent = array{RedPlayer, BluePlayer, YellowPlayer, GreenPlayer}
+        for(MaybeAgent: Agents, ValidAgent := MaybeAgent?):
+            Aud.Play(ValidAgent)
     )
 
     GameCostDeductor():void=
