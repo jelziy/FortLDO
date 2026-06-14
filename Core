@@ -2407,6 +2407,18 @@ LudoManager := class(creative_device):
         set GreenPawnThreeIndex = -1
     )
 
+    AudioPlayerMain(Aud:audio_player_device):void=(
+        if:
+            RedAgent := RedPlayer?
+            BlueAgent := BluePlayer?
+            YellowAgent := YellowPlayer?
+            GreenAgent := GreenPlayer?
+        then:
+            Agents : []agent = array{RedAgent, BlueAgent, YellowAgent, GreenAgent}
+            for(Agent:Agents):
+                Aud.Play(Agent)
+    )
+
     GameCostDeductor():void=
         if(RedAgent := RedPlayer?):
             CurrencySystem.GrantCurrency(RedAgent, currency_type.Coins, -PerGameCost)
