@@ -737,30 +737,42 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     #dont need it
                 else if(TurnNumber = 2):
                     if(ChoosenPawn = 0):
+                        set BlueZeroHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnBlue(BluePawn, BluePawnIndex)
                     else if(ChoosenPawn = 1):
+                        set BlueOneHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnBlue(BluePawnOne, BluePawnOneIndex)
                     else if(ChoosenPawn = 2):
+                        set BlueTwoHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnBlue(BluePawnTwo, BluePawnTwoIndex)
                     else if(ChoosenPawn = 3):
+                        set BlueThreeHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnBlue(BluePawnThree, BluePawnThreeIndex)
                 else if(TurnNumber = 3):
                     if(ChoosenPawn = 0):
+                        set YellowZeroHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnYellow(YellowPawn, YellowPawnIndex)
                     else if(ChoosenPawn = 1):
+                        set YellowOneHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnYellow(YellowPawnOne, YellowPawnOneIndex)
                     else if(ChoosenPawn = 2):
+                        set YellowTwoHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex)
                     else if(ChoosenPawn = 3):
+                        set YellowThreeHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnYellow(YellowPawnThree, YellowPawnThreeIndex)
                 else if(TurnNumber = 4):
                     if(ChoosenPawn = 0):
+                        set  GreenZeroHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnGreen(GreenPawn, GreenPawnIndex)
                     else if(ChoosenPawn = 1):
+                        set GreenOneHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnGreen(GreenPawnOne, GreenPawnOneIndex)
                     else if(ChoosenPawn = 2):
+                        set GreenTwoHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex)
                     else if(ChoosenPawn = 3):
+                        set GreenThreeHighlight.HIghlightIntensity = 20.0
                         spawn. BotMovePawnGreen(GreenPawnThree, GreenPawnThreeIndex)
 
         else: #no bot can move
