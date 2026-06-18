@@ -219,7 +219,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     var GreenTwoFinished : logic = false
     var GreenThreeFinished : logic = false
 
-    var WhichColorElim : int = -1 #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
+
 
     var RollerForPlayer : int = 0
     var DoubleRollFlagPlayer : logic = false
@@ -554,14 +554,14 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             #Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
-               TurnChanger(1)
+               TurnChanger(1, false)
                 set DoubleRollFlagPlayer = false
                 set RedConsecutiveSixes = 0
                 TimerCheckerHelper()
                 return
 
             else if(RedPlayer = false):
-                TurnChanger(1)
+                TurnChanger(1, false)
                 set DoubleRollFlagPlayer = false
                 set RedConsecutiveSixes = 0
                 TimerCheckerHelper()
@@ -579,7 +579,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
-               TurnChanger(2)
+               TurnChanger(2, false)
                 set DoubleRollFlagPlayer = false
                 set BlueConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
@@ -587,7 +587,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 return
 
             else if(BluePlayer = false):
-                TurnChanger(2)
+                TurnChanger(2, false)
                 set BlueConsecutiveSixes = 0
                 set DoubleRollFlagPlayer = false
                 spawn{HelperPlayerProfileTurn()}
@@ -605,14 +605,14 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
-                TurnChanger(4)
+                TurnChanger(4, false)
                 set DoubleRollFlagPlayer = false
                 set GreenConsecutiveSixes = 0
                 TimerCheckerHelper()
                 return
 
             else if(GreenPlayer = false):
-                TurnChanger(4)
+                TurnChanger(4, false)
                 set DoubleRollFlagPlayer = false
                 set GreenConsecutiveSixes = 0
                 TimerCheckerHelper()
@@ -629,13 +629,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             #Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
-                TurnChanger(3)
+                TurnChanger(3, false)
                 set YellowConsecutiveSixes = 0
                 set DoubleRollFlagPlayer = false
                 TimerCheckerHelper()
                 return
             else if(YellowPlayer = false):
-                TurnChanger(3)
+                TurnChanger(3, false)
                 set DoubleRollFlagPlayer = false
                 set YellowConsecutiveSixes = 0
                 TimerCheckerHelper()
@@ -706,7 +706,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 return
             else:
                 Sleep(1.0)
-                TurnChanger(1)
+                TurnChanger(1, false)
                 set DoubleRollFlagPlayer = false
                 set ConfirmFlag = false
                 TimerCheckerHelper()
@@ -769,7 +769,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
         else: #no bot can move
             Sleep(1.0)
-            TurnChanger(TurnNumber)
+            TurnChanger(TurnNumber, false)
             TimerCheckerHelper()
             Print("BotsCannotMove")
     )
@@ -781,43 +781,54 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         spawn. CheckTimerForYellow()
     )
 
-    TurnChanger(Index:int)<suspends>:void=(
-        if(Index = 1): # 1 = redfalse, 2 = bluefalse, 3 = yellowfalse, 4 = greenfalse
-            set RedPlayerTurn = false
-            if(BluePlayer?):
-                set BluePlayerTurn = true
-            else if(YellowPlayer?):
-                set YellowPlayerTurn = true
-            else if(GreenPlayer?):
-                set GreenPlayerTurn = true
-            spawn{HelperPlayerProfileTurn()}
-        else if(Index = 2):
-            set BluePlayerTurn = false
-            if(YellowPlayer?):
-                set YellowPlayerTurn = true
-            else if(GreenPlayer?):
-                set GreenPlayerTurn = true
-            else if(RedPlayer?):
+    TurnChanger(Index:int, KeepCurrentTurn : logic)<suspends>:void=(
+        FalsingPlayerTurn()
+
+        if(KeepCurrentTurn = true):
+            if(Index = 1):
                 set RedPlayerTurn = true
-            spawn{HelperPlayerProfileTurn()}
-        else if(Index = 4):
-            set GreenPlayerTurn = false
-            if(RedPlayer?):
-                set RedPlayerTurn = true
-            else if(BluePlayer?):
+            else if(Index = 2):
                 set BluePlayerTurn = true
-            else if(YellowPlayer?):
+            else if(Index = 3):
                 set YellowPlayerTurn = true
-            spawn{HelperPlayerProfileTurn()}
-        else if(Index = 3):
-            set YellowPlayerTurn = false
-            if(GreenPlayer?):
+            else if(Index = 4):
                 set GreenPlayerTurn = true
-            else if(RedPlayer?):
-                set RedPlayerTurn = true
-            else if(BluePlayer?):
-                set BluePlayerTurn = true
-            spawn{HelperPlayerProfileTurn()}
+
+        else:
+            if(Index = 1): # 1 = redfalse, 2 = bluefalse, 3 = yellowfalse, 4 = greenfalse
+                set RedPlayerTurn = false
+                if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+            else if(Index = 2):
+                set BluePlayerTurn = false
+                if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+                else if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+            else if(Index = 4):
+                set GreenPlayerTurn = false
+                if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                else if(YellowPlayer?):
+                    set YellowPlayerTurn = true
+            else if(Index = 3):
+                set YellowPlayerTurn = false
+                if(GreenPlayer?):
+                    set GreenPlayerTurn = true
+                else if(RedPlayer?):
+                    set RedPlayerTurn = true
+                else if(BluePlayer?):
+                    set BluePlayerTurn = true
+                
+        spawn{HelperPlayerProfileTurn()}
 
         if(BluePlayerTurn = true): #UNR 
             spawn. BotDiceRoller("Blue")
@@ -900,7 +911,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     set CurrentIndex = 0
                     set RedConsecutiveSixes += 1
                     if(RedConsecutiveSixes >= 3):
-                        TurnChanger(1)
+                        TurnChanger(1, false)
                         set RedConsecutiveSixes = 0
                     # else keep turn
                     set RedDiceRollValue = 0
@@ -927,12 +938,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     if(RedDiceRollValue = 6):
                         set RedConsecutiveSixes += 1
                         if(RedConsecutiveSixes >= 3):
-                            TurnChanger(1)
+                            TurnChanger(1, false)
                             set RedConsecutiveSixes = 0
                         # else keep turn
                     else:
                         set RedConsecutiveSixes = 0
-                        TurnChanger(1)
+                        TurnChanger(1, false)
                     set RedDiceRollValue = 0
                     set DoubleRollFlagPlayer = false
 
@@ -940,23 +951,22 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
         
-        set WhichColorElim = 0
         if (RedZeroHighlight.HIghlightIntensity = 20.0):
             set RedPawnIndex = CurrentIndex
             set WhichPawn = 0
-            spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, WhichColorElim)}
+            spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, 0)}
         else if (RedOneHighlight.HIghlightIntensity = 20.0):
             set WhichPawn = 1
             set RedPawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, WhichColorElim)}
+            spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, 0)}
         else if (RedTwoHighlight.HIghlightIntensity = 20.0):
             set RedPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
-            spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, WhichColorElim)}
+            spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, 0)}
         else if (RedThreeHighlight.HIghlightIntensity = 20.0):
             set RedPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
-            spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, WhichColorElim)}
+            spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, 0)}
         
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights()
@@ -968,8 +978,11 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
+        var MoveCompleted : logic = false
+        var ThirdSix : logic = false
         set ConfirmFlag = true
-        
+        var KeepCurrentTurn :logic = false
+
         if(CurrentIndex = -1 and BlueDiceRollValue = 6):
             if(Path := BluePaths[0]):
                 PathTransform := Path.GetTransform()
@@ -978,15 +991,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 AudioPlayer(APMove)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):   
                     set CurrentIndex = 0
-                    set BlueConsecutiveSixes += 1
-                    if(BlueConsecutiveSixes >= 3):
-                        TurnChanger(2)
-                        set BlueConsecutiveSixes = 0
-                    # else keep turn
-                    else:
-                        set BluePlayerTurn = true
-                        spawn. BotDiceRoller("Blue")
-                    set BlueDiceRollValue = 0
+                    set MoveCompleted = true
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1005,38 +1010,43 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(BlueDiceRollValue = 6):
-                        set BlueConsecutiveSixes += 1
-                        if(BlueConsecutiveSixes >= 3):
-                            # Switch to Green turn, reset counter
-                            TurnChanger(2)
-                            set BlueConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set BluePlayerTurn = true
-                            spawn. BotDiceRoller("Blue")
-                    else:
-                        set BlueConsecutiveSixes = 0
-                        TurnChanger(2)
-                    set BlueDiceRollValue = 0
+                    set MoveCompleted = true
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
-        set WhichColorElim = 1
-        if (PawnNumber = 0):
-            set BluePawnIndex = CurrentIndex
-            spawn{PossibleElimChecker(BluePawnIndex, PawnNumber, WhichColorElim)}
-        else if (PawnNumber = 1):
-            set BluePawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(BluePawnOneIndex, PawnNumber, WhichColorElim)}
-        else if (PawnNumber = 2):
-            set BluePawnTwoIndex = CurrentIndex
-            spawn{PossibleElimChecker(BluePawnTwoIndex, PawnNumber, WhichColorElim)}
-        else if (PawnNumber = 3):
-            set BluePawnThreeIndex = CurrentIndex
-            spawn{PossibleElimChecker(BluePawnThreeIndex, PawnNumber, WhichColorElim)}
+        if(MoveCompleted = true):
+            # Update the actual pawn index first
+            if(PawnNumber = 0):
+                set BluePawnIndex = CurrentIndex
+            else if(PawnNumber = 1):
+                set BluePawnOneIndex = CurrentIndex
+            else if(PawnNumber = 2):
+                set BluePawnTwoIndex = CurrentIndex
+            else if(PawnNumber = 3):
+                set BluePawnThreeIndex = CurrentIndex
 
-        spawn{HelperPlayerProfileTurn()}
+            #handle consecutive sixes
+            if(BlueDiceRollValue = 6): #also set consective to zero after turn change
+                set BlueConsecutiveSixes += 1
+
+                if(BlueConsecutiveSixes >= 3):
+                    set ThirdSix = true
+                    set BlueConsecutiveSixes = 0
+
+            else:
+                set BlueConsecutiveSixes = 0
+
+            Eliminated := PossibleElimChecker(CurrentIndex, PawnNumber, 1)
+
+            if(ThirdSix = true):
+                set KeepCurrentTurn = false
+            else if(Eliminated = true or BlueDiceRollValue = 6):
+                set KeepCurrentTurn = true
+
+            # Reset once, after checking the rolled value
+            set BlueDiceRollValue = 0
+            TurnChanger(2, KeepCurrentTurn)
+
         ResetAllHighlights()
         TimerCheckerHelper()
         set ConfirmFlag = false
@@ -1047,6 +1057,9 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
         set ConfirmFlag = true
+        var KeepTurn : logic = false
+        var ThirdSix : logic = false
+        var MoveCompleted : logic = false
 
         if(CurrentIndex = -1 and GreenDiceRollValue = 6):
             if(Path := GreenPaths[0]):
@@ -1056,15 +1069,9 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 AudioPlayer(APMove)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set GreenConsecutiveSixes += 1
-                    if(GreenConsecutiveSixes >= 3):
-                        TurnChanger(4)
-                        set GreenConsecutiveSixes = 0
-                    else:
-                        set GreenPlayerTurn = true
-                        spawn. BotDiceRoller("Green")
-                    set GreenDiceRollValue = 0
+                
                 set ConfirmFlag = false
+                set MoveCompleted = true
 
 
         else if(CurrentIndex >= 0):
@@ -1084,44 +1091,41 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(GreenDiceRollValue = 6):
-                        set GreenConsecutiveSixes += 1
-                        if(GreenConsecutiveSixes >= 3):
-                            # Switch to Red turn, reset counter
-                            TurnChanger(4)
-                            set GreenConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set GreenPlayerTurn = true
-                            spawn. BotDiceRoller("Green")
-                    else:
-                        set GreenConsecutiveSixes = 0
-                        TurnChanger(4)
-                    set GreenDiceRollValue = 0
+                    set MoveCompleted = true
                 set ConfirmFlag = false
                                 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
-        
-        set WhichColorElim = 3
-        if (PawnNumber = 0):
-            set GreenPawnIndex = CurrentIndex
-            spawn{PossibleElimChecker(GreenPawnIndex, PawnNumber, WhichColorElim)}
-            set ConfirmFlag = false
-        else if (PawnNumber = 1):
-            set GreenPawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(GreenPawnOneIndex, PawnNumber, WhichColorElim)}
-            set ConfirmFlag = false
-        else if (PawnNumber = 2):
-            set GreenPawnTwoIndex = CurrentIndex
-            spawn{PossibleElimChecker(GreenPawnTwoIndex, PawnNumber, WhichColorElim)}
-            set ConfirmFlag = false
-        else if (PawnNumber = 3):
-            set GreenPawnThreeIndex = CurrentIndex
-            spawn{PossibleElimChecker(GreenPawnThreeIndex, PawnNumber, WhichColorElim)}
-            set ConfirmFlag = false
 
-        spawn{HelperPlayerProfileTurn()}
+        if(MoveCompleted = true):
+            if (PawnNumber = 0):
+                set GreenPawnIndex = CurrentIndex
+            else if (PawnNumber = 1):
+                set GreenPawnOneIndex = CurrentIndex
+                set ConfirmFlag = false
+            else if (PawnNumber = 2):
+                set GreenPawnTwoIndex = CurrentIndex
+            else if (PawnNumber = 3):
+                set GreenPawnThreeIndex = CurrentIndex
+
+            if(GreenDiceRollValue = 6):
+                set GreenConsecutiveSixes += 1
+                if(GreenConsecutiveSixes >= 3):
+                    set ThirdSix = true
+                    set GreenConsecutiveSixes = 0
+            else:
+                set GreenConsecutiveSixes = 0
+            
+            Eliminated := PossibleElimChecker(CurrentIndex, PawnNumber, 3)
+            
+            if(ThirdSix = true):
+                set KeepTurn = false
+            else if(Eliminated = true or GreenDiceRollValue = 6):
+                set KeepTurn = true
+
+            set GreenDiceRollValue = 0
+
+
         ResetAllHighlights()
         TimerCheckerHelper()
         set ConfirmFlag = false 
@@ -1131,8 +1135,11 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
-        var WhichPawn : int = -1
         set ConfirmFlag = true
+        var MoveCompleted : logic = false
+        var ThirdSix : logic = false
+        var KeepTurn : logic = false
+
 
         if(CurrentIndex = -1 and YellowDiceRollValue = 6):
             if(Path := YellowPaths[0]):
@@ -1142,15 +1149,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 AudioPlayer(APMove)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set YellowConsecutiveSixes += 1
-                    if(YellowConsecutiveSixes >= 3):
-                        TurnChanger(3)
-                        set YellowConsecutiveSixes = 0
-                    # else keep turn
-                    else:
-                        set YellowPlayerTurn = true
-                        spawn. BotDiceRoller("Yellow")
-                    set YellowDiceRollValue = 0
+                    set MoveCompleted = true
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1169,48 +1168,44 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(YellowDiceRollValue = 6):
-                        set YellowConsecutiveSixes += 1
-                        if(YellowConsecutiveSixes >= 3):
-                            # Switch to Red turn, reset counter
-                            TurnChanger(3)
-                            set YellowConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set YellowPlayerTurn = true
-                            spawn. BotDiceRoller("Yellow")
-                    else:
-                        set YellowConsecutiveSixes = 0
-                        TurnChanger(3)
-                    set YellowDiceRollValue = 0
+                    set MoveCompleted = true
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
-        set WhichColorElim = 2
-        if (YellowZeroHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnIndex = CurrentIndex
-            set WhichPawn = 0
-            spawn{PossibleElimChecker(YellowPawnIndex, WhichPawn, WhichColorElim)}
-        else if (YellowOneHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnOneIndex = CurrentIndex
-            set WhichPawn = 1
-            spawn{PossibleElimChecker(YellowPawnOneIndex, WhichPawn, WhichColorElim)}
-        else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnTwoIndex = CurrentIndex
-            set WhichPawn = 2
-            spawn{PossibleElimChecker(YellowPawnTwoIndex, WhichPawn, WhichColorElim)}
-        else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnThreeIndex = CurrentIndex
-            set WhichPawn = 3
-            spawn{PossibleElimChecker(YellowPawnThreeIndex, WhichPawn, WhichColorElim)}
+        if(MoveCompleted = true):
+            if (PawnNumber = 0):
+                set YellowPawnIndex = CurrentIndex
+            else if (PawnNumber = 1):
+                set YellowPawnOneIndex = CurrentIndex
+            else if (PawnNumber = 2):
+                set YellowPawnTwoIndex = CurrentIndex
+            else if (PawnNumber = 3):
+                set YellowPawnThreeIndex = CurrentIndex
+
+            if(YellowDiceRollValue = 6):
+                set YellowConsecutiveSixes += 1
+                if(YellowConsecutiveSixes >= 3):
+                    set ThirdSix = true
+                    set YellowConsecutiveSixes = 0
+            else:
+                set YellowConsecutiveSixes = 0
+
+            Eliminated := PossibleElimChecker(CurrentIndex, PawnNumber, 2)
+
+            if(ThirdSix = true):
+                set KeepTurn = false
+            else if(Eliminated = true or YellowDiceRollValue = 6):
+                set KeepTurn = true
+
+            set YellowDiceRollValue = 0
+            TurnChanger(3, KeepTurn)
         
-        spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights()
         spawn{CheckTimerForGreen()}
         set ConfirmFlag = false
     )
 
-    PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int)<suspends>:void=(
+    PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int)<suspends>:logic=(
         #1 -- color. 2 -- which pawn from that color. 3. Position that pawns position index. All int Yes.
         #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
         
@@ -1458,26 +1453,11 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             Print("Green Eliminated")
 
 
-        if(EliminationOccured = true):
-            FalsingPlayerTurn()
-            if(Color = 0 and RedPlayer?):
-                set RedPlayerTurn = true
-            else if(Color = 1 and BluePlayer?):
-                set BluePlayerTurn = true
-                spawn. BotDiceRoller("Blue")
-            else if(Color = 2 and YellowPlayer?):
-                set YellowPlayerTurn = true
-                spawn. BotDiceRoller("Yellow")
-            else if(Color = 3 and GreenPlayer?):
-                set GreenPlayerTurn = true
-                spawn. BotDiceRoller("Green")
-            spawn{HelperPlayerProfileTurn()}
-            TimerCheckerHelper()
-        else:
-            Print("Blahhhh")
         
         if(RedAgent := RedPlayer?):
             IsItTheEnd(RedAgent)
+
+        return EliminationOccured
     )
 
     FalsingPlayerTurn():void=(
@@ -1618,7 +1598,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         YellowIndexInitialSetter()
         GreenIndexInitialSetter()
 
-        set WhichColorElim = -1
 
 
         if(RedPawn.TeleportTo[RedPawnInitialTransform]):
