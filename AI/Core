@@ -1099,7 +1099,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 set GreenPawnIndex = CurrentIndex
             else if (PawnNumber = 1):
                 set GreenPawnOneIndex = CurrentIndex
-                set ConfirmFlag = false
             else if (PawnNumber = 2):
                 set GreenPawnTwoIndex = CurrentIndex
             else if (PawnNumber = 3):
