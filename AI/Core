@@ -1069,9 +1069,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 AudioPlayer(APMove)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                
-                set ConfirmFlag = false
-                set MoveCompleted = true
+                    set MoveCompleted = true
 
 
         else if(CurrentIndex >= 0):
@@ -1092,7 +1090,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
                     set MoveCompleted = true
-                set ConfirmFlag = false
                                 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
@@ -1124,7 +1121,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 set KeepTurn = true
 
             set GreenDiceRollValue = 0
-
+            TurnChanger(4, KeepTurn)
 
         ResetAllHighlights()
         TimerCheckerHelper()
@@ -1201,7 +1198,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             TurnChanger(3, KeepTurn)
         
         ResetAllHighlights()
-        spawn{CheckTimerForGreen()}
+        TimerCheckerHelper()
         set ConfirmFlag = false
     )
 
