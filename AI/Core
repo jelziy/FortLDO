@@ -463,13 +463,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     ConfirmPressed(Agent:agent):void=(
         if(RedPlayer = option{Agent} and RedPlayerTurn = true and RedDiceRollValue > 0):
             if (RedZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawn, RedPawnIndex, Agent)}
+                spawn{MovePawnRed(RedPawn, RedPawnIndex, Agent, 0)}
             else if (RedOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawnOne, RedPawnOneIndex, Agent)}
+                spawn{MovePawnRed(RedPawnOne, RedPawnOneIndex, Agent, 1)}
             else if (RedTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
+                spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent, 2)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
+                spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent, 3)}
             #byg are bots
     )
 
@@ -894,7 +894,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
         return PossiblePawns
     )
-    MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+    MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent, PawnNumber : int)<suspends>:void=(
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
@@ -951,19 +951,19 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
         
-        if (RedZeroHighlight.HIghlightIntensity = 20.0):
+        if (PawnNumber = 0):
             set RedPawnIndex = CurrentIndex
             set WhichPawn = 0
             spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, 0)}
-        else if (RedOneHighlight.HIghlightIntensity = 20.0):
+        else if (PawnNumber = 1):
             set WhichPawn = 1
             set RedPawnOneIndex = CurrentIndex
             spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, 0)}
-        else if (RedTwoHighlight.HIghlightIntensity = 20.0):
+        else if (PawnNumber = 2):
             set RedPawnTwoIndex = CurrentIndex
             set WhichPawn = 2
             spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, 0)}
-        else if (RedThreeHighlight.HIghlightIntensity = 20.0):
+        else if (PawnNumber = 3):
             set RedPawnThreeIndex = CurrentIndex
             set WhichPawn = 3
             spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, 0)}
