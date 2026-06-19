@@ -898,7 +898,9 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
-        var WhichPawn : int = -1
+        var MoveCompleted : logic = false
+        var ThirdSix : logic = false
+        var KeepTurn : logic = false
         set ConfirmFlag = true
 
         if(CurrentIndex = -1 and RedDiceRollValue = 6):
@@ -909,13 +911,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 AudioPlayer(APMove)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set RedConsecutiveSixes += 1
-                    if(RedConsecutiveSixes >= 3):
-                        TurnChanger(1, false)
-                        set RedConsecutiveSixes = 0
-                    # else keep turn
-                    set RedDiceRollValue = 0
-                    set DoubleRollFlagPlayer = false
+                    set MoveCompleted = true
 
 
         else if(CurrentIndex >= 0):
@@ -935,40 +931,41 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(RedDiceRollValue = 6):
-                        set RedConsecutiveSixes += 1
-                        if(RedConsecutiveSixes >= 3):
-                            TurnChanger(1, false)
-                            set RedConsecutiveSixes = 0
-                        # else keep turn
-                    else:
-                        set RedConsecutiveSixes = 0
-                        TurnChanger(1, false)
-                    set RedDiceRollValue = 0
-                    set DoubleRollFlagPlayer = false
+                    set MoveCompleted = true
 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
-        
-        if (PawnNumber = 0):
-            set RedPawnIndex = CurrentIndex
-            set WhichPawn = 0
-            spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, 0)}
-        else if (PawnNumber = 1):
-            set WhichPawn = 1
-            set RedPawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, 0)}
-        else if (PawnNumber = 2):
-            set RedPawnTwoIndex = CurrentIndex
-            set WhichPawn = 2
-            spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, 0)}
-        else if (PawnNumber = 3):
-            set RedPawnThreeIndex = CurrentIndex
-            set WhichPawn = 3
-            spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, 0)}
-        
-        spawn{HelperPlayerProfileTurn()}
+        if(MoveCompleted = true):
+            if (PawnNumber = 0):
+                set RedPawnIndex = CurrentIndex
+            else if (PawnNumber = 1):
+                set RedPawnOneIndex = CurrentIndex
+            else if (PawnNumber = 2):
+                set RedPawnTwoIndex = CurrentIndex
+            else if (PawnNumber = 3):
+                set RedPawnThreeIndex = CurrentIndex
+
+            if(RedDiceRollValue = 6):
+                set RedConsecutiveSixes += 1
+            
+                if(RedConsecutiveSixes >= 3):
+                    set ThirdSix = true
+                    set RedConsecutiveSixes = 0
+            else:
+                set RedConsecutiveSixes = 0
+
+            Eliminated := PossibleElimChecker(CurrentIndex, PawnNumber, 0)
+
+            if(ThirdSix = true):
+                set KeepTurn = false
+            else if(Eliminated = true or RedDiceRollValue = 6):
+                set KeepTurn = true
+                
+            set RedDiceRollValue = 0
+            set DoubleRollFlagPlayer = false
+            TurnChanger(1, KeepTurn)
+
         ResetAllHighlights()
         TimerCheckerHelper()
         set ConfirmFlag = true
