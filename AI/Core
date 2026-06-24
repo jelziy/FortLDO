@@ -13,6 +13,7 @@ using {F_WIdget}
 using {PawnMInstance}
 using {Pawn2MInstance}
 
+RedPlayerTip<localizes>:message = "Red Player"
 #UNR = unnecessary.. Just tryping random shii for fun
 
     # Examples showing how old variables map to the new class:
@@ -38,13 +39,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     @editable var PerGameCost : float = 100.0
     @editable CurrencyDevice : display_currency_device = display_currency_device{}
 
-    @editable Red : shared_game_data = shared_game_data{}
-
-    @editable {Categories := array{CamerasTip}}PlayerCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
+    @editable {Categories := array{RedPlayerTip}} Red : shared_game_data = shared_game_data{}
 
     @editable {Categories := array{CamerasTip}} JoinButton  : button_device = button_device{} #will always be 4 player game
 
     @editable {Categories := array{TpTip2}} ExitTp : teleporter_device = teleporter_device{}
+
+    #Input
     @editable {Categories := array{InputTip}}
     ConfirmInput : input_trigger_device = input_trigger_device{}
     @editable {Categories := array{InputTip}}
@@ -209,10 +210,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     var BluePlayerTurn : logic = false
     var YellowPlayerTurn : logic = false
 
-    var RedFinished : logic = false
-    var RedOneFinished : logic = false
-    var RedTwoFinished : logic = false
-    var RedThreeFinished : logic = false
 
     var BlueFinished : logic = false
     var BlueOneFinished : logic = false
@@ -249,7 +246,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
         InitialInitiator()
-        set AllPlayersPawns = array{Red.Pawn, Red.PawnOne, Red.PawnTwo, Red.PawnThree, BluePawnOne,
+        set AllPlayersPawns = array{Red.Pns.Pawn, Red.Pns.PawnOne, Red.Pns.PawnTwo, Red.Pns.PawnThree, BluePawnOne,
                                     BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
                                     YellowPawnOne, YellowPawnTwo, YellowPawnThree}
         for(PlayerPawn : AllPlayersPawns):
@@ -293,8 +290,8 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     PlayerJoined(Agent : agent):void=(
         if(RedPlayer = false and GameStarted = false):
             set RedPlayer = option{Agent}
-            PlayerCamera.Enable()
-            PlayerCamera.AddTo(Agent)
+            Red.Devices.Camera.Enable()
+            Red.Devices.Camera.AddTo(Agent)
             PlayerChair.Seat(Agent)
             PlayerChair.DisableExit()
             if:
@@ -305,7 +302,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 RedPlayerAvProp.SetMaterial(RedPlayerIcon)
             
             if(GameStarted = false):
-                set AllPlayersPawns = array{Red.Pawn, Red.PawnOne, Red.PawnTwo, Red.PawnThree, BluePawn, BluePawnOne,
+                set AllPlayersPawns = array{Red.Pns.Pawn, Red.Pns.PawnOne, Red.Pns.PawnTwo, Red.Pns.PawnThree, BluePawn, BluePawnOne,
                                     BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
                                     YellowPawnOne, YellowPawnTwo, YellowPawnThree}
                 for(Pawns : AllPlayersPawns):
@@ -322,43 +319,43 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             loop:
                 if(Attempts >= 4):
                     break
-                if (RollerForPlayer = 0 and RedFinished = false):
+                if (RollerForPlayer = 0 and Red.PawnFinished = false):
                     ResetAllHighlights()
                     set RedZeroHighlight.HIghlightIntensity = 20.0
-                    Red.Pawn.SetMaterial(RedZeroHighlight)
+                    Red.Pns.Pawn.SetMaterial(RedZeroHighlight)
                     set RollerForPlayer += 1
                     APHighlight.Play(Agent)
                     Print("Higlidhting Red Pawn 0")
                     break
-                else if (RollerForPlayer = 1 and RedOneFinished = false):
+                else if (RollerForPlayer = 1 and Red.PawnOneFinished = false):
                     ResetAllHighlights()
                     set RedOneHighlight.HIghlightIntensity = 20.0
-                    Red.PawnOne.SetMaterial(RedOneHighlight)
+                    Red.Pns.PawnOne.SetMaterial(RedOneHighlight)
                     set RollerForPlayer += 1
                     APHighlight.Play(Agent)
                     break
-                else if (RollerForPlayer = 2 and RedTwoFinished = false):
+                else if (RollerForPlayer = 2 and Red.PawnTwoFinished = false):
                     ResetAllHighlights()
                     set RedTwoHighlight.HIghlightIntensity = 20.0
-                    Red.PawnTwo.SetMaterial(RedTwoHighlight)
+                    Red.Pns.PawnTwo.SetMaterial(RedTwoHighlight)
                     set RollerForPlayer += 1
                     APHighlight.Play(Agent)
                     break
-                else if ( RollerForPlayer = 3 and RedThreeFinished = false):
+                else if ( RollerForPlayer = 3 and Red.PawnThreeFinished = false):
                     ResetAllHighlights()
                     set RedThreeHighlight.HIghlightIntensity = 20.0
-                    Red.PawnThree.SetMaterial(RedThreeHighlight)
+                    Red.Pns.PawnThree.SetMaterial(RedThreeHighlight)
                     set RollerForPlayer = 0
                     APHighlight.Play(Agent)
                     break
                 else:
-                    if(RollerForPlayer = 0 and RedFinished = true):
+                    if(RollerForPlayer = 0 and Red.PawnFinished = true):
                         set RollerForPlayer = 1
-                    else if(RollerForPlayer = 1 and RedOneFinished = true):
+                    else if(RollerForPlayer = 1 and Red.PawnOneFinished = true):
                         set RollerForPlayer = 2
-                    else if(RollerForPlayer = 2 and RedTwoFinished = true):
+                    else if(RollerForPlayer = 2 and Red.PawnTwoFinished = true):
                         set RollerForPlayer = 3
-                    else if(RollerForPlayer = 3 and RedThreeFinished = true):
+                    else if(RollerForPlayer = 3 and Red.PawnThreeFinished = true):
                         set RollerForPlayer = 0
                     set Attempts += 1     
     )
@@ -472,13 +469,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     ConfirmPressed(Agent:agent):void=(
         if(RedPlayer = option{Agent} and Red.IsTurn = true and RedDiceRollValue > 0):
             if (RedZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(Red.Pawn, RedPawnIndex, Agent, 0)}
+                spawn{MovePawnRed(Red.Pns.Pawn, RedPawnIndex, Agent, 0)}
             else if (RedOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(Red.PawnOne, RedPawnOneIndex, Agent, 1)}
+                spawn{MovePawnRed(Red.Pns.PawnOne, RedPawnOneIndex, Agent, 1)}
             else if (RedTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(Red.PawnTwo, RedPawnTwoIndex, Agent, 2)}
+                spawn{MovePawnRed(Red.Pns.PawnTwo, RedPawnTwoIndex, Agent, 2)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(Red.PawnThree, RedPawnThreeIndex, Agent, 3)}
+                spawn{MovePawnRed(Red.Pns.PawnThree, RedPawnThreeIndex, Agent, 3)}
             #byg are bots
     )
 
@@ -486,17 +483,17 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
          if(RedPlayer = option{Agent} and GameStarted = true): #in this case gamestarted will always be true, because the if the agent has joined the game has started as it only requires one player.
             set RedPlayer = false
             spawn{LeaveWidget(Agent)}           
-            PlayerCamera.RemoveFrom(Agent)
-            PlayerCamera.Disable()
+            Red.Devices.Camera.RemoveFrom(Agent)
+            Red.Devices.Camera.Disable()
             PlayerChair.EnableExit()
-            if(Red.Pawn.TeleportTo[Red.PawnInitialTransform]):
-            if(Red.PawnOne.TeleportTo[Red.PawnOneInitialTransform]): 
-            if(Red.PawnTwo.TeleportTo[Red.PawnTwoInitialTransform]): 
-            if(Red.PawnThree.TeleportTo[Red.PawnThreeInitialTransform]):
-            set AllRedPawn = array{Red.Pawn, Red.PawnOne, Red.PawnTwo, Red.PawnThree}
+            if(Red.Pns.Pawn.TeleportTo[Red.PawnInitialTransform]):
+            if(Red.Pns.PawnOne.TeleportTo[Red.PawnOneInitialTransform]): 
+            if(Red.Pns.PawnTwo.TeleportTo[Red.PawnTwoInitialTransform]): 
+            if(Red.Pns.PawnThree.TeleportTo[Red.PawnThreeInitialTransform]):
+            set AllRedPawn = array{Red.Pns.Pawn, Red.Pns.PawnOne, Red.Pns.PawnTwo, Red.Pns.PawnThree}
             for(Pawns : AllRedPawn):
                 Pawns.Hide()
-            RedIndexInitialSetter()
+            Red.ResetPawnState()
             if(not FinishedOrder.Find[0]):
                 set ActivePlayerCount -= 1
 
@@ -507,7 +504,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             
             spawn. GameOverReset(1)
 
-            PlayerCamera.RemoveFrom(Agent) #temporary solution
+            Red.Devices.Camera.RemoveFrom(Agent) #temporary solution
     )
         
 
@@ -654,13 +651,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     ResetAllHighlights():void=(
         if(RedPlayer?):
             set RedZeroHighlight.HIghlightIntensity = 0.0
-            Red.Pawn.SetMaterial(RedZeroHighlight)
+            Red.Pns.Pawn.SetMaterial(RedZeroHighlight)
             set RedOneHighlight.HIghlightIntensity = 0.0
-            Red.PawnOne.SetMaterial(RedOneHighlight)
+            Red.Pns.PawnOne.SetMaterial(RedOneHighlight)
             set RedTwoHighlight.HIghlightIntensity = 0.0
-            Red.PawnTwo.SetMaterial(RedTwoHighlight)
+            Red.Pns.PawnTwo.SetMaterial(RedTwoHighlight)
             set RedThreeHighlight.HIghlightIntensity = 0.0
-            Red.PawnThree.SetMaterial(RedThreeHighlight)
+            Red.Pns.PawnThree.SetMaterial(RedThreeHighlight)
         else if(BluePlayer?):
             set BlueZeroHighlight.HIghlightIntensity = 0.0
             BluePawn.SetMaterial(BlueZeroHighlight)
@@ -1256,13 +1253,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             if(PawnPosition >= 56):
                 set RedEnd += 1
                 if(Pawn = 0):
-                    set RedFinished = true
+                    set Red.PawnFinished = true
                 else if(Pawn = 1):
-                    set RedOneFinished = true
+                    set Red.PawnOneFinished = true
                 else if(Pawn = 2):
-                    set RedTwoFinished = true
+                    set Red.PawnTwoFinished = true
                 else if(Pawn = 3):
-                    set RedThreeFinished = true
+                    set Red.PawnThreeFinished = true
                 #------------------------------------------------------
                 if(RedEnd = 1):
                     set MInbRed.HowManyNumbers = 1.0
@@ -1564,14 +1561,14 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         
         if(RedAgent := tempRedPlayer?):
             spawn{LeaveWidget(RedAgent)}
-            PlayerCamera.RemoveFrom(RedAgent)
-            PlayerCamera.Disable()
+            Red.Devices.Camera.RemoveFrom(RedAgent)
+            Red.Devices.Camera.Disable()
             ExitTp.Teleport(RedAgent)
 
         if(RedAgent := RedPlayer?): #got it the player that has not reached the end was not setting up to templayer hence it was not working
             spawn{LeaveWidget(RedAgent)}
-            PlayerCamera.RemoveFrom(RedAgent)
-            PlayerCamera.Disable()
+            Red.Devices.Camera.RemoveFrom(RedAgent)
+            Red.Devices.Camera.Disable()
             ExitTp.Teleport(RedAgent)
 
         PlayerChair.EnableExit()
@@ -1596,17 +1593,16 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         set YellowEnd = 0
         set GreenEnd = 0
         
-        RedIndexInitialSetter()
         BlueIndexInitialSetter()
         YellowIndexInitialSetter()
         GreenIndexInitialSetter()
 
 
 
-        if(Red.Pawn.TeleportTo[Red.PawnInitialTransform]):
-        if(Red.PawnOne.TeleportTo[Red.PawnOneInitialTransform]):
-        if(Red.PawnTwo.TeleportTo[Red.PawnTwoInitialTransform]):
-        if(Red.PawnThree.TeleportTo[Red.PawnThreeInitialTransform]):
+        if(Red.Pns.Pawn.TeleportTo[Red.PawnInitialTransform]):
+        if(Red.Pns.PawnOne.TeleportTo[Red.PawnOneInitialTransform]):
+        if(Red.Pns.PawnTwo.TeleportTo[Red.PawnTwoInitialTransform]):
+        if(Red.Pns.PawnThree.TeleportTo[Red.PawnThreeInitialTransform]):
 
         if(BluePawn.TeleportTo[BluePawnInitialTransform]):
         if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]):
@@ -1650,18 +1646,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         set MInbGreen.HowManyNumbers = 0.0
         
         FalsingTempPlayerandNormalPlayers()
-        PawnFinishStateResetter()
+        Red.ResetPawnState()
         ResetPlayerDrainerProfile()
 
         Print("Match reset complete")
     )
 
-    RedIndexInitialSetter():void=( #will add sturct later if better
-        set RedPawnIndex = -1
-        set RedPawnOneIndex = -1
-        set RedPawnTwoIndex = -1
-        set RedPawnThreeIndex = -1
-    )
 
     BlueIndexInitialSetter():void=(
         set BluePawnIndex = -1
@@ -1713,10 +1703,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     )
 
     PawnFinishStateResetter():void=(
-        set RedFinished = false
-        set RedOneFinished = false
-        set RedTwoFinished = false
-        set RedThreeFinished = false
+        Red.ResetPawnState()
 
         set BlueFinished = false
         set BlueOneFinished = false
