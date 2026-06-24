@@ -43,8 +43,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     @editable {Categories := array{CamerasTip}} JoinButton  : button_device = button_device{} #will always be 4 player game
 
-    @editable {Categories := array{TpTip2}} ExitTp : teleporter_device = teleporter_device{}
-
     #Input
     @editable {Categories := array{InputTip}}
     ConfirmInput : input_trigger_device = input_trigger_device{}
@@ -74,7 +72,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     @editable {Categories := array{YellowPawnTip}} YellowPawnTwo : creative_prop = creative_prop{}
     @editable {Categories := array{YellowPawnTip}} YellowPawnThree : creative_prop = creative_prop{}
 
-    @editable { Categories := array{PathProps}} RedPaths : []creative_prop = array{}
+    
     @editable { Categories := array{PathProps}} GreenPaths : []creative_prop = array{}
     @editable { Categories := array{PathProps}} BluePaths : []creative_prop = array{}
     @editable { Categories := array{PathProps}} YellowPaths : []creative_prop = array{}
@@ -98,7 +96,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     @editable{Categories := array{ChairTip}} PlayerChair : chair_device = chair_device{}
 
-    @editable {Categories := array{TpTip2}} PlayerTp : teleporter_device = teleporter_device{}
 
     var RedZeroHighlight : MI_HighRed = MI_HighRed{}
     var RedOneHighlight : MI_HighRed1 = MI_HighRed1{}
@@ -290,8 +287,8 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     PlayerJoined(Agent : agent):void=(
         if(RedPlayer = false and GameStarted = false):
             set RedPlayer = option{Agent}
-            Red.Devices.Camera.Enable()
-            Red.Devices.Camera.AddTo(Agent)
+            Red.Device.Camera.Enable()
+            Red.Device.Camera.AddTo(Agent)
             PlayerChair.Seat(Agent)
             PlayerChair.DisableExit()
             if:
@@ -483,8 +480,8 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
          if(RedPlayer = option{Agent} and GameStarted = true): #in this case gamestarted will always be true, because the if the agent has joined the game has started as it only requires one player.
             set RedPlayer = false
             spawn{LeaveWidget(Agent)}           
-            Red.Devices.Camera.RemoveFrom(Agent)
-            Red.Devices.Camera.Disable()
+            Red.Device.Camera.RemoveFrom(Agent)
+            Red.Device.Camera.Disable()
             PlayerChair.EnableExit()
             if(Red.Pns.Pawn.TeleportTo[Red.PawnInitialTransform]):
             if(Red.Pns.PawnOne.TeleportTo[Red.PawnOneInitialTransform]): 
@@ -500,11 +497,11 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             set RedPlayerIcon.TexParam = NormAv
             RedPlayerAvProp.SetMaterial(RedPlayerIcon)
 
-            PlayerTp.Teleport(Agent)
+            Red.Device.ExitTp.Teleport(Agent)
             
             spawn. GameOverReset(1)
 
-            Red.Devices.Camera.RemoveFrom(Agent) #temporary solution
+            Red.Device.Camera.RemoveFrom(Agent) #temporary solution
     )
         
 
@@ -692,7 +689,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         ##if not then switch the turm to the next player###
         var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
         var CanMove : logic = false
-        PathLenght := RedPaths.Length #same number for each
+        PathLenght := Red.Pns.Paths.Length #same number for each
         var PawnIndices : []int = array{}
         var TurnNumber : int = 0
         var DiceValue : int = 0
@@ -735,7 +732,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             set DiceValue = GreenDiceRollValue
             set TurnNumber = 4
         
-        PossiblePawns := GetPossiblePawns(PawnIndices, DiceValue, RedPaths.Length) #pathlength giving unknown identifier
+        PossiblePawns := GetPossiblePawns(PawnIndices, DiceValue, Red.Pns.Paths.Length) #pathlength giving unknown identifier
 
         if(PossiblePawns.Length > 0):
             RandomIndex := GetRandomInt(0, PossiblePawns.Length - 1)
@@ -910,7 +907,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         set ConfirmFlag = true
 
         if(CurrentIndex = -1 and RedDiceRollValue = 6):
-            if(Path := RedPaths[0]):
+            if(Path := Red.Pns.Paths[0]):
                 PathTransform:= Path.GetTransform()
                 PathTranslation:= PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
@@ -923,13 +920,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
             TargetIndex := CurrentIndex + RedDiceRollValue
-            RemainingPaths := RedPaths.Length - CurrentIndex - 1
+            RemainingPaths := Red.Pns.Paths.Length - CurrentIndex - 1
             if(RedDiceRollValue <= RemainingPaths):
-                if(TargetIndex < RedPaths.Length):
+                if(TargetIndex < Red.Pns.Paths.Length):
                     for (Step := 1..RedDiceRollValue):
                         NextIndex := CurrentIndex + Step
                         Print("Step {Step}: NextIndex = {NextIndex}")
-                        if(Path := RedPaths[NextIndex]):
+                        if(Path := Red.Pns.Paths[NextIndex]):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
@@ -1561,15 +1558,15 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         
         if(RedAgent := tempRedPlayer?):
             spawn{LeaveWidget(RedAgent)}
-            Red.Devices.Camera.RemoveFrom(RedAgent)
-            Red.Devices.Camera.Disable()
-            ExitTp.Teleport(RedAgent)
+            Red.Device.Camera.RemoveFrom(RedAgent)
+            Red.Device.Camera.Disable()
+            Red.Device.ExitTp.Teleport(RedAgent)
 
         if(RedAgent := RedPlayer?): #got it the player that has not reached the end was not setting up to templayer hence it was not working
             spawn{LeaveWidget(RedAgent)}
-            Red.Devices.Camera.RemoveFrom(RedAgent)
-            Red.Devices.Camera.Disable()
-            ExitTp.Teleport(RedAgent)
+            Red.Device.Camera.RemoveFrom(RedAgent)
+            Red.Device.Camera.Disable()
+            Red.Device.ExitTp.Teleport(RedAgent)
 
         PlayerChair.EnableExit()
         
