@@ -1,0 +1,105 @@
+
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /UnrealEngine.com/Temporary/SpatialMath }
+
+
+PawnTip<localizes>:message = "Pawns & stuff"
+GeneralTip<localizes>:message = "General Devices"
+
+#This is for player version but can be used for ai version
+shared_game_data<public> := class<concrete>:
+    #Devices configured in UEFN
+    @editable {Categories := array{GeneralTip}} Camera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
+    @editable {Categories := array{GeneralTip}} JoinButton : button_device = button_device{}
+    
+    #player switch is for device itself
+
+    @editable {Categories := array{GeneralTip}} Chair : chair_device = chair_device{}
+    @editable {Categories := array{GeneralTip}} LobbyPlayerRef : player_reference_device = player_reference_device{} 
+    @editable {Categories := array{GeneralTip}} ExitTp : teleporter_device = teleporter_device{}
+    @editable {Categories := array{GeneralTip}} AvatarProp : creative_prop = creative_prop{}
+
+    # Pawn order: zero, one, two, three
+    @editable {Categories := array{PawnTip}} Pawn : creative_prop = creative_prop{}
+    @editable {Categories := array{PawnTip}} PawnOne : creative_prop = creative_prop{}
+    @editable {Categories := array{PawnTip}} PawnTwo : creative_prop = creative_prop{}
+    @editable {Categories := array{PawnTip}} PawnThree : creative_prop = creative_prop{}
+    @editable {Categories := array{PawnTip}} Paths : []creative_prop = array{} 
+    @editable {Categories := array{PawnTip}} DiceProps : []creative_prop = array{}
+     #in main code diceprop is for 0 dice and 1 is for the blinking thing , i want to seperate but will do later..
+
+    #player state
+    var Player : ?agent = false
+    var TempPlayer : ?agent = false
+    var IsTurn : logic = false
+
+    #Dice/turn state
+    var DiceRollValue : int = 0
+    var ConsecutiveSixes : int = 0
+    var Roller : int = 0
+    var DoubleRollFlag : logic = false
+
+    #positions
+    var PawnIndex : int = -1
+    var PawnOneIndex : int = -1
+    var PawnTwoIndex : int = -1
+    var PawnThreeIndex : int = -1
+
+    # Initial transforms 
+    var PawnInitialTransform : transform = transform{}
+    var PawnOneInitialTransform : transform = transform{}
+    var PawnTwoInitialTransform : transform = transform{}
+    var PawnThreeInitialTransform : transform = transform{}
+
+    #finish state
+    var PawnFinish : logic = false
+    var PawnOneFinish : logic = false
+    var PawnTwoFinish : logic = false
+    var PawnThreeFinish : logic = false
+
+    var FinishedPawnCount : int = 0
+
+    # Provides an array only when all four pawns need the same operation.
+    GetPawn():[]creative_prop=
+        array{Pawn, PawnOne, PawnTwo, PawnThree}
+
+    CaptureInitialTransforms():void=
+        set PawnInitialTransform = Pawn.GetTransform()
+        set PawnOneInitialTransform = PawnOne.GetTransform()
+        set PawnTwoInitialTransform = PawnTwo.GetTransform()
+        set PawnThreeInitialTransform = PawnThree.GetTransform()
+
+    ResetPawnState():void=
+        set PawnIndex = -1
+        set PawnOneIndex = -1
+        set PawnTwoIndex = -1
+        set PawnThreeIndex = -1
+        
+        set PawnFinish = false
+        set PawnOneFinish = false
+        set PawnTwoFinish = false
+        set PawnThreeFinish = false
+
+        set FinishedPawnCount = 0
+
+    ResetTurnState():void= #or can be useful in turn change
+        set IsTurn = false
+        set DiceRollValue = 0
+        set ConsecutiveSixes = 0
+        #set Roller = 0   #maybe not
+        set DoubleRollFlag = false
+
+    ClearPlayers():void= #only do when left and game reset 
+        set Player = false
+        set TempPlayer = false
+
+    ResetRuntimeState():void=
+        ResetPawnState()
+        ResetTurnState()
+        ClearPlayers()
+    
+
+    
+    
