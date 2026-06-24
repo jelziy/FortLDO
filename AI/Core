@@ -264,10 +264,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     InitialInitiator():void=(
         Red.CaptureInitialTransforms()
-        #set RedPawnInitialTransform = RedPawn.GetTransform()
-        #set RedPawnOneInitialTransform = RedPawnOne.GetTransform()
-        #set RedPawnTwoInitialTransform = RedPawnTwo.GetTransform()
-        #set RedPawnThreeInitialTransform = RedPawnThree.GetTransform()
         set BluePawnInitialTransform = BluePawn.GetTransform()
         set BluePawnOneInitialTransform = BluePawnOne.GetTransform()
         set BluePawnTwoInitialTransform = BluePawnTwo.GetTransform()
