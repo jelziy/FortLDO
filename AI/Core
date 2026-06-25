@@ -40,8 +40,9 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     @editable CurrencyDevice : display_currency_device = display_currency_device{}
 
     @editable {Categories := array{RedPlayerTip}} Red : shared_game_data = shared_game_data{}
-
-    @editable {Categories := array{CamerasTip}} JoinButton  : button_device = button_device{} #will always be 4 player game
+    @editable Blue : shared_game_data = shared_game_data{}
+    @editable Yellow : shared_game_data = shared_game_data{}
+    @editable Green : shared_game_data = shared_game_data{}
 
     #Input
     @editable {Categories := array{InputTip}}
@@ -55,24 +56,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     @editable {Categories := array{WidgetTip}} WidgetLoading : Ldo_Loading = Ldo_Loading{}
     @editable {Categories := array{WidgetTip}} WidgetLeaving : Ldo_Leaving = Ldo_Leaving{}
-
-
-    @editable {Categories := array{GreenPawnTip}} GreenPawn : creative_prop = creative_prop{}
-    @editable {Categories := array{GreenPawnTip}} GreenPawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{GreenPawnTip}} GreenPawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{GreenPawnTip}} GreenPawnThree : creative_prop = creative_prop{}
-
-    @editable {Categories := array{BluePawnTip}} BluePawn : creative_prop = creative_prop{}
-    @editable {Categories := array{BluePawnTip}} BluePawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{BluePawnTip}} BluePawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{BluePawnTip}} BluePawnThree : creative_prop = creative_prop{}
-    
-    @editable {Categories := array{YellowPawnTip}} YellowPawn : creative_prop = creative_prop{}
-    @editable {Categories := array{YellowPawnTip}} YellowPawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{YellowPawnTip}} YellowPawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{YellowPawnTip}} YellowPawnThree : creative_prop = creative_prop{}
-
-    
+  
     @editable { Categories := array{PathProps}} GreenPaths : []creative_prop = array{}
     @editable { Categories := array{PathProps}} BluePaths : []creative_prop = array{}
     @editable { Categories := array{PathProps}} YellowPaths : []creative_prop = array{}
@@ -81,8 +65,8 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     @editable {Categories := array{DicesRollTip}} GreenDiceProp : []creative_prop = array{}
     @editable {Categories := array{DicesRollTip}} BlueDiceProp : []creative_prop = array{}
     @editable {Categories := array{DicesRollTip}} YellowDiceProp : []creative_prop = array{}
-
-    @editable {Categories := array{EndPlanesPropTip}} VictoryProps : []creative_prop = array{}
+ 
+    @editable {Categories := array{EndPlanesPropTip}} VictoryProps : []creative_prop = array{} #leave this as it is for now.. 24.6.26 
     @editable {Categories := array{EndPlanesPropTip}} NumbersProp :[]creative_prop = array{} #0r1b2y3g
 
     @editable{Categories := array{AudioTip}} APMove :audio_player_device = audio_player_device{}
@@ -93,9 +77,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     @editable{Categories := array{AudioTip}} APHighlight :audio_player_device = audio_player_device{} #Agent
     @editable{Categories := array{AudioTip}} APInGame : audio_player_device = audio_player_device{}
     @editable{Categories := array{AudioTip}} APEnvOg : []audio_player_device = array{}
-
-    @editable{Categories := array{ChairTip}} PlayerChair : chair_device = chair_device{}
-
 
     var RedZeroHighlight : MI_HighRed = MI_HighRed{}
     var RedOneHighlight : MI_HighRed1 = MI_HighRed1{}
@@ -119,7 +100,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     var RedPlayerIcon : MaI_NormPI = MaI_NormPI{}
     NormAv : texture = Pawn1
-    @editable {Categories := array{AvTip}} var RedPlayerAvProp : creative_prop = creative_prop{}
 
     var RollingDice : MI_DiceRolls = MI_DiceRolls{}
     var Dice1Value : MI_DiceValue1 = MI_DiceValue1{}
@@ -150,38 +130,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     var AllYellowPawn : []creative_prop = array{}
     var AllGreenPawn : []creative_prop = array{}
 
-    # Track current path index for each pawn
-    var RedPawnIndex : int = -1 #-1 indicates the pawn is not yet on the path
-    var RedPawnOneIndex : int = -1
-    var RedPawnTwoIndex : int = -1
-    var RedPawnThreeIndex : int = -1
-
-    var BluePawnIndex : int = -1
-    var BluePawnOneIndex : int = -1
-    var BluePawnTwoIndex : int = -1
-    var BluePawnThreeIndex : int = -1
-
-    var YellowPawnIndex : int = -1
-    var YellowPawnOneIndex : int = -1
-    var YellowPawnTwoIndex : int = -1
-    var YellowPawnThreeIndex : int = -1
 
     var GreenPawnIndex : int = -1
     var GreenPawnOneIndex : int = -1
     var GreenPawnTwoIndex : int = -1
     var GreenPawnThreeIndex : int = -1
 
-
-    var BluePawnInitialTransform : transform = transform{}
-    var BluePawnOneInitialTransform : transform = transform{}
-    var BluePawnTwoInitialTransform : transform = transform{}
-    var BluePawnThreeInitialTransform : transform = transform{}
-
-    var YellowPawnInitialTransform : transform = transform{}
-    var YellowPawnOneInitialTransform : transform = transform{}
-    var YellowPawnTwoInitialTransform : transform = transform{}
-    var YellowPawnThreeInitialTransform : transform = transform{}
-    
+ 
     var GreenPawnInitialTransform : transform = transform{}
     var GreenPawnOneInitialTransform : transform = transform{}
     var GreenPawnTwoInitialTransform : transform = transform{}
@@ -208,16 +163,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     var YellowPlayerTurn : logic = false
 
 
-    var BlueFinished : logic = false
-    var BlueOneFinished : logic = false
-    var BlueTwoFinished : logic = false
-    var BlueThreeFinished : logic = false
-
-    var YellowFinished : logic = false
-    var YellowOneFinished : logic = false
-    var YellowTwoFinished : logic = false
-    var YellowThreeFinished : logic = false
-
     var GreenFinished : logic = false
     var GreenOneFinished : logic = false
     var GreenTwoFinished : logic = false
@@ -228,8 +173,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     var RollerForPlayer : int = 0
     var DoubleRollFlagPlayer : logic = false
 
-    var RedEnd : int = 0
-    var BlueEnd : int = 0 
     var GreenEnd : int = 0
     var YellowEnd : int = 0
 
@@ -243,13 +186,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
         InitialInitiator()
-        set AllPlayersPawns = array{Red.Pns.Pawn, Red.Pns.PawnOne, Red.Pns.PawnTwo, Red.Pns.PawnThree, BluePawnOne,
-                                    BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
-                                    YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+        set AllPlayersPawns = array{Red.Pns.Pawn, Red.Pns.PawnOne, Red.Pns.PawnTwo, Red.Pns.PawnThree, Blue.Pns.PawnOne,
+                                    Blue.Pns.PawnTwo, Blue.Pns.PawnThree, Green.Pns.Pawn, Green.Pns.PawnOne, Green.Pns.PawnTwo, Green.Pns.PawnThree, Yellow.Pns.Pawn, 
+                                    Yellow.Pns.PawnOne, Yellow.Pns.PawnTwo, Yellow.Pns.PawnThree}
         for(PlayerPawn : AllPlayersPawns):
             PlayerPawn.Hide()
 
-        JoinButton.InteractedWithEvent.Subscribe(PlayerJoined)
+        Red.Device.JoinButton.InteractedWithEvent.Subscribe(PlayerJoined)
         Select.PressedEvent.Subscribe(SelectPressed)
         ConfirmInput.PressedEvent.Subscribe(ConfirmPressed)
         Leave.PressedEvent.Subscribe(PlayerExiting)
@@ -258,18 +201,9 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     InitialInitiator():void=(
         Red.CaptureInitialTransforms()
-        set BluePawnInitialTransform = BluePawn.GetTransform()
-        set BluePawnOneInitialTransform = BluePawnOne.GetTransform()
-        set BluePawnTwoInitialTransform = BluePawnTwo.GetTransform()
-        set BluePawnThreeInitialTransform = BluePawnThree.GetTransform()
-        set YellowPawnInitialTransform = YellowPawn.GetTransform()
-        set YellowPawnOneInitialTransform = YellowPawnOne.GetTransform()
-        set YellowPawnTwoInitialTransform = YellowPawnTwo.GetTransform()
-        set YellowPawnThreeInitialTransform = YellowPawnThree.GetTransform()
-        set GreenPawnInitialTransform = GreenPawn.GetTransform()
-        set GreenPawnOneInitialTransform = GreenPawnOne.GetTransform()
-        set GreenPawnTwoInitialTransform = GreenPawnTwo.GetTransform()
-        set GreenPawnThreeInitialTransform = GreenPawnThree.GetTransform()
+        Blue.CaptureInitialTransforms()
+        Yellow.CaptureInitialTransforms()
+        Green.CaptureInitialTransforms()
         ResetPlayerDrainerProfile()
     )
     
@@ -289,19 +223,19 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             set RedPlayer = option{Agent}
             Red.Device.Camera.Enable()
             Red.Device.Camera.AddTo(Agent)
-            PlayerChair.Seat(Agent)
-            PlayerChair.DisableExit()
+            Red.Device.Chair.Seat(Agent)
+            Red.Device.Chair.DisableExit()
             if:
                 FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
                 Player := player[Agent]
             then:
                 set RedPlayerIcon.TexParam = FcIcon
-                RedPlayerAvProp.SetMaterial(RedPlayerIcon)
+                Red.Device.AvatarProp.SetMaterial(RedPlayerIcon)
             
             if(GameStarted = false):
-                set AllPlayersPawns = array{Red.Pns.Pawn, Red.Pns.PawnOne, Red.Pns.PawnTwo, Red.Pns.PawnThree, BluePawn, BluePawnOne,
-                                    BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
-                                    YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+                set AllPlayersPawns = array{Red.Pns.Pawn, Red.Pns.PawnOne, Red.Pns.PawnTwo, Red.Pns.PawnThree, Blue.Pns.Pawn, Blue.Pns.PawnOne,
+                                    Blue.Pns.PawnTwo, Blue.Pns.PawnThree, Green.Pns.Pawn, Green.Pns.PawnOne, Green.Pns.PawnTwo, Green.Pns.PawnThree, Yellow.Pns.Pawn, 
+                                    Yellow.Pns.PawnOne, Yellow.Pns.PawnTwo, Yellow.Pns.PawnThree}
                 for(Pawns : AllPlayersPawns):
                     Pawns.Show()
                     spawn. GameStartInitiator()
@@ -466,13 +400,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     ConfirmPressed(Agent:agent):void=(
         if(RedPlayer = option{Agent} and Red.IsTurn = true and RedDiceRollValue > 0):
             if (RedZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(Red.Pns.Pawn, RedPawnIndex, Agent, 0)}
+                spawn{MovePawnRed(Red.Pns.Pawn, Red.PawnIndex, Agent, 0)}
             else if (RedOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(Red.Pns.PawnOne, RedPawnOneIndex, Agent, 1)}
+                spawn{MovePawnRed(Red.Pns.PawnOne, Red.PawnOneIndex, Agent, 1)}
             else if (RedTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(Red.Pns.PawnTwo, RedPawnTwoIndex, Agent, 2)}
+                spawn{MovePawnRed(Red.Pns.PawnTwo, Red.PawnTwoIndex, Agent, 2)}
             else if (RedThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(Red.Pns.PawnThree, RedPawnThreeIndex, Agent, 3)}
+                spawn{MovePawnRed(Red.Pns.PawnThree, Red.PawnThreeIndex, Agent, 3)}
             #byg are bots
     )
 
@@ -482,7 +416,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             spawn{LeaveWidget(Agent)}           
             Red.Device.Camera.RemoveFrom(Agent)
             Red.Device.Camera.Disable()
-            PlayerChair.EnableExit()
+            Red.Device.Chair.EnableExit()
             if(Red.Pns.Pawn.TeleportTo[Red.PawnInitialTransform]):
             if(Red.Pns.PawnOne.TeleportTo[Red.PawnOneInitialTransform]): 
             if(Red.Pns.PawnTwo.TeleportTo[Red.PawnTwoInitialTransform]): 
@@ -495,7 +429,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 set ActivePlayerCount -= 1
 
             set RedPlayerIcon.TexParam = NormAv
-            RedPlayerAvProp.SetMaterial(RedPlayerIcon)
+            Red.Device.AvatarProp.SetMaterial(RedPlayerIcon)
 
             Red.Device.ExitTp.Teleport(Agent)
             
@@ -657,37 +591,37 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             Red.Pns.PawnThree.SetMaterial(RedThreeHighlight)
         else if(BluePlayer?):
             set BlueZeroHighlight.HIghlightIntensity = 0.0
-            BluePawn.SetMaterial(BlueZeroHighlight)
+            Blue.Pns.Pawn.SetMaterial(BlueZeroHighlight)
             set BlueOneHighlight.HIghlightIntensity = 0.0
-            BluePawnOne.SetMaterial(BlueOneHighlight)
+            Blue.Pns.PawnOne.SetMaterial(BlueOneHighlight)
             set BlueTwoHighlight.HIghlightIntensity = 0.0
-            BluePawnTwo.SetMaterial(BlueTwoHighlight)
+            Blue.Pns.PawnTwo.SetMaterial(BlueTwoHighlight)
             set BlueThreeHighlight.HIghlightIntensity = 0.0
-            BluePawnThree.SetMaterial(BlueThreeHighlight)
+            Blue.Pns.PawnThree.SetMaterial(BlueThreeHighlight)
         else if(GreenPlayer?):
             set GreenZeroHighlight.HIghlightIntensity = 0.0
-            GreenPawn.SetMaterial(GreenZeroHighlight)
+            Green.Pns.Pawn.SetMaterial(GreenZeroHighlight)
             set GreenOneHighlight.HIghlightIntensity = 0.0
-            GreenPawnOne.SetMaterial(GreenOneHighlight)
+            Green.Pns.PawnOne.SetMaterial(GreenOneHighlight)
             set GreenTwoHighlight.HIghlightIntensity = 0.0
-            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
+            Green.Pns.PawnTwo.SetMaterial(GreenTwoHighlight)
             set GreenThreeHighlight.HIghlightIntensity = 0.0
-            GreenPawnThree.SetMaterial(GreenThreeHighlight)
+            Green.Pns.PawnThree.SetMaterial(GreenThreeHighlight)
         else if(YellowPlayer?):
             set YellowZeroHighlight.HIghlightIntensity = 0.0
-            YellowPawn.SetMaterial(YellowZeroHighlight)
+            Yellow.Pns.Pawn.SetMaterial(YellowZeroHighlight)
             set YellowOneHighlight.HIghlightIntensity = 0.0
-            YellowPawnOne.SetMaterial(YellowOneHighlight)
+            Yellow.Pns.PawnOne.SetMaterial(YellowOneHighlight)
             set YellowTwoHighlight.HIghlightIntensity = 0.0
-            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
+            Yellow.Pns.PawnTwo.SetMaterial(YellowTwoHighlight)
             set YellowThreeHighlight.HIghlightIntensity = 0.0
-            YellowPawnThree.SetMaterial(YellowThreeHighlight)
+            Yellow.Pns.PawnThree.SetMaterial(YellowThreeHighlight)
     )
 
     PossibleMoveChecker()<suspends>:void=(
         ###after a dice roll, for perticular player check if the player can make a move with any of its pawn, 
         ##if not then switch the turm to the next player###
-        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
+        var RedPawnIndices : []int = array{Red.PawnIndex, Red.PawnOneIndex, Red.PawnTwoIndex, Red.PawnThreeIndex}
         var CanMove : logic = false
         PathLenght := Red.Pns.Paths.Length #same number for each
         var PawnIndices : []int = array{}
@@ -718,12 +652,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 return
 
         else if( BluePlayer = true and BluePlayerTurn = true): #check timer perticular color is being removed, just keep in mind if any bugs happen this can be the cause
-            set PawnIndices = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
+            set PawnIndices = array{Blue.PawnIndex, Blue.PawnOneIndex, Blue.PawnTwoIndex, Blue.PawnThreeIndex}
             set DiceValue = BlueDiceRollValue
             set TurnNumber = 2
 
         else if(YellowPlayer = true and YellowPlayerTurn = true):
-            set PawnIndices = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
+            set PawnIndices = array{Yellow.PawnIndex, Yellow.PawnOneIndex, Yellow.PawnTwoIndex, Yellow.PawnThreeIndex}
             set DiceValue = YellowDiceRollValue
             set TurnNumber = 3
 
@@ -744,31 +678,31 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     #dont need it
                 else if(TurnNumber = 2):
                     if(ChoosenPawn = 0):
-                        spawn. BotMovePawnBlue(BluePawn, BluePawnIndex, 0)
+                        spawn. BotMovePawnBlue(Blue.Pns.Pawn, Blue.PawnIndex, 0)
                     else if(ChoosenPawn = 1):
-                        spawn. BotMovePawnBlue(BluePawnOne, BluePawnOneIndex, 1)
+                        spawn. BotMovePawnBlue(Blue.Pns.PawnOne, Blue.PawnOneIndex, 1)
                     else if(ChoosenPawn = 2):
-                        spawn. BotMovePawnBlue(BluePawnTwo, BluePawnTwoIndex, 2)
+                        spawn. BotMovePawnBlue(Blue.Pns.PawnTwo, Blue.PawnTwoIndex, 2)
                     else if(ChoosenPawn = 3):
-                        spawn. BotMovePawnBlue(BluePawnThree, BluePawnThreeIndex, 3)
+                        spawn. BotMovePawnBlue(Blue.Pns.PawnThree, Blue.PawnThreeIndex, 3)
                 else if(TurnNumber = 3):
                     if(ChoosenPawn = 0):
-                        spawn. BotMovePawnYellow(YellowPawn, YellowPawnIndex, 0)
+                        spawn. BotMovePawnYellow(Yellow.Pns.Pawn, Yellow.PawnIndex, 0)
                     else if(ChoosenPawn = 1):
-                        spawn. BotMovePawnYellow(YellowPawnOne, YellowPawnOneIndex, 1)
+                        spawn. BotMovePawnYellow(Yellow.Pns.PawnOne, Yellow.PawnOneIndex, 1)
                     else if(ChoosenPawn = 2):
-                        spawn. BotMovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, 2)
+                        spawn. BotMovePawnYellow(Yellow.Pns.PawnTwo, Yellow.PawnTwoIndex, 2)
                     else if(ChoosenPawn = 3):
-                        spawn. BotMovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, 3)
+                        spawn. BotMovePawnYellow(Yellow.Pns.PawnThree, Yellow.PawnThreeIndex, 3)
                 else if(TurnNumber = 4):
                     if(ChoosenPawn = 0):
-                        spawn. BotMovePawnGreen(GreenPawn, GreenPawnIndex, 0)
+                        spawn. BotMovePawnGreen(Green.Pns.Pawn, GreenPawnIndex, 0)
                     else if(ChoosenPawn = 1):
-                        spawn. BotMovePawnGreen(GreenPawnOne, GreenPawnOneIndex, 1)
+                        spawn. BotMovePawnGreen(Green.Pns.PawnOne, GreenPawnOneIndex, 1)
                     else if(ChoosenPawn = 2):
-                        spawn. BotMovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex, 2)
+                        spawn. BotMovePawnGreen(Green.Pns.PawnTwo, GreenPawnTwoIndex, 2)
                     else if(ChoosenPawn = 3):
-                        spawn. BotMovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, 3)
+                        spawn. BotMovePawnGreen(Green.Pns.PawnThree, GreenPawnThreeIndex, 3)
 
         else: #no bot can move
             Sleep(1.0)
@@ -941,13 +875,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
         if(MoveCompleted = true):
             if (PawnNumber = 0):
-                set RedPawnIndex = CurrentIndex
+                set Red.PawnIndex = CurrentIndex
             else if (PawnNumber = 1):
-                set RedPawnOneIndex = CurrentIndex
+                set Red.PawnOneIndex = CurrentIndex
             else if (PawnNumber = 2):
-                set RedPawnTwoIndex = CurrentIndex
+                set Red.PawnTwoIndex = CurrentIndex
             else if (PawnNumber = 3):
-                set RedPawnThreeIndex = CurrentIndex
+                set Red.PawnThreeIndex = CurrentIndex
 
             if(RedDiceRollValue = 6):
                 set RedConsecutiveSixes += 1
@@ -1017,13 +951,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         if(MoveCompleted = true):
             # Update the actual pawn index first
             if(PawnNumber = 0):
-                set BluePawnIndex = CurrentIndex
+                set Blue.PawnIndex = CurrentIndex
             else if(PawnNumber = 1):
-                set BluePawnOneIndex = CurrentIndex
+                set Blue.PawnOneIndex = CurrentIndex
             else if(PawnNumber = 2):
-                set BluePawnTwoIndex = CurrentIndex
+                set Blue.PawnTwoIndex = CurrentIndex
             else if(PawnNumber = 3):
-                set BluePawnThreeIndex = CurrentIndex
+                set Blue.PawnThreeIndex = CurrentIndex
 
             #handle consecutive sixes
             if(BlueDiceRollValue = 6): #also set consective to zero after turn change
@@ -1170,13 +1104,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         
         if(MoveCompleted = true):
             if (PawnNumber = 0):
-                set YellowPawnIndex = CurrentIndex
+                set Yellow.PawnIndex = CurrentIndex
             else if (PawnNumber = 1):
-                set YellowPawnOneIndex = CurrentIndex
+                set Yellow.PawnOneIndex = CurrentIndex
             else if (PawnNumber = 2):
-                set YellowPawnTwoIndex = CurrentIndex
+                set Yellow.PawnTwoIndex = CurrentIndex
             else if (PawnNumber = 3):
-                set YellowPawnThreeIndex = CurrentIndex
+                set Yellow.PawnThreeIndex = CurrentIndex
 
             if(YellowDiceRollValue = 6):
                 set YellowConsecutiveSixes += 1
@@ -1206,19 +1140,18 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
         
         RedPawns : []creative_prop = Red.GetPawn()
-        #RedPawns : []creative_prop = array{Red.Pawn, Red.PawnOne, Red.PawnTwo, Red.PawnThree}
-        BluePawns : []creative_prop = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
-        YellowPawns : []creative_prop = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
-        GreenPawns : []creative_prop = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
+        BluePawns : []creative_prop = Blue.GetPawn()
+        YellowPawns : []creative_prop = Yellow.GetPawn()
+        GreenPawns : []creative_prop = Green.GetPawn()
 
-        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
-        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
-        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
+        var RedPawnIndices : []int = array{Red.PawnIndex, Red.PawnOneIndex, Red.PawnTwoIndex, Red.PawnThreeIndex}
+        var BluePawnIndices : []int = array{Blue.PawnIndex, Blue.PawnOneIndex, Blue.PawnTwoIndex, Blue.PawnThreeIndex}
+        var YellowPawnIndices : []int = array{Yellow.PawnIndex, Yellow.PawnOneIndex, Yellow.PawnTwoIndex, Yellow.PawnThreeIndex}
         var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
         
         RedPawnTransforms : []transform = array{Red.PawnInitialTransform, Red.PawnOneInitialTransform, Red.PawnTwoInitialTransform, Red.PawnThreeInitialTransform}
-        BluePawnTransforms : []transform = array{BluePawnInitialTransform, BluePawnOneInitialTransform, BluePawnTwoInitialTransform, BluePawnThreeInitialTransform}
-        YellowPawnTransforms : []transform = array{YellowPawnInitialTransform, YellowPawnOneInitialTransform, YellowPawnTwoInitialTransform, YellowPawnThreeInitialTransform}
+        BluePawnTransforms : []transform = array{Blue.PawnInitialTransform, Blue.PawnOneInitialTransform, Blue.PawnTwoInitialTransform, Blue.PawnThreeInitialTransform}
+        YellowPawnTransforms : []transform = array{Yellow.PawnInitialTransform, Yellow.PawnOneInitialTransform, Yellow.PawnTwoInitialTransform, Yellow.PawnThreeInitialTransform}
         GreenPawnTransforms : []transform = array{GreenPawnInitialTransform, GreenPawnOneInitialTransform, GreenPawnTwoInitialTransform, GreenPawnThreeInitialTransform}
 
         SafeSpots : []int = array{0, 8, 13, 21, 26, 34, 39, 47}
@@ -1248,7 +1181,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     NewLocX := PawnTranslation + Offset
                         if(RedPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
-                set RedEnd += 1
+                set Red.FinishedPawnCount+= 1
                 if(Pawn = 0):
                     set Red.PawnFinished = true
                 else if(Pawn = 1):
@@ -1258,16 +1191,16 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 else if(Pawn = 3):
                     set Red.PawnThreeFinished = true
                 #------------------------------------------------------
-                if(RedEnd = 1):
+                if(Red.FinishedPawnCount = 1):
                     set MInbRed.HowManyNumbers = 1.0
                     if(NumbersProp[0].SetMaterial(MInbRed)):
-                else if(RedEnd = 2):
+                else if(Red.FinishedPawnCount = 2):
                     set MInbRed.HowManyNumbers = 2.0
                     if(NumbersProp[0].SetMaterial(MInbRed)):
-                else if(RedEnd = 3):
+                else if(Red.FinishedPawnCount = 3):
                     set MInbRed.HowManyNumbers = 3.0
                     if(NumbersProp[0].SetMaterial(MInbRed)):
-                else if(RedEnd >= 4):
+                else if(Red.FinishedPawnCount >= 4):
                     if(NumbersProp[0].SetMaterial(MIInv)):
                 AudioPlayer(APEnd)
 
@@ -1284,26 +1217,26 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     NewLocX := PawnTranslation + Offset
                         if(BluePawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
-                set BlueEnd += 1
+                set Blue.FinishedPawnCount += 1
                 if(Pawn = 0):
-                    set BlueFinished = true
+                    set Blue.PawnFinished = true
                 else if(Pawn = 1):
-                    set BlueOneFinished = true
+                    set Blue.PawnOneFinished = true
                 else if(Pawn = 2):
-                    set BlueTwoFinished = true
+                    set Blue.PawnTwoFinished = true
                 else if(Pawn = 3):
-                    set BlueThreeFinished = true
+                    set Blue.PawnThreeFinished = true
                 #------------------------------------------------------    
-                if(BlueEnd = 1):
+                if(Blue.FinishedPawnCount = 1):
                     set MInbBlue.HowManyNumbers = 1.0
                     if(NumbersProp[1].SetMaterial(MInbBlue)):
-                else if(BlueEnd = 2):
+                else if(Blue.FinishedPawnCount = 2):
                     set MInbBlue.HowManyNumbers = 2.0
                     if(NumbersProp[1].SetMaterial(MInbBlue)):
-                else if(BlueEnd = 3):
+                else if(Blue.FinishedPawnCount = 3):
                     set MInbBlue.HowManyNumbers = 3.0
                     if(NumbersProp[1].SetMaterial(MInbBlue)):
-                else if(BlueEnd >= 4):
+                else if(Blue.FinishedPawnCount >= 4):
                     if(NumbersProp[1].SetMaterial(MIInv)):
                 AudioPlayer(APEnd)
 
@@ -1322,13 +1255,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             if(PawnPosition >= 56):
                 set YellowEnd += 1
                 if(Pawn = 0):
-                    set YellowFinished = true
+                    set Yellow.PawnFinished = true
                 else if(Pawn = 1):
-                    set YellowOneFinished = true
+                    set Yellow.PawnOneFinished = true
                 else if(Pawn = 2):
-                    set YellowTwoFinished = true
+                    set Yellow.PawnTwoFinished = true
                 else if(Pawn = 3):
-                    set YellowThreeFinished = true
+                    set Yellow.PawnThreeFinished = true
                 #------------------------------------------------------
                 if(YellowEnd = 1):
                     set MInbYellow.HowManyNumbers = 1.0
@@ -1388,13 +1321,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                         if(RedPawns[PawnIdx].TeleportTo[RedPawnTransforms[PawnIdx]]):
                             AudioPlayer(APEliminated)
                             if(PawnIdx = 0):
-                                set RedPawnIndex = -1
+                                set Red.PawnIndex = -1
                             else if(PawnIdx = 1):
-                                set RedPawnOneIndex = -1
+                                set Red.PawnOneIndex = -1
                             else if(PawnIdx = 2):
-                                set RedPawnTwoIndex = -1
+                                set Red.PawnTwoIndex = -1
                             else if(PawnIdx = 3):
-                                set RedPawnThreeIndex = -1
+                                set Red.PawnThreeIndex = -1
                             set EliminationOccured = true
                             Print("Red ELiminated by someone")
                                 
@@ -1405,13 +1338,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                         if(BluePawns[PawnIdx].TeleportTo[BluePawnTransforms[PawnIdx]]):
                             AudioPlayer(APEliminated)
                             if(PawnIdx = 0):
-                                set BluePawnIndex = -1
+                                set Blue.PawnIndex = -1
                             else if(PawnIdx = 1):
-                                set BluePawnOneIndex = -1
+                                set Blue.PawnOneIndex = -1
                             else if(PawnIdx = 2):
-                                set BluePawnTwoIndex = -1
+                                set Blue.PawnTwoIndex = -1
                             else if(PawnIdx = 3):
-                                set BluePawnThreeIndex = -1
+                                set Blue.PawnThreeIndex = -1
                             set EliminationOccured = true
                             Print("Blue Eliminated by someone")
 
@@ -1422,13 +1355,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                         if(YellowPawns[PawnIdx].TeleportTo[YellowPawnTransforms[PawnIdx]]):
                             AudioPlayer(APEliminated)
                             if(PawnIdx = 0):
-                                set YellowPawnIndex = -1
+                                set Yellow.PawnIndex = -1
                             else if(PawnIdx = 1):
-                                set YellowPawnOneIndex = -1
+                                set Yellow.PawnOneIndex = -1
                             else if(PawnIdx = 2):
-                                set YellowPawnTwoIndex = -1
+                                set Yellow.PawnTwoIndex = -1
                             else if(PawnIdx = 3):
-                                set YellowPawnThreeIndex = -1
+                                set Yellow.PawnThreeIndex = -1
                             set EliminationOccured = true
                             Print("Yellow Eliminated")
             
@@ -1466,7 +1399,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     IsItTheEnd(Agent:agent):void=( # dont need accolades and stuff for ygb 
 
-        if(RedEnd >= 4 and RedPlayer = option{Agent}):
+        if(Red.FinishedPawnCount >= 4 and RedPlayer = option{Agent}):
             if(Player := player[Agent]):
                 if(not FinishedOrder.Find[0]):
                     set FinishedOrder += array{0}
@@ -1488,7 +1421,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                         set tempRedPlayer = RedPlayer
                         set RedPlayer = false
 
-        if(BlueEnd >= 4 and BluePlayer?):
+        if(Blue.FinishedPawnCount >= 4 and BluePlayer?):
                 if(not FinishedOrder.Find[1]):
                     set FinishedOrder += array{1}
                     Print("rank {FinishedOrder.Length}")
@@ -1568,7 +1501,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
             Red.Device.Camera.Disable()
             Red.Device.ExitTp.Teleport(RedAgent)
 
-        PlayerChair.EnableExit()
+        Red.Device.Chair.EnableExit()
         
         DefaultAvSetter()
 
@@ -1585,36 +1518,30 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         set RollerForPlayer = 0
         set DoubleRollFlagPlayer = false
    
-        set RedEnd = 0
-        set BlueEnd = 0
         set YellowEnd = 0
         set GreenEnd = 0
-        
-        BlueIndexInitialSetter()
-        YellowIndexInitialSetter()
+    
         GreenIndexInitialSetter()
-
-
 
         if(Red.Pns.Pawn.TeleportTo[Red.PawnInitialTransform]):
         if(Red.Pns.PawnOne.TeleportTo[Red.PawnOneInitialTransform]):
         if(Red.Pns.PawnTwo.TeleportTo[Red.PawnTwoInitialTransform]):
         if(Red.Pns.PawnThree.TeleportTo[Red.PawnThreeInitialTransform]):
 
-        if(BluePawn.TeleportTo[BluePawnInitialTransform]):
-        if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]):
-        if(BluePawnTwo.TeleportTo[BluePawnTwoInitialTransform]):
-        if(BluePawnThree.TeleportTo[BluePawnThreeInitialTransform]):
+        if(Blue.Pns.Pawn.TeleportTo[Blue.PawnInitialTransform]):
+        if(Blue.Pns.PawnOne.TeleportTo[Blue.PawnOneInitialTransform]):
+        if(Blue.Pns.PawnTwo.TeleportTo[Blue.PawnTwoInitialTransform]):
+        if(Blue.Pns.PawnThree.TeleportTo[Blue.PawnThreeInitialTransform]):
 
-        if(YellowPawn.TeleportTo[YellowPawnInitialTransform]):
-        if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]):
-        if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]):
-        if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
+        if(Yellow.Pns.Pawn.TeleportTo[Yellow.PawnInitialTransform]):
+        if(Yellow.Pns.PawnOne.TeleportTo[Yellow.PawnOneInitialTransform]):
+        if(Yellow.Pns.PawnTwo.TeleportTo[Yellow.PawnTwoInitialTransform]):
+        if(Yellow.Pns.PawnThree.TeleportTo[Yellow.PawnThreeInitialTransform]):
 
-        if(GreenPawn.TeleportTo[GreenPawnInitialTransform]):
-        if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]):
-        if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]):
-        if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
+        if(Green.Pns.Pawn.TeleportTo[GreenPawnInitialTransform]):
+        if(Green.Pns.PawnOne.TeleportTo[GreenPawnOneInitialTransform]):
+        if(Green.Pns.PawnTwo.TeleportTo[GreenPawnTwoInitialTransform]):
+        if(Green.Pns.PawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
 
         for(PlayerPawn : AllPlayersPawns):
             PlayerPawn.Hide()
@@ -1644,25 +1571,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         
         FalsingTempPlayerandNormalPlayers()
         Red.ResetPawnState()
+        Blue.ResetPawnState()
+        Yellow.ResetPawnState()
         ResetPlayerDrainerProfile()
 
         Print("Match reset complete")
     )
 
-
-    BlueIndexInitialSetter():void=(
-        set BluePawnIndex = -1
-        set BluePawnOneIndex = -1
-        set BluePawnTwoIndex = -1
-        set BluePawnThreeIndex = -1     
-    )
-
-    YellowIndexInitialSetter():void=(
-        set YellowPawnIndex = -1
-        set YellowPawnOneIndex = -1
-        set YellowPawnTwoIndex = -1
-        set YellowPawnThreeIndex = -1
-    )
 
     GreenIndexInitialSetter():void=(
         set GreenPawnIndex = -1
@@ -1702,16 +1617,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     PawnFinishStateResetter():void=(
         Red.ResetPawnState()
 
-        set BlueFinished = false
-        set BlueOneFinished = false
-        set BlueTwoFinished = false
-        set BlueThreeFinished = false
-
-        set YellowFinished = false
-        set YellowOneFinished = false
-        set YellowTwoFinished = false
-        set YellowThreeFinished = false
-
         set GreenFinished = false
         set GreenOneFinished = false
         set GreenTwoFinished = false
@@ -1725,7 +1630,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         #set BluePlayerIcon.TexParam = NormAv
         #set YellowPlayerIcon.TexParam = NormAv 
         #set GreenPlayerIcon.TexParam = NormAv
-        RedPlayerAvProp.SetMaterial(RedPlayerIcon)
+        Red.Device.AvatarProp.SetMaterial(RedPlayerIcon)
         #BlueAvProp.SetMaterial(BluePlayerIcon)
         #YellowAvProp.SetMaterial(YellowPlayerIcon)
         #GreenAvProp.SetMaterial(GreenPlayerIcon)
