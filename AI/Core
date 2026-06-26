@@ -59,9 +59,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     @editable {Categories := array{WidgetTip}} WidgetLoading : Ldo_Loading = Ldo_Loading{}
     @editable {Categories := array{WidgetTip}} WidgetLeaving : Ldo_Leaving = Ldo_Leaving{}
  
-    @editable {Categories := array{EndPlanesPropTip}} VictoryProps : []creative_prop = array{} #leave this as it is for now.. 24.6.26 
-    @editable {Categories := array{EndPlanesPropTip}} NumbersProp :[]creative_prop = array{} #0r1b2y3g
-
     var RedPlayerIcon : MaI_NormPI = MaI_NormPI{}
 
     var GameStarted:logic = false 
@@ -192,8 +189,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 RollValue := GetRandomInt(1,6)
                 set Red.DiceRollValue = RollValue
                 AudioPlayer(General.Audio.Dice)
-                if(DiceProp := Red.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.Rolling)  
+                Red.Pns.DiceProp.SetMaterial(General.Dice.Rolling)  
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker()}
                 set Red.DoubleRollFlag = true
@@ -207,23 +203,17 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         if(Red.Player = option{Agent} and Red.IsTurn = true):
             Sleep(1.0)
             if(Red.DiceRollValue = 1):
-                if(DiceProp := Red.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueOne)
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueOne)
             else if(Red.DiceRollValue = 2):
-                if(DiceProp := Red.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueTwo)
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueTwo)
             else if(Red.DiceRollValue = 3):
-                if(DiceProp := Red.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueThree)
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueThree)
             else if(Red.DiceRollValue = 4):
-                if(DiceProp := Red.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueFour)
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueFour)
             else if(Red.DiceRollValue = 5):
-                if(DiceProp := Red.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueFive)
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueFive)
             else if(Red.DiceRollValue = 6):
-                if(DiceProp := Red.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueSix)
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueSix)
 
     )
 
@@ -232,63 +222,45 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         if(BluePlayer? and Blue.IsTurn = true):
             Sleep(1.0)
             if(Blue.DiceRollValue = 1):
-                if(DiceProp := Blue.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueOne)
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueOne)
             else if(Blue.DiceRollValue = 2):
-                if(DiceProp := Blue.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueTwo)
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueTwo)
             else if(Blue.DiceRollValue = 3):
-                if(DiceProp := Blue.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueThree)
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueThree)
             else if(Blue.DiceRollValue = 4):
-                if(DiceProp := Blue.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueFour)
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueFour)
             else if(Blue.DiceRollValue = 5):
-                if(DiceProp := Blue.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueFive)
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueFive)
             else if(Blue.DiceRollValue = 6):
-                if(DiceProp := Blue.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueSix)
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueSix)
         else if(GreenPlayer? and Green.IsTurn = true):
             Sleep(1.0)
             if(Green.DiceRollValue = 1):
-                if(DiceProp := Green.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueOne)
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueOne)
             else if(Green.DiceRollValue = 2):
-                if(DiceProp := Green.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueTwo)
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueTwo)
             else if(Green.DiceRollValue = 3):
-                if(DiceProp := Green.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueThree)
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueThree)
             else if(Green.DiceRollValue = 4):
-                if(DiceProp := Green.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueFour)
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueFour)
             else if(Green.DiceRollValue = 5):
-                if(DiceProp := Green.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueFive)
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueFive)
             else if(Green.DiceRollValue = 6):
-                if(DiceProp := Green.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueSix)
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueSix)
         else if(YellowPlayer? and Yellow.IsTurn = true):
             Sleep(1.0)
             if(Yellow.DiceRollValue = 1):
-                if(DiceProp := Yellow.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueOne)
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueOne)
             else if(Yellow.DiceRollValue = 2):
-                if(DiceProp := Yellow.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueTwo)
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueTwo)
             else if(Yellow.DiceRollValue = 3):
-                if(DiceProp := Yellow.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueThree)
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueThree)
             else if(Yellow.DiceRollValue = 4):
-                if(DiceProp := Yellow.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueFour)
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueFour)
             else if(Yellow.DiceRollValue = 5):
-                if(DiceProp := Yellow.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueFive)
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueFive)
             else if(Yellow.DiceRollValue = 6):
-                if(DiceProp := Yellow.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.ValueSix)
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueSix)
     )
         
     ConfirmPressed(Agent:agent):void=(
@@ -334,43 +306,35 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         
 
     ResetPlayerDrainerProfile():void=(
-        if(RedPropProfile := Red.Pns.DiceProp[1]): #the blinking ones
-            RedPropProfile.Hide()
-        if(BluePropProfile := Blue.Pns.DiceProp[1]):
-            BluePropProfile.Hide()
-        if(GreenPropProfile := Green.Pns.DiceProp[1]):
-            GreenPropProfile.Hide()
-        if(YellowPropProfile := Yellow.Pns.DiceProp[1]):
-            YellowPropProfile.Hide()
+        Red.Pns.TurnIndicator.Hide()
+        Blue.Pns.TurnIndicator.Hide()
+        Green.Pns.TurnIndicator.Hide()
+        Yellow.Pns.TurnIndicator.Hide()
     )
 
     HelperPlayerProfileTurn()<suspends>:void=(
         if(Red.IsTurn = true):
-            if(RedPropProfile := Red.Pns.DiceProp[1]):
-                ResetPlayerDrainerProfile()
-                Sleep(1.0)
-                RedPropProfile.Show()
+            ResetPlayerDrainerProfile()
+            Sleep(1.0)
+            Red.Pns.TurnIndicator.Show()
             Print("Red Player's Turn")
             spawn{CheckTimerForRed()}
         else if(Blue.IsTurn = true):
-            if(BluePropProfile := Blue.Pns.DiceProp[1]):
-                ResetPlayerDrainerProfile()
-                Sleep(1.0)
-                BluePropProfile.Show()
+            ResetPlayerDrainerProfile()
+            Sleep(1.0)
+            Blue.Pns.TurnIndicator.Show()
             Print("Blue Player's Turn")
             spawn{CheckTimerForBlue()}
         else if(Green.IsTurn = true):
-            if(GreenPropProfile := Green.Pns.DiceProp[1]):
-                ResetPlayerDrainerProfile()
-                Sleep(1.0)
-                GreenPropProfile.Show()
+            ResetPlayerDrainerProfile()
+            Sleep(1.0)
+            Green.Pns.TurnIndicator.Show()
             Print("Green Player's Turn")
             spawn{CheckTimerForGreen()}
         else if(Yellow.IsTurn = true):
-            if(YellowPropProfile := Yellow.Pns.DiceProp[1]):
-                ResetPlayerDrainerProfile()
-                Sleep(1.0)
-                YellowPropProfile.Show()
+            ResetPlayerDrainerProfile()
+            Sleep(1.0)
+            Yellow.Pns.TurnIndicator.Show()
             Print("Yellow Player's Turn")
             spawn{CheckTimerForYellow()}
     )
@@ -656,8 +620,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 RollValue := GetRandomInt(1,6)
                 set Blue.DiceRollValue = RollValue
                 AudioPlayer(General.Audio.Dice)
-                if(DiceProp := Blue.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.Rolling)
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.Rolling)
                     spawn{HelperDiceRollForBots()}
                     spawn{PossibleMoveChecker()}
                 set ConfirmFlag = false
@@ -669,8 +632,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 RollValue := GetRandomInt(1,6)
                 set Yellow.DiceRollValue = RollValue
                 AudioPlayer(General.Audio.Dice)
-                if(DiceProp := Yellow.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.Rolling)
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.Rolling)
                     spawn{HelperDiceRollForBots()}
                     spawn{PossibleMoveChecker()}
                 set ConfirmFlag = false
@@ -681,8 +643,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 RollValue := GetRandomInt(1,6)
                 set Green.DiceRollValue = RollValue
                 AudioPlayer(General.Audio.Dice)
-                if(DiceProp := Green.Pns.DiceProp[0]):
-                    DiceProp.SetMaterial(General.Dice.Rolling)
+                Green.Pns.DiceProp.SetMaterial(General.Dice.Rolling)
                     spawn{HelperDiceRollForBots()}
                     spawn{PossibleMoveChecker()}
                 set ConfirmFlag = false
@@ -1064,13 +1025,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     set Red.PawnThreeFinished = true
                 #------------------------------------------------------
                 if(Red.FinishedPawnCount = 1):
-                    if(NumbersProp[0].SetMaterial(General.Materials.NumberOne)):
+                    Red.Device.NumberProp.SetMaterial(General.Materials.NumberOne)
                 else if(Red.FinishedPawnCount = 2):
-                    if(NumbersProp[0].SetMaterial(General.Materials.NumberTwo)):
+                    Red.Device.NumberProp.SetMaterial(General.Materials.NumberTwo)
                 else if(Red.FinishedPawnCount = 3):
-                    if(NumbersProp[0].SetMaterial(General.Materials.NumberThree)):
+                    Red.Device.NumberProp.SetMaterial(General.Materials.NumberThree)
                 else if(Red.FinishedPawnCount >= 4):
-                    if(NumbersProp[0].SetMaterial(General.Materials.Invisible)):
+                    Red.Device.NumberProp.SetMaterial(General.Materials.Invisible)
                 AudioPlayer(General.Audio.End)
 
         else if(Color = 1): # Blue
@@ -1097,13 +1058,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     set Blue.PawnThreeFinished = true
                 #------------------------------------------------------    
                 if(Blue.FinishedPawnCount = 1):
-                    if(NumbersProp[1].SetMaterial(General.Materials.NumberOne)):
+                    Blue.Device.NumberProp.SetMaterial(General.Materials.NumberOne)
                 else if(Blue.FinishedPawnCount = 2):
-                    if(NumbersProp[1].SetMaterial(General.Materials.NumberTwo)):
+                    Blue.Device.NumberProp.SetMaterial(General.Materials.NumberTwo)
                 else if(Blue.FinishedPawnCount = 3):
-                    if(NumbersProp[1].SetMaterial(General.Materials.NumberThree)):
+                    Blue.Device.NumberProp.SetMaterial(General.Materials.NumberThree)
                 else if(Blue.FinishedPawnCount >= 4):
-                    if(NumbersProp[1].SetMaterial(General.Materials.Invisible)):
+                    Blue.Device.NumberProp.SetMaterial(General.Materials.Invisible)
                 AudioPlayer(General.Audio.End)
 
         else if(Color = 2): #Yellow
@@ -1130,13 +1091,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     set Yellow.PawnThreeFinished = true
                 #------------------------------------------------------
                 if(Yellow.FinishedPawnCount = 1):
-                    if(NumbersProp[2].SetMaterial(General.Materials.NumberOne)):
+                    Yellow.Device.NumberProp.SetMaterial(General.Materials.NumberOne)
                 else if(Yellow.FinishedPawnCount = 2):
-                    if(NumbersProp[2].SetMaterial(General.Materials.NumberTwo)):
+                    Yellow.Device.NumberProp.SetMaterial(General.Materials.NumberTwo)
                 else if(Yellow.FinishedPawnCount = 3):
-                    if(NumbersProp[2].SetMaterial(General.Materials.NumberThree)):
+                    Yellow.Device.NumberProp.SetMaterial(General.Materials.NumberThree)
                 else if(Yellow.FinishedPawnCount >= 4):
-                    if(NumbersProp[2].SetMaterial(General.Materials.Invisible)):
+                    Yellow.Device.NumberProp.SetMaterial(General.Materials.Invisible)
                 AudioPlayer(General.Audio.End)
 
         else if(Color = 3): # Green
@@ -1163,13 +1124,13 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     set Green.PawnThreeFinished = true
                 #------------------------------------------------------
                 if(Green.FinishedPawnCount = 1):
-                    if(NumbersProp[3].SetMaterial(General.Materials.NumberOne)):
+                    Green.Device.NumberProp.SetMaterial(General.Materials.NumberOne)
                 else if(Green.FinishedPawnCount = 2):
-                    if(NumbersProp[3].SetMaterial(General.Materials.NumberTwo)):
+                    Green.Device.NumberProp.SetMaterial(General.Materials.NumberTwo)
                 else if(Green.FinishedPawnCount = 3):
-                    if(NumbersProp[3].SetMaterial(General.Materials.NumberTwo)):
+                    Green.Device.NumberProp.SetMaterial(General.Materials.NumberTwo)
                 else if(Green.FinishedPawnCount >= 4):
-                    if(NumbersProp[3].SetMaterial(General.Materials.Invisible)):
+                    Green.Device.NumberProp.SetMaterial(General.Materials.Invisible)
                 AudioPlayer(General.Audio.End)
         
         #Formula newIndex=(index−targetOffset+52)mod52
@@ -1264,17 +1225,16 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 if(not FinishedOrder.Find[0]):
                     set FinishedOrder += array{0}
                     Print("rank {FinishedOrder.Length}")
-                    if(RedVictoryProp := VictoryProps[0]):
                         if(FinishedOrder.Length = 1):
-                            RedVictoryProp.SetMaterial(General.Materials.CrownOne)
+                            Red.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                             Accolade1.Award(Player)
                             GameRewardGranter(Player, 1)
                         else if(FinishedOrder.Length = 2):
-                            RedVictoryProp.SetMaterial(General.Materials.CrownTwo)
+                            Red.Device.CrownProp.SetMaterial(General.Materials.CrownTwo)
                             Accolade2.Award(Player)
                             GameRewardGranter(Player, 2)
                         else if(FinishedOrder.Length = 3):
-                            RedVictoryProp.SetMaterial(General.Materials.CrownThree)
+                            Red.Device.CrownProp.SetMaterial(General.Materials.CrownThree)
                             Accolade3.Award(Player)
                             GameRewardGranter(Player, 3)
                         AudioPlayer(General.Audio.Victory)
@@ -1285,13 +1245,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 if(not FinishedOrder.Find[1]):
                     set FinishedOrder += array{1}
                     Print("rank {FinishedOrder.Length}")
-                    if(BlueVictoryProp := VictoryProps[1]):
                         if(FinishedOrder.Length = 1):
-                            BlueVictoryProp.SetMaterial(General.Materials.CrownOne)
+                            Blue.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                         else if(FinishedOrder.Length = 2):
-                            BlueVictoryProp.SetMaterial(General.Materials.CrownTwo)
+                            Blue.Device.CrownProp.SetMaterial(General.Materials.CrownTwo)
                         else if(FinishedOrder.Length = 3):
-                            BlueVictoryProp.SetMaterial(General.Materials.CrownThree)
+                            Blue.Device.CrownProp.SetMaterial(General.Materials.CrownThree)
                         AudioPlayer(General.Audio.Victory)
                         set BluePlayer = false
 
@@ -1299,13 +1258,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 if(not FinishedOrder.Find[2]):
                     set  FinishedOrder += array{2}
                     Print("rank {FinishedOrder.Length}")
-                    if(YellowVictoryProp := VictoryProps[2]):
                             if(FinishedOrder.Length = 1):
-                                YellowVictoryProp.SetMaterial(General.Materials.CrownOne)
+                                Yellow.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                             else if(FinishedOrder.Length = 2):
-                                YellowVictoryProp.SetMaterial(General.Materials.CrownTwo)
+                                Yellow.Device.CrownProp.SetMaterial(General.Materials.CrownTwo)
                             else if(FinishedOrder.Length = 3):
-                                YellowVictoryProp.SetMaterial(General.Materials.CrownThree)
+                                Yellow.Device.CrownProp.SetMaterial(General.Materials.CrownThree)
                             AudioPlayer(General.Audio.Victory)
                             set YellowPlayer = false
 
@@ -1313,13 +1271,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 if(not FinishedOrder.Find[3]):
                     set FinishedOrder += array{3}
                     Print("rank {FinishedOrder.Length}")
-                    if(GreenVictoryProp := VictoryProps[3]):
                         if(FinishedOrder.Length = 1):
-                            GreenVictoryProp.SetMaterial(General.Materials.CrownOne)
+                            Green.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                         else if(FinishedOrder.Length = 2):
-                            GreenVictoryProp.SetMaterial(General.Materials.CrownTwo)
+                            Green.Device.CrownProp.SetMaterial(General.Materials.CrownTwo)
                         else if(FinishedOrder.Length = 3):
-                            GreenVictoryProp.SetMaterial(General.Materials.CrownThree)
+                            Green.Device.CrownProp.SetMaterial(General.Materials.CrownThree)
                         AudioPlayer(General.Audio.Victory)
                         set GreenPlayer = false
 
@@ -1391,23 +1348,15 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         for(PlayerPawn : AllPlayersPawns):
             PlayerPawn.Hide()
 
-        if(NumRed := NumbersProp[0]):
-            NumRed.SetMaterial(General.Materials.Invisible)
-        if(NumBlue := NumbersProp[1]):
-            NumBlue.SetMaterial(General.Materials.Invisible)
-        if(NumYellow := NumbersProp[2]):
-            NumYellow.SetMaterial(General.Materials.Invisible)
-        if(NumGreen := NumbersProp[3]):
-            NumGreen.SetMaterial(General.Materials.Invisible)
+        Red.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+        Blue.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+        Yellow.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+        Green.Device.NumberProp.SetMaterial(General.Materials.Invisible)
         
-        if(RedVictoryProp := VictoryProps[0]):
-            RedVictoryProp.SetMaterial(General.Materials.Invisible)
-        if(BlueVictoryProp := VictoryProps[1]):
-            BlueVictoryProp.SetMaterial(General.Materials.Invisible)
-        if(YellowVictoryProp := VictoryProps[2]):
-            YellowVictoryProp.SetMaterial(General.Materials.Invisible)
-        if(GreenVictoryProp := VictoryProps[3]):
-            GreenVictoryProp.SetMaterial(General.Materials.Invisible)
+        Red.Device.CrownProp.SetMaterial(General.Materials.Invisible)
+        Blue.Device.CrownProp.SetMaterial(General.Materials.Invisible)
+        Yellow.Device.CrownProp.SetMaterial(General.Materials.Invisible)
+        Green.Device.CrownProp.SetMaterial(General.Materials.Invisible)
 
         
         FalsingTempPlayerandNormalPlayers()
