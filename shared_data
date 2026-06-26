@@ -60,8 +60,8 @@ general_material_group<public> := class<concrete>:
 
 general_game_data<public> := class<concrete>:
     @editable Audio : audio_group = audio_group{}
-    @editable Dice : dice_material_group = dice_material_group{}
-    @editable Materials : general_material_group = general_material_group{}
+    Dice : dice_material_group = dice_material_group{}
+    Materials : general_material_group = general_material_group{}
 
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -79,6 +79,8 @@ devices_group<public> := class<concrete>:
     @editable LobbyPlayerRef : player_reference_device = player_reference_device{} 
     @editable ExitTp : teleporter_device = teleporter_device{}
     @editable AvatarProp : creative_prop = creative_prop{}
+    @editable NumberProp : creative_prop = creative_prop{}
+    @editable CrownProp : creative_prop = creative_prop{}
 
 pawns_group<public> := class<concrete>:
 
@@ -88,7 +90,8 @@ pawns_group<public> := class<concrete>:
     @editable PawnTwo : creative_prop = creative_prop{}
     @editable PawnThree : creative_prop = creative_prop{}
     @editable Paths : []creative_prop = array{} 
-    @editable DiceProp : []creative_prop = array{}
+    @editable DiceProp : creative_prop = creative_prop{}
+    @editable TurnIndicator : creative_prop = creative_prop{}
     #in main code diceprop is for 0 dice and 1 is for the blinking thing , i want to seperate but will do later..
 
 #This is for player version but can be used for ai version
