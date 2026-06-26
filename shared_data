@@ -3,12 +3,54 @@ using { /Fortnite.com/Devices }
 using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 using { /UnrealEngine.com/Temporary/SpatialMath }
+using { /Verse.org/Assets }
+using { PawnMInstance }
+using { Pawn2MInstance }
+using {AIMInstance}
 
 
 PawnTip<localizes>:message = "Pawns & stuff"
 GeneralTip<localizes>:message = "General Devices"
 
 #Pns = pawns . to clear confusion
+
+# @editable General : general_game_data = general_game_data{}
+# General.Audio.Dice.Play(Agent)
+audio_group<public> := class<concrete>:
+    @editable Move : audio_player_device = audio_player_device{}
+    @editable Dice : audio_player_device = audio_player_device{}
+    @editable Victory : audio_player_device = audio_player_device{}
+    @editable End : audio_player_device = audio_player_device{}
+    @editable Eliminated : audio_player_device = audio_player_device{}
+    @editable Highlight : audio_player_device = audio_player_device{}
+    @editable InGame : audio_player_device = audio_player_device{}
+
+# Dice material instances
+dice_material_group<public> := class<concrete>:
+    var Rolling : MI_DiceRolls = MI_DiceRolls{}
+    var ValueOne : MI_DiceValue1 = MI_DiceValue1{}
+    var ValueTwo : MI_DiceValue2 = MI_DiceValue2{}
+    var ValueThree : MI_DiceValue3 = MI_DiceValue3{}
+    var ValueFour : MI_DiceValue4 = MI_DiceValue4{}
+    var ValueFive : MI_DiceValue5 = MI_DiceValue5{}
+    var ValueSix : MI_DiceValue6 = MI_DiceValue6{}
+
+# Other global material instances.
+general_material_group<public> := class<concrete>:
+    var NormalAvatarTexture : texture = Pawn1
+
+    var CrownOne : MI_CrownOne = MI_CrownOne{}
+    var CrownTwo : MI_CrownTwo = MI_CrownTwo{}
+    var CrownThree : MI_CrownThree = MI_CrownThree{}
+    var NumberOne : MI_Number1 = MI_Number1{}
+    var NumberTwo : MI_Number2 = MI_Number2{}
+    var NumberThree : MI_Number3 = MI_Number3{}
+    var Invisible : MI_Invisible = MI_Invisible{}
+
+general_game_data<public> := class<concrete>:
+    @editable Audio : audio_group = audio_group{}
+    @editable Dice : dice_material_group = dice_material_group{}
+    @editable Materials : general_material_group = general_material_group{}
 
 devices_group<public> := class<concrete>:
 
@@ -31,7 +73,7 @@ pawns_group<public> := class<concrete>:
     @editable PawnTwo : creative_prop = creative_prop{}
     @editable PawnThree : creative_prop = creative_prop{}
     @editable Paths : []creative_prop = array{} 
-    @editable DiceProps : []creative_prop = array{}
+    @editable DiceProp : []creative_prop = array{}
     #in main code diceprop is for 0 dice and 1 is for the blinking thing , i want to seperate but will do later..
 
 #This is for player version but can be used for ai version
