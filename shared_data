@@ -47,10 +47,25 @@ general_material_group<public> := class<concrete>:
     var NumberThree : MI_Number3 = MI_Number3{}
     var Invisible : MI_Invisible = MI_Invisible{}
 
+    #Highlight & Norm Color Mats
+    var Red : MI_Red = MI_Red{}
+    var Blue : MI_Blue = MI_Blue{}
+    var Yellow : MI_Yellow = MI_Yellow{}
+    var Green : MI_Green = MI_Green{}
+    var RedHigh : MI_RedHigh = MI_RedHigh{}
+    var BlueHigh : MI_BlueHigh = MI_BlueHigh{}
+    var YellowHigh : MI_YellowHigh = MI_YellowHigh{}
+    var GreenHigh : MI_GreenHigh = MI_GreenHigh{}
+
+
 general_game_data<public> := class<concrete>:
     @editable Audio : audio_group = audio_group{}
     @editable Dice : dice_material_group = dice_material_group{}
     @editable Materials : general_material_group = general_material_group{}
+
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------
 
 devices_group<public> := class<concrete>:
 
