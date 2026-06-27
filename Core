@@ -935,43 +935,54 @@ LudoManager := class(creative_device):
                 spawn{MovePawnGreen(Green.Pns.PawnThree, Green.PawnThreeIndex, Agent, 3)}
     )
     
-    TurnChanger(Turn:int):void=(
-        if(Turn = 1): #1 red false , 2 blue false and so on
-            set Red.IsTurn  = false
-            if(Blue.Player?):
-                set Blue.IsTurn = true
-            else if(Yellow.Player?):
-                set Yellow.IsTurn  = true
-            else if(Green.Player?):
-                set Green.IsTurn  = true
-            spawn . HelperPlayerProfileTurn()
-        else if(Turn = 2):
-            set Blue.IsTurn  = false
-            if(Yellow.Player?):
-                set Yellow.IsTurn  = true
-            else if(Green.Player?):
-                set Green.IsTurn = true
-            else if(Red.Player?):
+    TurnChanger(Index:int, KeepCurrentTurn:logic):void=(
+        FalsingPlayerTurn()
+
+        if(KeepCurrentTurn = true):
+            if(Index = 1):
                 set Red.IsTurn = true
-            spawn . HelperPlayerProfileTurn()
-        else if(Turn = 3):
-            set Yellow.IsTurn = false
-            if(Green.Player?):
-                set Green.IsTurn = true
-            else if(Red.Player?):
-                set Red.IsTurn = true
-            else if(Blue.Player?):
+            else if(Index = 2):
                 set Blue.IsTurn = true
-            spawn. HelperPlayerProfileTurn()
-        else if(Turn = 4):
-            set Green.IsTurn = false
-            if(Red.Player?):
-                set Red.IsTurn = true
-            else if(Blue.Player?):
-                set Blue.IsTurn = true
-            else if(Yellow.Player?):
+            else if(Index = 3):
                 set Yellow.IsTurn = true
-            spawn. HelperPlayerProfileTurn()
+            else if(Index = 4):
+                set Green.IsTurn = true
+
+        else:
+            if(Index = 1): # 1 = redfalse, 2 = bluefalse, 3 = yellowfalse, 4 = greenfalse
+                set Red.IsTurn = false
+                if(Blue.Player?):
+                    set Blue.IsTurn = true
+                else if(Yellow.Player?):
+                    set Yellow.IsTurn = true
+                else if(Green.Player?):
+                    set Green.IsTurn = true
+            else if(Index = 2):
+                set Blue.IsTurn = false
+                if(Yellow.Player?):
+                    set Yellow.IsTurn = true
+                else if(Green.Player?):
+                    set Green.IsTurn = true
+                else if(Red.Player?):
+                    set Red.IsTurn = true
+            else if(Index = 4):
+                set Green.IsTurn = false
+                if(Red.Player?):
+                    set Red.IsTurn = true
+                else if(Blue.Player?):
+                    set Blue.IsTurn = true
+                else if(Yellow.Player?):
+                    set Yellow.IsTurn = true
+            else if(Index = 3):
+                set Yellow.IsTurn = false
+                if(Green.Player?):
+                    set Green.IsTurn = true
+                else if(Red.Player?):
+                    set Red.IsTurn = true
+                else if(Blue.Player?):
+                    set Blue.IsTurn = true
+                
+        spawn{HelperPlayerProfileTurn()}
     )
 
     TimerCheckerHelper():void=(
@@ -1004,7 +1015,7 @@ LudoManager := class(creative_device):
                     spawn{CheckTimerForRed()}
             else:
                 Sleep(1.0)
-                TurnChanger(1)
+                TurnChanger(1, false)
                 set Red.DoubleRollFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
@@ -1022,7 +1033,7 @@ LudoManager := class(creative_device):
                     spawn{CheckTimerForBlue()}
             else:
                 Sleep(1.0)
-                TurnChanger(2)
+                TurnChanger(2, false)
                 set Blue.DoubleRollFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
@@ -1040,7 +1051,7 @@ LudoManager := class(creative_device):
                     spawn{CheckTimerForYellow()}
             else:
                 Sleep(1.0)
-                TurnChanger(3)
+                TurnChanger(3, false)
                 set Yellow.DoubleRollFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
@@ -1058,7 +1069,7 @@ LudoManager := class(creative_device):
                     spawn{CheckTimerForGreen()}
             else:
                 Sleep(1.0)
-                TurnChanger(4)
+                TurnChanger(4, false)
                 set Green.DoubleRollFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
@@ -1070,6 +1081,9 @@ LudoManager := class(creative_device):
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
+        var MoveCompleted : logic = false
+        var ThirdSix : logic = false
+        var KeepTurn : logic = false
 
         if(CurrentIndex = -1 and Red.DiceRollValue = 6):
             if(Path := Red.Pns.Paths[0]):
@@ -1079,13 +1093,7 @@ LudoManager := class(creative_device):
                 AudioPlayerMain(General.Audio.Move)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set Red.ConsecutiveSixes += 1
-                    if(Red.ConsecutiveSixes >= 3):
-                        TurnChanger(1)
-                        set Red.ConsecutiveSixes = 0
-                    # else keep turn
-                    set Red.DiceRollValue = 0
-                    set Red.DoubleRollFlag = false
+                    set MoveCompleted = true
 
 
         else if(CurrentIndex >= 0):
@@ -1105,36 +1113,41 @@ LudoManager := class(creative_device):
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(Red.DiceRollValue = 6):
-                        set Red.ConsecutiveSixes += 1
-                        if(Red.ConsecutiveSixes >= 3):
-                            TurnChanger(1)
-                            set Red.ConsecutiveSixes = 0
-                        # else keep turn
-                    else:
-                        set Red.ConsecutiveSixes = 0
-                        TurnChanger(1)
-                    set Red.DiceRollValue = 0
-                    set Red.DoubleRollFlag = false
+                    set MoveCompleted = true
 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
+        if(MoveCompleted = true):
+            if (PawnNumber = 0):
+                set Red.PawnIndex = CurrentIndex
+            else if (PawnNumber = 1):
+                set Red.PawnOneIndex = CurrentIndex
+            else if (PawnNumber = 2):
+                set Red.PawnTwoIndex = CurrentIndex
+            else if (PawnNumber = 3):
+                set Red.PawnThreeIndex = CurrentIndex
+
+            if(Red.DiceRollValue = 6):
+                set Red.ConsecutiveSixes += 1
+            
+                if(Red.ConsecutiveSixes >= 3):
+                    set ThirdSix = true
+                    set Red.ConsecutiveSixes = 0
+            else:
+                set Red.ConsecutiveSixes = 0
+
+            Eliminated := PossibleElimChecker(CurrentIndex, PawnNumber, 0, Agent)
+
+            if(ThirdSix = true):
+                set KeepTurn = false
+            else if(Eliminated = true or Red.DiceRollValue = 6):
+                set KeepTurn = true
+
+            set Red.DiceRollValue = 0
+            set Red.DoubleRollFlag = false
+            TurnChanger(1, KeepTurn)
         
-        if (PawnNumber = 0):
-            set Red.PawnIndex = CurrentIndex
-            spawn{PossibleElimChecker(Red.PawnIndex, PawnNumber, 0, Agent)}
-        else if (PawnNumber = 1):
-            set Red.PawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(Red.PawnOneIndex, PawnNumber, 0, Agent)}
-        else if (PawnNumber = 2):
-            set Red.PawnTwoIndex = CurrentIndex
-            spawn{PossibleElimChecker(Red.PawnTwoIndex, PawnNumber, 0, Agent)}
-        else if (PawnNumber = 3):
-            set Red.PawnThreeIndex = CurrentIndex
-            spawn{PossibleElimChecker(Red.PawnThreeIndex, PawnNumber, 0, Agent)}
-        
-        spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
     )
@@ -1143,6 +1156,9 @@ LudoManager := class(creative_device):
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
+        var MoveCompleted : logic = false
+        var ThirdSix : logic = false
+        var KeepTurn : logic = false
         
         if(CurrentIndex = -1 and Blue.DiceRollValue = 6):
             if(Path := Blue.Pns.Paths[0]):
@@ -1152,13 +1168,7 @@ LudoManager := class(creative_device):
                 AudioPlayerMain(General.Audio.Move)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):   
                     set CurrentIndex = 0
-                    set Blue.ConsecutiveSixes += 1
-                    if(Blue.ConsecutiveSixes >= 3):
-                        TurnChanger(2)
-                        set Blue.ConsecutiveSixes = 0
-                    # else keep turn
-                    set Blue.DiceRollValue = 0
-                    set Blue.DoubleRollFlag = false
+                    set MoveCompleted = true
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1177,37 +1187,39 @@ LudoManager := class(creative_device):
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(Blue.DiceRollValue = 6):
-                        set Blue.ConsecutiveSixes += 1
-                        if(Blue.ConsecutiveSixes >= 3):
-                            # Switch to Green turn, reset counter
-                            TurnChanger(2)
-                            set Blue.ConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set Blue.IsTurn = true
-                    else:
-                        set Blue.ConsecutiveSixes = 0
-                        TurnChanger(2)
-                    set Blue.DiceRollValue = 0
-                    set Blue.DoubleRollFlag = false
+                    set MoveCompleted = true
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
-        
-        if (PawnNumber = 0):
-            set Blue.PawnIndex = CurrentIndex
-            spawn{PossibleElimChecker(Blue.PawnIndex, PawnNumber , 1, Agent)}
-        else if (PawnNumber = 1):
-            set Blue.PawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(Blue.PawnOneIndex, PawnNumber, 1, Agent)}
-        else if (PawnNumber = 2):
-            set Blue.PawnTwoIndex = CurrentIndex
-            spawn{PossibleElimChecker(Blue.PawnTwoIndex, PawnNumber, 1, Agent)}
-        else if (PawnNumber = 3):
-            set Blue.PawnThreeIndex = CurrentIndex
-            spawn{PossibleElimChecker(Blue.PawnThreeIndex, PawnNumber, 1, Agent)}
+        if(MoveCompleted = true):
+            if (PawnNumber = 0):
+                set Blue.PawnIndex = CurrentIndex
+            else if (PawnNumber = 1):
+                set Blue.PawnOneIndex = CurrentIndex
+            else if (PawnNumber = 2):
+                set Blue.PawnTwoIndex = CurrentIndex
+            else if (PawnNumber = 3):
+                set Blue.PawnThreeIndex = CurrentIndex
+            
+            if(Blue.DiceRollValue = 6): #also set consective to zero after turn change
+                set Blue.ConsecutiveSixes += 1
 
-        spawn{HelperPlayerProfileTurn()}
+                if(Blue.ConsecutiveSixes >= 3):
+                    set ThirdSix = true
+                    set Blue.ConsecutiveSixes = 0
+            else:
+                set Blue.ConsecutiveSixes = 0
+
+            Eliminated := PossibleElimChecker(CurrentIndex, PawnNumber, 1, Agent)
+            
+            if(ThirdSix = true):
+                set KeepTurn = false
+            else if(Eliminated = true or Blue.DiceRollValue = 6):
+                set KeepTurn = true
+            
+            set Blue.DiceRollValue = 0
+            set Blue.DoubleRollFlag = false
+            TurnChanger(2, KeepTurn)
+  
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
     )
@@ -1216,6 +1228,9 @@ LudoManager := class(creative_device):
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
+        var MoveCompleted : logic = false
+        var ThirdSix : logic = false
+        var KeepTurn : logic = false
 
         if(CurrentIndex = -1 and Yellow.DiceRollValue = 6):
             if(Path := Yellow.Pns.Paths[0]):
@@ -1225,13 +1240,7 @@ LudoManager := class(creative_device):
                 AudioPlayerMain(General.Audio.Move)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set Yellow.ConsecutiveSixes += 1
-                    if(Yellow.ConsecutiveSixes >= 3):
-                        TurnChanger(3)
-                        set Yellow.ConsecutiveSixes = 0
-                    # else keep turn
-                    set Yellow.DiceRollValue = 0
-                    set Yellow.DoubleRollFlag = false
+                    set MoveCompleted = true
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
@@ -1250,37 +1259,38 @@ LudoManager := class(creative_device):
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(Yellow.DiceRollValue = 6):
-                        set Yellow.ConsecutiveSixes += 1
-                        if(Yellow.ConsecutiveSixes >= 3):
-                            # Switch to Red turn, reset counter
-                            TurnChanger(3)
-                            set Yellow.ConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set Yellow.IsTurn = true
-                    else:
-                        set Yellow.ConsecutiveSixes = 0
-                        TurnChanger(3)
-                    set Yellow.DiceRollValue = 0
-                    set Yellow.DoubleRollFlag = false
+                    set MoveCompleted = true
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
+        if(MoveCompleted = true):
+            if (PawnNumber = 0):
+                set Yellow.PawnIndex = CurrentIndex
+            else if (PawnNumber = 1):
+                set Yellow.PawnOneIndex = CurrentIndex
+            else if (PawnNumber = 2):
+                set Yellow.PawnTwoIndex = CurrentIndex
+            else if (PawnNumber = 3):
+                set Yellow.PawnThreeIndex = CurrentIndex
+            
+            if(Yellow.DiceRollValue = 6):
+                set Yellow.ConsecutiveSixes += 1
+                if(Yellow.ConsecutiveSixes >= 3):
+                    set ThirdSix = true
+                    set Yellow.ConsecutiveSixes = 0
+            else:
+                set Yellow.ConsecutiveSixes = 0
+            
+            Eliminated := PossibleElimChecker(CurrentIndex, PawnNumber, 2, Agent)
+
+            if(ThirdSix = true):
+                set KeepTurn = false
+            else if(Eliminated = true or Yellow.DiceRollValue = 6):
+                set KeepTurn = true
+            
+            set Yellow.DiceRollValue = 0
+            set Yellow.DoubleRollFlag = false
+            TurnChanger(3, KeepTurn)
         
-        if (PawnNumber = 0):
-            set Yellow.PawnIndex = CurrentIndex
-            spawn{PossibleElimChecker(Yellow.PawnIndex, PawnNumber, 2, Agent)}
-        else if (PawnNumber = 1):
-            set Yellow.PawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(Yellow.PawnOneIndex, PawnNumber, 2, Agent)}
-        else if (PawnNumber = 2):
-            set Yellow.PawnTwoIndex = CurrentIndex
-            spawn{PossibleElimChecker(Yellow.PawnTwoIndex, PawnNumber, 2, Agent)}
-        else if (PawnNumber = 3):
-            set Yellow.PawnThreeIndex = CurrentIndex
-            spawn{PossibleElimChecker(Yellow.PawnThreeIndex, PawnNumber, 2, Agent)}
-        
-        spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         spawn{CheckTimerForGreen()}
     )
@@ -1289,6 +1299,9 @@ LudoManager := class(creative_device):
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
+        var MoveCompleted : logic = false
+        var ThirdSix : logic = false
+        var KeepTurn : logic = false
 
         if(CurrentIndex = -1 and Green.DiceRollValue = 6):
             if(Path := Green.Pns.Paths[0]):
@@ -1298,13 +1311,7 @@ LudoManager := class(creative_device):
                 AudioPlayerMain(General.Audio.Move)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set Green.ConsecutiveSixes += 1
-                    if(Green.ConsecutiveSixes >= 3):
-                        TurnChanger(4)
-                        set Green.ConsecutiveSixes = 0
-
-                    set Green.DiceRollValue = 0
-                    set Green.DoubleRollFlag = false
+                    set MoveCompleted = true
 
 
         else if(CurrentIndex >= 0):
@@ -1324,43 +1331,45 @@ LudoManager := class(creative_device):
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(Green.DiceRollValue = 6):
-                        set Green.ConsecutiveSixes += 1
-                        if(Green.ConsecutiveSixes >= 3):
-                            # Switch to Red turn, reset counter
-                            TurnChanger(4)
-                            set Green.ConsecutiveSixes = 0
-                        else:
-                            # Keep turn
-                            set Green.IsTurn = true
-                    else:
-                        set Green.ConsecutiveSixes = 0
-                        TurnChanger(4)
-                    set Green.DiceRollValue = 0
-                    set Green.DoubleRollFlag = false
+                    set MoveCompleted = true
                                 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
-        if (PawnNumber = 0):
-            set Green.PawnIndex = CurrentIndex
-            spawn{PossibleElimChecker(Green.PawnIndex, PawnNumber, 3, Agent)}
-        else if (PawnNumber = 1):
-            set Green.PawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(Green.PawnOneIndex, PawnNumber, 3, Agent)}
-        else if (PawnNumber = 2):
-            set Green.PawnTwoIndex = CurrentIndex
-            spawn{PossibleElimChecker(Green.PawnTwoIndex, PawnNumber, 3, Agent)}
-        else if (PawnNumber = 3):
-            set Green.PawnThreeIndex = CurrentIndex
-            spawn{PossibleElimChecker(Green.PawnThreeIndex, PawnNumber, 3, Agent)}
+        if(MoveCompleted = true):
+            if (PawnNumber = 0):
+                set Green.PawnIndex = CurrentIndex
+            else if (PawnNumber = 1):
+                set Green.PawnOneIndex = CurrentIndex
+            else if (PawnNumber = 2):
+                set Green.PawnTwoIndex = CurrentIndex
+            else if (PawnNumber = 3):
+                set Green.PawnThreeIndex = CurrentIndex
+            
+            if(Green.DiceRollValue = 6):
+                set Green.ConsecutiveSixes += 1
+                if(Green.ConsecutiveSixes >= 3):
+                    set ThirdSix = true
+                    set Green.ConsecutiveSixes = 0
+            else:
+                set Green.ConsecutiveSixes = 0
 
-        spawn{HelperPlayerProfileTurn()} #keep this dont remove
+            Eliminated := PossibleElimChecker(CurrentIndex, PawnNumber, 3, Agent)
+            
+            if(ThirdSix = true):
+                set KeepTurn = false
+            else if(Eliminated = true or Green.DiceRollValue = 6):
+                set KeepTurn = true
+
+            set Green.DiceRollValue = 0
+            set Green.DoubleRollFlag = false
+            TurnChanger(4, KeepTurn)
+
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
     )
 
-    PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int, Agent:agent)<suspends>:void=( #move pawn red and else
+    PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int, Agent:agent)<suspends>:logic=( #move pawn red and else
         #1 -- color. 2 -- which pawn from that color. 3. Position that pawns position index. All int Yes.
         #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
         
@@ -1595,23 +1604,8 @@ LudoManager := class(creative_device):
                             set EliminationOccured = true
                             Print("Green Eliminated")
 
-
-        if(EliminationOccured = true):
-            FalsingPlayerTurn()
-            if(Color = 0 and Red.Player?):
-                set Red.IsTurn = true
-            else if(Color = 1 and Blue.Player?):
-                set Blue.IsTurn = true
-            else if(Color = 2 and Yellow.Player?):
-                set Yellow.IsTurn = true
-            else if(Color = 3 and Green.Player?):
-                set Green.IsTurn = true
-            spawn{HelperPlayerProfileTurn()}
-            TimerCheckerHelper()
-        else:
-            Print("Blahhhh")
-
         IsItTheEnd(Agent)
+        return EliminationOccured
     )
 
     IsItTheEnd(Agent:agent):void=( #mention in possible elim Checker
