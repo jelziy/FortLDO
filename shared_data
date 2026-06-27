@@ -24,6 +24,7 @@ audio_group<public> := class<concrete>:
     @editable Eliminated : audio_player_device = audio_player_device{}
     @editable Highlight : audio_player_device = audio_player_device{}
     @editable InGame : audio_player_device = audio_player_device{}
+    @editable Ambiant : audio_player_device = audio_player_device{}
 
 # Dice material instances
 dice_material_group<public> := class<concrete>:
@@ -63,6 +64,7 @@ general_game_data<public> := class<concrete>:
     Dice : dice_material_group = dice_material_group{}
     Materials : general_material_group = general_material_group{}
 
+    DefaultAv : texture = Pawn1
 
 #---------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -189,7 +191,4 @@ shared_game_data<public> := class<concrete>:
         ResetPawnState()
         ResetTurnState()
         ClearPlayers()
-    
-
-    
     
