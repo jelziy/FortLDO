@@ -13,27 +13,11 @@ using {F_WIdget}
 using {PawnMInstance}
 using {Pawn2MInstance}
 
-CamerasTip<localizes>:message = "Cameras"
 InputTip<localizes>:message = "Inputs"
-RedPawnTip<localizes>:message = "Red Pawns"
-GreenPawnTip<localizes>:message = "Green Pawns" 
-BluePawnTip<localizes>:message = "Blue Pawns"
-YellowPawnTip<localizes>:message = "Yellow Pawns"
-DicesRollTip<localizes>:message = "Dices Prop & Frames"
 PlayerSwitchTip<localizes>:message = "Players Switch"
-EndPlanesPropTip<localizes>:message = "End Screen"
-AudioTip<localizes>:message = "Audio Devices"
-ChairTip<localizes>:message = "Chairs"
 WidgetTip<localizes>:message = "Widgets"
 PRFTip<localizes>:message = "Player References Devices"
-AvTip<localizes>:message = "Player Icons"
-PrTip<localizes>:message = "Lobby Prs"
-TpTip2<localizes>:message = "TPS2"
-
-PathProps<localizes>:message = "Paths For Each"
 XPTip<localizes>:message = "XP Devices"
-
-
 
 LudoManager := class(creative_device):
     @editable  var CoolDownTime : float = 24.0
@@ -42,18 +26,12 @@ LudoManager := class(creative_device):
 
     var PerGameCost : float = 100.0
 
-    @editable {Categories := array{CamerasTip}}
-    RedCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
-    @editable {Categories := array{CamerasTip}}
-    GreenCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
-    @editable {Categories := array{CamerasTip}}
-    BlueCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
-    @editable {Categories := array{CamerasTip}}
-    YellowCamera : gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
-    @editable {Categories := array{CamerasTip}} RedButton : button_device = button_device{}
-    @editable {Categories := array{CamerasTip}} GreenButton : button_device = button_device{}
-    @editable {Categories := array{CamerasTip}} BlueButton : button_device = button_device{}
-    @editable {Categories := array{CamerasTip}} YellowButton : button_device = button_device{}
+    @editable General : general_game_data = general_game_data{}
+
+    @editable {Categories := array{PlayerTip}} Red : shared_game_data = shared_game_data{}
+    @editable {Categories := array{PlayerTip}} Blue : shared_game_data = shared_game_data{}
+    @editable {Categories := array{PlayerTip}} Yellow : shared_game_data = shared_game_data{}
+    @editable {Categories := array{PlayerTip}} Green : shared_game_data = shared_game_data{}
 
     @editable {Categories := array{PlayerSwitchTip}} TwoPlayerSwitch : switch_device = switch_device{}
     @editable {Categories := array{PlayerSwitchTip}} ThreePlayerSwitch : switch_device = switch_device{}
@@ -66,6 +44,7 @@ LudoManager := class(creative_device):
     SelectZero : input_trigger_device = input_trigger_device{}
     @editable {Categories := array{InputTip}}
     SelectOne : input_trigger_device = input_trigger_device{}
+    @editable {Categories := array{InputTip}} DiceRoll : input_trigger_device = input_trigger_device{}
 
     @editable EndGameCD : cinematic_sequence_device = cinematic_sequence_device{}
 
@@ -74,250 +53,35 @@ LudoManager := class(creative_device):
     @editable {Categories := array{WidgetTip}} WidgetLoading : Ldo_Loading = Ldo_Loading{}
     @editable {Categories := array{WidgetTip}} WidgetLeaving : Ldo_Leaving = Ldo_Leaving{}
 
-    @editable {Categories := array{RedPawnTip}} RedPawn : creative_prop = creative_prop{}
-    @editable {Categories := array{RedPawnTip}} RedPawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{RedPawnTip}} RedPawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{RedPawnTip}} RedPawnThree : creative_prop = creative_prop{}
-
-    @editable {Categories := array{GreenPawnTip}} GreenPawn : creative_prop = creative_prop{}
-    @editable {Categories := array{GreenPawnTip}} GreenPawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{GreenPawnTip}} GreenPawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{GreenPawnTip}} GreenPawnThree : creative_prop = creative_prop{}
-
-    @editable {Categories := array{BluePawnTip}} BluePawn : creative_prop = creative_prop{}
-    @editable {Categories := array{BluePawnTip}} BluePawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{BluePawnTip}} BluePawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{BluePawnTip}} BluePawnThree : creative_prop = creative_prop{}
-    
-    @editable {Categories := array{YellowPawnTip}} YellowPawn : creative_prop = creative_prop{}
-    @editable {Categories := array{YellowPawnTip}} YellowPawnOne : creative_prop = creative_prop{}
-    @editable {Categories := array{YellowPawnTip}} YellowPawnTwo : creative_prop = creative_prop{}
-    @editable {Categories := array{YellowPawnTip}} YellowPawnThree : creative_prop = creative_prop{}
-
-    @editable { Categories := array{PathProps}} RedPaths : []creative_prop = array{}
-    @editable { Categories := array{PathProps}} GreenPaths : []creative_prop = array{}
-    @editable { Categories := array{PathProps}} BluePaths : []creative_prop = array{}
-    @editable { Categories := array{PathProps}} YellowPaths : []creative_prop = array{}
-
-    @editable {Categories := array{DicesRollTip}} RedDiceProp : []creative_prop = array{}
-    @editable {Categories := array{DicesRollTip}} GreenDiceProp : []creative_prop = array{}
-    @editable {Categories := array{DicesRollTip}} BlueDiceProp : []creative_prop = array{}
-    @editable {Categories := array{DicesRollTip}} YellowDiceProp : []creative_prop = array{}
-
-    @editable {Categories := array{EndPlanesPropTip}} VictoryProps : []creative_prop = array{}
-    @editable {Categories := array{EndPlanesPropTip}} NumbersProp :[]creative_prop = array{} #0r1b2y3g
-
-    @editable{Categories := array{AudioTip}} APMove :audio_player_device = audio_player_device{}
-    @editable{Categories := array{AudioTip}} APDice :audio_player_device = audio_player_device{}
-    @editable{Categories := array{AudioTip}} APVic :audio_player_device = audio_player_device{}
-    @editable{Categories := array{AudioTip}} APEnd :audio_player_device = audio_player_device{}
-    @editable{Categories := array{AudioTip}} APEliminated :audio_player_device = audio_player_device{} 
-    @editable{Categories := array{AudioTip}} APHighlight :audio_player_device = audio_player_device{} #Agent
-    @editable{Categories := array{AudioTip}} APInGame : audio_player_device = audio_player_device{}
-    @editable{Categories := array{AudioTip}} APEnvOg : []audio_player_device = array{}
-
-    @editable{Categories := array{ChairTip}} RedChair : chair_device = chair_device{}
-    @editable{Categories := array{ChairTip}} GreenChair : chair_device = chair_device{}
-    @editable{Categories := array{ChairTip}} BlueChair : chair_device = chair_device{}
-    @editable{Categories := array{ChairTip}} YellowChair : chair_device = chair_device{}
-
-    @editable {Categories := array{PrTip}} RedPr : player_reference_device = player_reference_device{}
-    @editable {Categories := array{PrTip}} BluePr : player_reference_device = player_reference_device{}
-    @editable {Categories := array{PrTip}} YellowPr : player_reference_device = player_reference_device{}
-    @editable {Categories := array{PrTip}} GreenPr : player_reference_device = player_reference_device{}
-
-
-    @editable {Categories := array{TpTip2}} RedTp2 : teleporter_device = teleporter_device{}
-    @editable {Categories := array{TpTip2}} BlueTp2 : teleporter_device = teleporter_device{}
-    @editable {Categories := array{TpTip2}} YellowTp2 : teleporter_device = teleporter_device{}
-    @editable {Categories := array{TpTip2}} GreenTp2 : teleporter_device = teleporter_device{}
-
-    var RedZeroHighlight : MI_RedPawn = MI_RedPawn{}
-    var RedOneHighlight : MI_RedPawn1 = MI_RedPawn1{}
-    var RedTwoHighlight : MI_RedPawn2 = MI_RedPawn2{}
-    var RedThreeHighlight : MI_RedPawn3 = MI_RedPawn3{}
-
-    var GreenZeroHighlight : MI_GreenPawn = MI_GreenPawn{}
-    var GreenOneHighlight : MI_GreenPawn1 = MI_GreenPawn1{}
-    var GreenTwoHighlight : MI_GreenPawn2 = MI_GreenPawn2{}
-    var GreenThreeHighlight : MI_GreenPawn3 = MI_GreenPawn3{}
-
-    var BlueZeroHighlight : MI_BluePawn = MI_BluePawn{}
-    var BlueOneHighlight : MI_BluePawn1 = MI_BluePawn1{}
-    var BlueTwoHighlight : MI_BluePawn2 = MI_BluePawn2{}
-    var BlueThreeHighlight : MI_BluePawn3 = MI_BluePawn3{}
-
-    var YellowZeroHighlight : MI_YellowPawn = MI_YellowPawn{}
-    var YellowOneHighlight : MI_YellowPawn1 = MI_YellowPawn1{}
-    var YellowTwoHighlight : MI_YellowPawn2 = MI_YellowPawn2{}
-    var YellowThreeHighlight : MI_YellowPawn3 = MI_YellowPawn3{}
-
     var RedPlayerIcon : MI_NormRed = MI_NormRed{}
     var GreenPlayerIcon : MI_NormGreen = MI_NormGreen{}
     var BluePlayerIcon : MI_NormBlue = MI_NormBlue{}
     var YellowPlayerIcon : MI_NormYellow = MI_NormYellow{}
-    @editable {Categories := array{AvTip}} var NormAv1 : ?texture = false
-    NormAv : texture = Pawn1
     
-    @editable {Categories := array{AvTip}} var RedAvProp : creative_prop = creative_prop{}
-    @editable {Categories := array{AvTip}} var GreenAvProp : creative_prop = creative_prop{}
-    @editable {Categories := array{AvTip}} var BlueAvProp : creative_prop = creative_prop{}
-    @editable {Categories := array{AvTip}} var YellowAvProp : creative_prop = creative_prop{}
-
-    var RollingDice : MI_DiceRolls = MI_DiceRolls{}
-    var Dice1Value : MI_DiceValue1 = MI_DiceValue1{}
-    var Dice2Value : MI_DiceValue2 = MI_DiceValue2{}
-    var Dice3Value : MI_DiceValue3 = MI_DiceValue3{}
-    var Dice4Value : MI_DiceValue4 = MI_DiceValue4{}
-    var Dice5Value : MI_DiceValue5 = MI_DiceValue5{}
-    var Dice6Value : MI_DiceValue6 = MI_DiceValue6{}
-    var MICrownOne : MI_CrownOne = MI_CrownOne{}
-    var MICrownTwo : MI_CrownTwo = MI_CrownTwo{}
-    var MICrownThree : MI_CrownThree = MI_CrownThree{}
-    var MInbRed : MI_NumerRed = MI_NumerRed{}
-    var MInbBlue : MI_NumerBlue = MI_NumerBlue{}
-    var MInbYellow : MI_NumerYellow = MI_NumerYellow{}
-    var MInbGreen : MI_NumerGreen = MI_NumerGreen{}
-    var MIInv : MI_Invisible = MI_Invisible{}
-
-
-    @editable DiceRoll : input_trigger_device = input_trigger_device{}
-
-    var RedDiceRollValue : int = 0
-    var BlueDiceRollValue : int = 0
-    var GreenDiceRollValue : int = 0
-    var YellowDiceRollValue : int = 0
-
     var GameStarted:logic = false 
     var AllPlayersPawns : []creative_prop = array{}
-
-    var AllRedPawn : []creative_prop = array{}
-    var AllBluePawn : []creative_prop = array{}
-    var AllYellowPawn : []creative_prop = array{}
-    var AllGreenPawn : []creative_prop = array{}
-
-
-    # Track current path index for each pawn
-    var RedPawnIndex : int = -1 #-1 indicates the pawn is not yet on the path
-    var RedPawnOneIndex : int = -1
-    var RedPawnTwoIndex : int = -1
-    var RedPawnThreeIndex : int = -1
-
-    var BluePawnIndex : int = -1
-    var BluePawnOneIndex : int = -1
-    var BluePawnTwoIndex : int = -1
-    var BluePawnThreeIndex : int = -1
-
-    var YellowPawnIndex : int = -1
-    var YellowPawnOneIndex : int = -1
-    var YellowPawnTwoIndex : int = -1
-    var YellowPawnThreeIndex : int = -1
-
-    var GreenPawnIndex : int = -1
-    var GreenPawnOneIndex : int = -1
-    var GreenPawnTwoIndex : int = -1
-    var GreenPawnThreeIndex : int = -1
-
-    # Store initial transforms for respawn
-    var RedPawnInitialTransform : transform = transform{}
-    var RedPawnOneInitialTransform : transform = transform{}
-    var RedPawnTwoInitialTransform : transform = transform{}
-    var RedPawnThreeInitialTransform : transform = transform{}
-
-    var BluePawnInitialTransform : transform = transform{}
-    var BluePawnOneInitialTransform : transform = transform{}
-    var BluePawnTwoInitialTransform : transform = transform{}
-    var BluePawnThreeInitialTransform : transform = transform{}
-
-    var YellowPawnInitialTransform : transform = transform{}
-    var YellowPawnOneInitialTransform : transform = transform{}
-    var YellowPawnTwoInitialTransform : transform = transform{}
-    var YellowPawnThreeInitialTransform : transform = transform{}
     
-    var GreenPawnInitialTransform : transform = transform{}
-    var GreenPawnOneInitialTransform : transform = transform{}
-    var GreenPawnTwoInitialTransform : transform = transform{}
-    var GreenPawnThreeInitialTransform : transform = transform{}
-
     @editable {Categories := array{XPTip}} Accolade1 : accolades_device = accolades_device{}
     @editable {Categories := array{XPTip}} Accolade2 : accolades_device = accolades_device{}
     @editable {Categories := array{XPTip}} Accolade3 : accolades_device = accolades_device{}
-    
-    var RedConsecutiveSixes : int = 0       
-    var GreenConsecutiveSixes : int = 0
-    var BlueConsecutiveSixes : int = 0
-    var YellowConsecutiveSixes : int = 0
-
-    var RedPlayer: ?agent = false
-    var GreenPlayer : ?agent = false
-    var BluePlayer : ?agent = false
-    var YellowPlayer : ?agent = false
-
-    var tempRedPlayer : ?agent = false
-    var tempGreenPlayer : ?agent = false
-    var tempBluePlayer : ?agent = false
-    var tempYellowPlayer : ?agent = false
-
-    var RedPlayerTurn : logic = false
-    var GreenPlayerTurn : logic = false
-    var BluePlayerTurn : logic = false
-    var YellowPlayerTurn : logic = false
-
-    var RedFinished : logic = false
-    var RedOneFinished : logic = false
-    var RedTwoFinished : logic = false
-    var RedThreeFinished : logic = false
-
-    var BlueFinished : logic = false
-    var BlueOneFinished : logic = false
-    var BlueTwoFinished : logic = false
-    var BlueThreeFinished : logic = false
-
-    var YellowFinished : logic = false
-    var YellowOneFinished : logic = false
-    var YellowTwoFinished : logic = false
-    var YellowThreeFinished : logic = false
-
-    var GreenFinished : logic = false
-    var GreenOneFinished : logic = false
-    var GreenTwoFinished : logic = false
-    var GreenThreeFinished : logic = false
-
-    var WhichColorElim : int = -1 #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
-
-    var RollerForRed : int = 0
-    var RollerForBlue : int = 0
-    var RollerForYellow : int = 0
-    var RollerForGreen : int = 0
-
-    var DoubleRollFlagRed : logic = false
-    var DoubleRollFlagBlue : logic = false
-    var DoubleRollFlagYellow : logic = false
-    var DoubleRollFlagGreen : logic = false
-
-    var RedEnd : int = 0
-    var BlueEnd : int = 0 
-    var GreenEnd : int = 0
-    var YellowEnd : int = 0
 
     var FinishedOrder :[]int =array{}
     var ActivePlayerCount : int = 0
-    var ConfirmFlag : logic = false
     var GameFormat : int = 0
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=(
         
         InitialInitiator()     
-        set AllPlayersPawns = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree, BluePawn, BluePawnOne,
-                                    BluePawnTwo, BluePawnThree, GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree, YellowPawn, 
-                                    YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+        set AllPlayersPawns = array{Red.Pns.Pawn, Red.Pns.PawnOne, Red.Pns.PawnTwo, Red.Pns.PawnThree, Blue.Pns.Pawn, Blue.Pns.PawnOne,
+                                    Blue.Pns.PawnTwo, Blue.Pns.PawnThree, Green.Pns.Pawn, Green.Pns.PawnOne, Green.Pns.PawnTwo, Green.Pns.PawnThree, Yellow.Pns.Pawn, 
+                                    Yellow.Pns.PawnOne, Yellow.Pns.PawnTwo, Yellow.Pns.PawnThree}
         for(PlayerPawn : AllPlayersPawns):
             PlayerPawn.Hide()
-        RedButton.InteractedWithEvent.Subscribe(RedOneJoined)
-        BlueButton.InteractedWithEvent.Subscribe(BlueOneJoined)
-        GreenButton.InteractedWithEvent.Subscribe(GreenOneJoined)
-        YellowButton.InteractedWithEvent.Subscribe(YellowOneJoined)
+        Red.Device.JoinButton.InteractedWithEvent.Subscribe(RedOneJoined)
+        Blue.Device.JoinButton.InteractedWithEvent.Subscribe(BlueOneJoined)
+        Green.Device.JoinButton.InteractedWithEvent.Subscribe(GreenOneJoined)
+        Yellow.Device.JoinButton.InteractedWithEvent.Subscribe(YellowOneJoined)
 
         SelectZero.PressedEvent.Subscribe(SelectZeroPressed)
         ConfirmInput.PressedEvent.Subscribe(ConfirmInputPressed)
@@ -327,40 +91,26 @@ LudoManager := class(creative_device):
         
     
         Sleep(7.0)
-        for(Mdevice : APEnvOg):
-            Mdevice.Play()
+        General.Audio.Ambiant.Play()
     )
 
-
     InitialInitiator():void=(
-        set RedPawnInitialTransform = RedPawn.GetTransform()
-        set RedPawnOneInitialTransform = RedPawnOne.GetTransform()
-        set RedPawnTwoInitialTransform = RedPawnTwo.GetTransform()
-        set RedPawnThreeInitialTransform = RedPawnThree.GetTransform()
-        set BluePawnInitialTransform = BluePawn.GetTransform()
-        set BluePawnOneInitialTransform = BluePawnOne.GetTransform()
-        set BluePawnTwoInitialTransform = BluePawnTwo.GetTransform()
-        set BluePawnThreeInitialTransform = BluePawnThree.GetTransform()
-        set YellowPawnInitialTransform = YellowPawn.GetTransform()
-        set YellowPawnOneInitialTransform = YellowPawnOne.GetTransform()
-        set YellowPawnTwoInitialTransform = YellowPawnTwo.GetTransform()
-        set YellowPawnThreeInitialTransform = YellowPawnThree.GetTransform()
-        set GreenPawnInitialTransform = GreenPawn.GetTransform()
-        set GreenPawnOneInitialTransform = GreenPawnOne.GetTransform()
-        set GreenPawnTwoInitialTransform = GreenPawnTwo.GetTransform()
-        set GreenPawnThreeInitialTransform = GreenPawnThree.GetTransform()
+        Red.CaptureInitialTransforms()
+        Blue.CaptureInitialTransforms()
+        Yellow.CaptureInitialTransforms()
+        Green.CaptureInitialTransforms()
         ResetPlayerDrainerProfile()
     )
 
     GameStartInitiator()<suspends>:void=(
         var PlayerCount : int = 0
-        if(RedPlayer?):
+        if(Red.Player?):
             set PlayerCount += 1
-        if(BluePlayer?):
+        if(Blue.Player?):
             set PlayerCount += 1
-        if(YellowPlayer?):
+        if(Yellow.Player?):
             set PlayerCount += 1
-        if(GreenPlayer?):
+        if(Green.Player?):
             set PlayerCount += 1
         
         Sleep(2.0) # Small delay to ensure all players are registered before starting the game
@@ -402,76 +152,75 @@ LudoManager := class(creative_device):
                 GameCostDeductor()
 
         if(GameStarted = true):
-            for(Music : APEnvOg):
-                Music.Stop()
-            APInGame.Play()  
+            General.Audio.Ambiant.Stop()
+            AudioPlayerMain(General.Audio.InGame)
     )
     
     RedTurnSetter():void=(
-        if(RedPlayer?):
-            set RedPlayerTurn = true
-        else if(BluePlayer?):
-            set BluePlayerTurn = true
-        else if(YellowPlayer?):
-            set YellowPlayerTurn = true
-        else if(GreenPlayer?):
-            set GreenPlayerTurn = true
+        if(Red.Player?):
+            set Red.IsTurn = true
+        else if(Blue.Player?):
+            set Blue.IsTurn = true
+        else if(Yellow.Player?):
+            set Yellow.IsTurn = true
+        else if(Green.Player?):
+            set Green.IsTurn = true
     )
 
     CamChairGranter():void= #probably should just disable exit always
-        if(RedAgent := RedPlayer?):
+        if(RedAgent := Red.Player?):
             spawn. LoadWidget(RedAgent)
-            RedCamera.Enable()
-            RedCamera.AddTo(RedAgent)
-            RedChair.Seat(RedAgent)
-            RedChair.DisableExit()
-        if(BlueAgent := BluePlayer?):
+            Red.Device.Camera.Enable()
+            Red.Device.Camera.AddTo(RedAgent)
+            Red.Device.Chair.Seat(RedAgent)
+            Red.Device.Chair.DisableExit()
+        if(BlueAgent := Blue.Player?):
             spawn. LoadWidget(BlueAgent)
-            BlueCamera.Enable()
-            BlueCamera.AddTo(BlueAgent)
-            BlueChair.Seat(BlueAgent)
-            BlueChair.DisableExit()
-        if(YellowAgent := YellowPlayer?):
+            Blue.Device.Camera.Enable()
+            Blue.Device.Camera.AddTo(BlueAgent)
+            Blue.Device.Chair.Seat(BlueAgent)
+            Blue.Device.Chair.DisableExit()
+        if(YellowAgent := Yellow.Player?):
             spawn. LoadWidget(YellowAgent)
-            YellowCamera.Enable()
-            YellowCamera.AddTo(YellowAgent)
-            YellowChair.Seat(YellowAgent)
-            YellowChair.DisableExit()
-        if(GreenAgent := GreenPlayer?):
+            Yellow.Device.Camera.Enable()
+            Yellow.Device.Camera.AddTo(YellowAgent)
+            Yellow.Device.Chair.Seat(YellowAgent)
+            Yellow.Device.Chair.DisableExit()
+        if(GreenAgent := Green.Player?):
             spawn. LoadWidget(GreenAgent)
-            GreenCamera.Enable()
-            GreenCamera.AddTo(GreenAgent)
-            GreenChair.Seat(GreenAgent)
-            GreenChair.DisableExit
+            Green.Device.Camera.Enable()
+            Green.Device.Camera.AddTo(GreenAgent)
+            Green.Device.Chair.Seat(GreenAgent)
+            Green.Device.Chair.DisableExit
 
-        RedPr.Clear()
-        BluePr.Clear()
-        GreenPr.Clear()
-        YellowPr.Clear()
+        Red.Device.LobbyPlayerRef.Clear()
+        Blue.Device.LobbyPlayerRef.Clear()
+        Green.Device.LobbyPlayerRef.Clear()
+        Yellow.Device.LobbyPlayerRef.Clear()
 
         
     RedOneJoined(Agent : agent) : void = (
 
-        if(RedPlayer = false and GameStarted = false):
+        if(Red.Player = false and GameStarted = false):
             if:
-                option{Agent} <> BluePlayer
-                option{Agent} <> YellowPlayer
-                option{Agent} <> GreenPlayer
+                option{Agent} <> Blue.Player
+                option{Agent} <> Yellow.Player
+                option{Agent} <> Green.Player
             then:
                 #spawn{LoadWidget(Agent)}
                 #RedCamera.AddTo(Agent)   #just to check hash
-                set RedPlayer = option{Agent}
-                RedChair.DisableExit()
-                RedPr.Register(Agent)
+                set Red.Player = option{Agent}
+                Red.Device.Chair.DisableExit()
+                Red.Device.LobbyPlayerRef.Register(Agent)
                 if:
                     FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
                     Player := player[Agent]
                 then:
                     set RedPlayerIcon.TexParam = FcIcon
-                    RedAvProp.SetMaterial(RedPlayerIcon)
+                    Red.Device.AvatarProp.SetMaterial(RedPlayerIcon)
                 
                 if(GameStarted = false):
-                    set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
+                    AllRedPawn : []creative_prop = Red.GetPawn()
                     for(RedPawnForRedJoined : AllRedPawn):
                         RedPawnForRedJoined.Show()
                         spawn{GameStartInitiator()}
@@ -480,26 +229,26 @@ LudoManager := class(creative_device):
     )
 
     BlueOneJoined(Agent : agent) : void = (
-        if(BluePlayer = false and GameStarted = false):
+        if(Blue.Player = false and GameStarted = false):
             if:
-                option{Agent} <> RedPlayer
-                option{Agent} <> YellowPlayer
-                option{Agent} <> GreenPlayer
+                option{Agent} <> Red.Player
+                option{Agent} <> Yellow.Player
+                option{Agent} <> Green.Player
             then:
                 #spawn{LoadWidget(Agent)} #remove the lines with hashes .... Later It creates confusion
-                set BluePlayer = option{Agent}
-                BlueChair.DisableExit() #hash for playtest
+                set Blue.Player = option{Agent}
+                Blue.Device.Chair.DisableExit() #hash for playtest
                 #BlueCamera.AddTo(Agent)
-                BluePr.Register(Agent)
+                Blue.Device.LobbyPlayerRef.Register(Agent)
                 if:
                     FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
                     Player := player[Agent]
                 then:
                     set BluePlayerIcon.TexParam = FcIcon
-                    BlueAvProp.SetMaterial(BluePlayerIcon)
+                    Blue.Device.AvatarProp.SetMaterial(BluePlayerIcon)
                     
                 if(GameStarted = false):
-                    set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
+                    AllBluePawn :[]creative_prop = Blue.GetPawn()
                     for(BluePawnForBlueJoined : AllBluePawn):
                         BluePawnForBlueJoined.Show()
                         spawn{GameStartInitiator()}
@@ -508,26 +257,26 @@ LudoManager := class(creative_device):
     )
 
     GreenOneJoined(Agent : agent) : void = (
-        if(GreenPlayer = false and GameStarted = false):
+        if(Green.Player = false and GameStarted = false):
             if:
-                option{Agent} <> RedPlayer
-                option{Agent} <> BluePlayer
-                option{Agent} <> YellowPlayer
+                option{Agent} <> Red.Player
+                option{Agent} <> Blue.Player
+                option{Agent} <> Yellow.Player
             then:
                 #spawn{LoadWidget(Agent)}
-                set GreenPlayer = option{Agent}
-                GreenChair.DisableExit()
+                set Green.Player = option{Agent}
+                Green.Device.Chair.DisableExit()
                 #GreenCamera.AddTo(Agent)
-                GreenPr.Register(Agent)
+                Green.Device.LobbyPlayerRef.Register(Agent)
                 if:
                     FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
                     Player := player[Agent]
                 then:
                     set GreenPlayerIcon.TexParam = FcIcon
-                    GreenAvProp.SetMaterial(GreenPlayerIcon)
+                    Green.Device.AvatarProp.SetMaterial(GreenPlayerIcon)
                     
                 if(GameStarted = false):
-                    set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
+                    AllGreenPawn :[]creative_prop = Green.GetPawn()
                     for(GreenPawnForGreenJoined : AllGreenPawn):
                         GreenPawnForGreenJoined.Show()
                         spawn{GameStartInitiator()}
@@ -536,26 +285,26 @@ LudoManager := class(creative_device):
     )
 
     YellowOneJoined(Agent : agent) : void = (
-        if(YellowPlayer = false and GameStarted = false):
+        if(Yellow.Player = false and GameStarted = false):
             if:
-                option{Agent} <> RedPlayer
-                option{Agent} <> BluePlayer
-                option{Agent} <> GreenPlayer
+                option{Agent} <> Red.Player
+                option{Agent} <> Blue.Player
+                option{Agent} <> Green.Player
             then:
                 #spawn{LoadWidget(Agent)}
-                set YellowPlayer = option{Agent}
+                set Yellow.Player = option{Agent}
                 #YellowCamera.AddTo(Agent)
-                YellowChair.DisableExit()
-                YellowPr.Register(Agent)
+                Yellow.Device.Chair.DisableExit()
+                Yellow.Device.LobbyPlayerRef.Register(Agent)
                 if:
                     FcIcon := Agent.GetFortCharacter[].GetEntity[].GetComponent[icon_component].Icon
                     Player := player[Agent]
                 then:
                     set YellowPlayerIcon.TexParam = FcIcon
-                    YellowAvProp.SetMaterial(YellowPlayerIcon)
+                    Yellow.Device.AvatarProp.SetMaterial(YellowPlayerIcon)
 
                 if(GameStarted = false):
-                    set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
+                    AllYellowPawn :[]creative_prop = Yellow.GetPawn() 
                     for(YellowPawnForYellowJoined : AllYellowPawn):
                         YellowPawnForYellowJoined.Show()
                         spawn{GameStartInitiator()}
@@ -584,163 +333,132 @@ LudoManager := class(creative_device):
 
     ExitingTheArena(Agent:agent):void=(
 
-        if(RedPlayer = option{Agent}):
-            set RedPlayer = false
+        if(Red.Player = option{Agent}):
+            set Red.Player = false
             spawn{LeaveWidget(Agent)}           
-            RedCamera.RemoveFrom(Agent)
-            RedCamera.Disable()
-            RedChair.EnableExit()
-            if(RedPawn.TeleportTo[RedPawnInitialTransform]):
-            if(RedPawnOne.TeleportTo[RedPawnOneInitialTransform]): 
-            if(RedPawnTwo.TeleportTo[RedPawnTwoInitialTransform]): 
-            if(RedPawnThree.TeleportTo[RedPawnThreeInitialTransform]):
-            set AllRedPawn = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
-            for(Pawns : AllRedPawn):
-                Pawns.Hide()
-            RedIndexInitialSetter()
+            Red.Device.Camera.RemoveFrom(Agent)
+            Red.Device.Camera.Disable()
+            Red.Device.Chair.EnableExit()
+            #-----------------------------
+            Red.HidePawns()
+            Red.ResetPawnState()
             if(not FinishedOrder.Find[0]):
                 set ActivePlayerCount -= 1
 
-            set RedPlayerIcon.TexParam = NormAv
-            RedAvProp.SetMaterial(RedPlayerIcon)
+            set RedPlayerIcon.TexParam = General.DefaultAv
+            Red.Device.AvatarProp.SetMaterial(RedPlayerIcon)
 
-            RedTp2.Teleport(Agent)
-            RedPr.Clear()
+            Red.Device.ExitTp.Teleport(Agent)
+            Red.Device.LobbyPlayerRef.Clear()
             
             
 
-        else if(BluePlayer = option{Agent}):
-            set BluePlayer = false # for PlayTesting.... was "#"# there not now
+        else if(Blue.Player = option{Agent}):
+            set Blue.Player = false # for PlayTesting.... was "#"# there not now
             spawn{LeaveWidget(Agent)}
-            BlueCamera.RemoveFrom(Agent)
-            BlueCamera.Disable()
-            BlueChair.EnableExit()
-            if(BluePawn.TeleportTo[BluePawnInitialTransform]): 
-            if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]): 
-            if(BluePawnTwo.TeleportTo[BluePawnTwoInitialTransform]): 
-            if(BluePawnThree.TeleportTo[BluePawnThreeInitialTransform]):
-            set AllBluePawn = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
-            for(Pawns : AllBluePawn):
-                Pawns.Hide()
-            BlueIndexInitialSetter()
+            Blue.Device.Camera.RemoveFrom(Agent)
+            Blue.Device.Camera.Disable()
+            Blue.Device.Chair.EnableExit()
+            #--------------
+            Blue.ResetPawnState()
             if(not FinishedOrder.Find[1]):
                 set ActivePlayerCount -= 1
             
-            set BluePlayerIcon.TexParam = NormAv
-            BlueAvProp.SetMaterial(BluePlayerIcon)
+            set BluePlayerIcon.TexParam = General.DefaultAv
+            Blue.Device.AvatarProp.SetMaterial(BluePlayerIcon)
 
-            BlueTp2.Teleport(Agent)
-            BluePr.Clear()
+            Blue.Device.ExitTp.Teleport(Agent)
+            Blue.Device.LobbyPlayerRef.Clear()
 
-        else if(YellowPlayer = option{Agent}):
-            set YellowPlayer = false
+        else if(Yellow.Player = option{Agent}):
+            set Yellow.Player = false
             spawn{LeaveWidget(Agent)}
-            YellowCamera.RemoveFrom(Agent)
-            YellowCamera.Disable()
-            YellowChair.EnableExit()
-            if(YellowPawn.TeleportTo[YellowPawnInitialTransform]): 
-            if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]): 
-            if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]): 
-            if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
-            set AllYellowPawn = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
-            for(Pawns : AllYellowPawn):
-                Pawns.Hide()
-            YellowIndexInitialSetter()
+            Yellow.Device.Camera.RemoveFrom(Agent)
+            Yellow.Device.Camera.Disable()
+            Yellow.Device.Chair.EnableExit()
+            #---------------
+            Yellow.ResetPawnState()
             if(not FinishedOrder.Find[2]):
                 set ActivePlayerCount -= 1
             
-            set YellowPlayerIcon.TexParam = NormAv
-            YellowAvProp.SetMaterial(YellowPlayerIcon)
+            set YellowPlayerIcon.TexParam = General.DefaultAv
+            Yellow.Device.AvatarProp.SetMaterial(YellowPlayerIcon)
 
-            YellowTp2.Teleport(Agent)
-            YellowPr.Clear()
+            Yellow.Device.ExitTp.Teleport(Agent)
+            Yellow.Device.LobbyPlayerRef.Clear()
 
-        else if(GreenPlayer = option{Agent}):
-            set GreenPlayer = false
+        else if(Green.Player = option{Agent}):
+            set Green.Player = false
             spawn{LeaveWidget(Agent)}
-            GreenCamera.RemoveFrom(Agent)
-            GreenCamera.Disable()
-            GreenChair.EnableExit()
-            if(GreenPawn.TeleportTo[GreenPawnInitialTransform]): 
-            if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]): 
-            if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]): 
-            if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
-            set AllGreenPawn = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
-            for(Pawns : AllGreenPawn):
-                Pawns.Hide()
-            GreenIndexInitialSetter()
+            Green.Device.Camera.RemoveFrom(Agent)
+            Green.Device.Camera.Disable()
+            Green.Device.Chair.EnableExit()
+            #---------------
+            Green.ResetPawnState()
             if(not FinishedOrder.Find[3]):
                 set ActivePlayerCount -= 1
 
             
-            set GreenPlayerIcon.TexParam = NormAv
-            GreenAvProp.SetMaterial(GreenPlayerIcon)
+            set GreenPlayerIcon.TexParam = General.DefaultAv
+            Green.Device.AvatarProp.SetMaterial(GreenPlayerIcon)
 
-            GreenTp2.Teleport(Agent)
-            GreenPr.Clear()
+            Green.Device.ExitTp.Teleport(Agent)
+            Green.Device.LobbyPlayerRef.Clear()
 
         if(ActivePlayerCount <= 1 and GameStarted = true):
             spawn. GameOverReset(1)
 
-        RedCamera.RemoveFrom(Agent) #temporary solution
-        BlueCamera.RemoveFrom(Agent)
-        YellowCamera.RemoveFrom(Agent)
-        GreenCamera.RemoveFrom(Agent)
+        Red.Device.Camera.RemoveFrom(Agent) #temporary solution
+        Blue.Device.Camera.RemoveFrom(Agent)
+        Yellow.Device.Camera.RemoveFrom(Agent)
+        Green.Device.Camera.RemoveFrom(Agent)
     )
 
     DiceRollPressed(Agent:agent):void=(
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true): #removes else if from this function for PlayTesting
+        if(Red.Player = option{Agent} and Red.IsTurn = true): #removes else if from this function for PlayTesting
             Print("Red Pressing")
-            if(DoubleRollFlagRed = false):
+            if(Red.DoubleRollFlag = false):
                 RollValue := GetRandomInt(1,6)
-                set RedDiceRollValue = RollValue
-                APDice.Play()
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)  
+                set Red.DiceRollValue = RollValue
+                AudioPlayerMain(General.Audio.Dice)
+                Red.Pns.DiceProp.SetMaterial(General.Dice.Rolling)  
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
-                set DoubleRollFlagRed = true
-                set ConfirmFlag = false
+                set Red.DoubleRollFlag = true
                 Print("Dice Rolled: {RollValue}")
 
-        else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
-            if( DoubleRollFlagBlue = false):
+        else if(Blue.Player = option{Agent} and Blue.IsTurn = true):
+            if( Blue.DoubleRollFlag = false):
                 RollValue := GetRandomInt(1,6)
-                set BlueDiceRollValue = RollValue
-                APDice.Play()
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
+                set Blue.DiceRollValue = RollValue
+                AudioPlayerMain(General.Audio.Dice)
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.Rolling)
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
-                set DoubleRollFlagBlue = true
-                set ConfirmFlag = false
+                set Blue.DoubleRollFlag= true
                 Print("Dice Rolled: {RollValue} ")
 
-        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
-            if(DoubleRollFlagGreen = false):
+        else if(Green.Player = option{Agent} and Green.IsTurn = true):
+            if(Green.DoubleRollFlag = false):
                 RollValue := GetRandomInt(1,6)
-                set GreenDiceRollValue = RollValue
-                APDice.Play()
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
+                set Green.DiceRollValue = RollValue
+                AudioPlayerMain(General.Audio.Dice)
+                Green.Pns.DiceProp.SetMaterial(General.Dice.Rolling)
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
-                set DoubleRollFlagGreen = true
-                set ConfirmFlag = false
+                set Green.DoubleRollFlag = true
                 Print("Dice Rolled: {RollValue} ")
                 
-        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
+        else if(Yellow.Player = option{Agent} and Yellow.IsTurn = true):
             Print("Agent yellow found")
-            if(DoubleRollFlagYellow = false):
+            if(Yellow.DoubleRollFlag = false):
                 RollValue := GetRandomInt(1,6)
-                set YellowDiceRollValue = RollValue
-                APDice.Play()
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(RollingDice)
+                set Yellow.DiceRollValue = RollValue
+                AudioPlayerMain(General.Audio.Dice)
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.Rolling)
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker(Agent)}
-                set DoubleRollFlagYellow = true
-                set ConfirmFlag = false
+                set Yellow.DoubleRollFlag = true
                 Print("Dice Rolled: {RollValue} ")
     )
     
@@ -749,35 +467,35 @@ LudoManager := class(creative_device):
         var StartTime: float = GetSimulationElapsedTime()
         loop:
             Sleep(0.2)
-            if(RedPlayerTurn = false):
+            if(Red.IsTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
             #Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
-                set RedPlayerTurn = false
-                if(BluePlayer?):
-                    set BluePlayerTurn = true
-                else if(YellowPlayer?):
-                    set YellowPlayerTurn = true
-                else if(GreenPlayer?):
-                    set GreenPlayerTurn = true
+                set Red.IsTurn = false
+                if(Blue.Player?):
+                    set Blue.IsTurn = true
+                else if(Yellow.Player?):
+                    set Yellow.IsTurn = true
+                else if(Green.Player?):
+                    set Green.IsTurn = true
                 FalsingDoubleRollFlags()
-                set RedConsecutiveSixes = 0
+                set Red.ConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
 
-            else if(RedPlayer = false):
-                set RedPlayerTurn = false
-                if(BluePlayer?):
-                    set BluePlayerTurn = true
-                else if(YellowPlayer?):
-                    set YellowPlayerTurn = true
-                else if(GreenPlayer?):
-                    set GreenPlayerTurn = true
+            else if(Red.Player = false):
+                set Red.IsTurn = false
+                if(Blue.Player?):
+                    set Blue.IsTurn = true
+                else if(Yellow.Player?):
+                    set Yellow.IsTurn = true
+                else if(Green.Player?):
+                    set Green.IsTurn = true
                 FalsingDoubleRollFlags()
-                set RedConsecutiveSixes = 0
+                set Red.ConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
 
@@ -788,35 +506,35 @@ LudoManager := class(creative_device):
         var StartTime: float = GetSimulationElapsedTime()
         loop:
             Sleep(0.2)
-            if(BluePlayerTurn = false):
+            if(Blue.IsTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
             Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
-                set BluePlayerTurn = false
-                if(YellowPlayer?):
-                    set YellowPlayerTurn = true
-                else if(GreenPlayer?):
-                    set GreenPlayerTurn = true
-                else if(RedPlayer?):
-                    set RedPlayerTurn = true
+                set Blue.IsTurn = false
+                if(Yellow.Player?):
+                    set Yellow.IsTurn = true
+                else if(Green.Player?):
+                    set Green.IsTurn = true
+                else if(Red.Player?):
+                    set Red.IsTurn = true
                 FalsingDoubleRollFlags()
-                set BlueConsecutiveSixes = 0
+                set Blue.ConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
 
-            else if(BluePlayer = false):
-                set BluePlayerTurn = false
-                if(YellowPlayer?):
-                    set YellowPlayerTurn = true
-                else if(GreenPlayer?):
-                    set GreenPlayerTurn = true
-                else if(RedPlayer?):
-                    set RedPlayerTurn = true
+            else if(Blue.Player = false):
+                set Blue.IsTurn = false
+                if(Yellow.Player?):
+                    set Yellow.IsTurn = true
+                else if(Green.Player?):
+                    set Green.IsTurn = true
+                else if(Red.Player?):
+                    set Red.IsTurn = true
                 FalsingDoubleRollFlags()
-                set BlueConsecutiveSixes = 0
+                set Blue.ConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -826,35 +544,35 @@ LudoManager := class(creative_device):
         var StartTime: float = GetSimulationElapsedTime()
         loop:
             Sleep(0.2)
-            if(GreenPlayerTurn = false):
+            if(Green.IsTurn = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
             Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
-                set GreenPlayerTurn = false
-                if(RedPlayer?):
-                    set RedPlayerTurn = true
-                else if(BluePlayer?):
-                    set BluePlayerTurn = true
-                else if(YellowPlayer?):
-                    set YellowPlayerTurn = true
+                set Green.IsTurn = false
+                if(Red.Player?):
+                    set Red.IsTurn  = true
+                else if(Blue.Player?):
+                    set Blue.IsTurn  = true
+                else if(Yellow.Player?):
+                    set Yellow.IsTurn  = true
                 FalsingDoubleRollFlags()
-                set GreenConsecutiveSixes = 0
+                set Green.ConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
 
-            else if(GreenPlayer = false):
-                set GreenPlayerTurn = false
-                if(RedPlayer?):
-                    set RedPlayerTurn = true
-                else if(BluePlayer?):
-                    set BluePlayerTurn = true
-                else if(YellowPlayer?):
-                    set YellowPlayerTurn = true
+            else if(Green.Player = false):
+                set Green.IsTurn  = false
+                if(Red.Player?):
+                    set Red.IsTurn  = true
+                else if(Blue.Player?):
+                    set Blue.IsTurn  = true
+                else if(Yellow.Player?):
+                    set Yellow.IsTurn  = true
                 FalsingDoubleRollFlags()
-                set GreenConsecutiveSixes = 0
+                set Green.ConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -864,34 +582,34 @@ LudoManager := class(creative_device):
         var StartTime: float = GetSimulationElapsedTime()
         loop:
             Sleep(0.2)
-            if(YellowPlayerTurn = false):
+            if(Yellow.IsTurn  = false):
                 return
             var Elapsed : float = GetSimulationElapsedTime() - StartTime
             #Print("Timer {Elapsed}")
             if(Elapsed >= CoolDownTime):
                 Print("Time Out! Moving to next player.")
-                set YellowPlayerTurn = false
-                if(GreenPlayer?):
-                    set GreenPlayerTurn = true
-                else if(RedPlayer?):
-                    set RedPlayerTurn = true
-                else if(BluePlayer?):
-                    set BluePlayerTurn = true
+                set Yellow.IsTurn  = false
+                if(Green.Player?):
+                    set Green.IsTurn  = true
+                else if(Red.Player?):
+                    set Red.IsTurn  = true
+                else if(Blue.Player?):
+                    set Blue.IsTurn  = true
                 FalsingDoubleRollFlags()
-                set YellowConsecutiveSixes = 0
+                set Yellow.ConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
-            else if(YellowPlayer = false):
-                set YellowPlayerTurn = false
-                if(GreenPlayer?):
-                    set GreenPlayerTurn = true
-                else if(RedPlayer?):
-                    set RedPlayerTurn = true
-                else if(BluePlayer?):
-                    set BluePlayerTurn = true
+            else if(Yellow.Player = false):
+                set Yellow.IsTurn  = false
+                if(Green.Player?):
+                    set Green.IsTurn  = true
+                else if(Red.Player?):
+                    set Red.IsTurn = true
+                else if(Blue.Player?):
+                    set Blue.IsTurn  = true
                 FalsingDoubleRollFlags()
-                set YellowConsecutiveSixes = 0
+                set Yellow.ConsecutiveSixes = 0
                 spawn{HelperPlayerProfileTurn()}
                 TimerCheckerHelper()
                 return
@@ -899,426 +617,360 @@ LudoManager := class(creative_device):
     )
 
     HelperPlayerProfileTurn()<suspends>:void=(
-        if(RedPlayerTurn = true):
-            if(RedPropProfile := RedDiceProp[1]):
-                ResetPlayerDrainerProfile()
-                Sleep(1.0)
-                RedPropProfile.Show()
+        if(Red.IsTurn  = true):
+            ResetPlayerDrainerProfile()
+            Sleep(1.0)
+            Red.Pns.TurnIndicator.Show()
             Print("Red Player's Turn")
             spawn{CheckTimerForRed()}
-        else if(BluePlayerTurn = true):
-            if(BluePropProfile := BlueDiceProp[1]):
-                ResetPlayerDrainerProfile()
-                Sleep(1.0)
-                BluePropProfile.Show()
+        else if(Blue.IsTurn  = true):
+            ResetPlayerDrainerProfile()
+            Sleep(1.0)
+            Blue.Pns.TurnIndicator.Show()
             Print("Blue Player's Turn")
             spawn{CheckTimerForBlue()}
-        else if(GreenPlayerTurn = true):
-            if(GreenPropProfile := GreenDiceProp[1]):
-                ResetPlayerDrainerProfile()
-                Sleep(1.0)
-                GreenPropProfile.Show()
+        else if(Green.IsTurn  = true):
+            ResetPlayerDrainerProfile()
+            Sleep(1.0)
+            Green.Pns.TurnIndicator.Show()
             Print("Green Player's Turn")
             spawn{CheckTimerForGreen()}
-        else if(YellowPlayerTurn = true):
-            if(YellowPropProfile := YellowDiceProp[1]):
-                ResetPlayerDrainerProfile()
-                Sleep(1.0)
-                YellowPropProfile.Show()
+        else if(Yellow.IsTurn  = true):
+            ResetPlayerDrainerProfile()
+            Sleep(1.0)
+            Yellow.Pns.TurnIndicator.Show()
             Print("Yellow Player's Turn")
             spawn{CheckTimerForYellow()}
     )
 
     ResetPlayerDrainerProfile():void=(
-        if(RedPropProfile := RedDiceProp[1]):
-            RedPropProfile.Hide()
-        if(BluePropProfile := BlueDiceProp[1]):
-            BluePropProfile.Hide()
-        if(GreenPropProfile := GreenDiceProp[1]):
-            GreenPropProfile.Hide()
-        if(YellowPropProfile := YellowDiceProp[1]):
-            YellowPropProfile.Hide()
+        Red.Pns.TurnIndicator.Hide()
+        Blue.Pns.TurnIndicator.Hide()
+        Green.Pns.TurnIndicator.Hide()
+        Yellow.Pns.TurnIndicator.Hide()
     )
 
     HelperDiceRoll(Agent:agent)<suspends>:void=(
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
+        if(Red.Player = option{Agent} and Red.IsTurn = true):
             Sleep(1.0)
-            if(RedDiceRollValue = 1):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice1Value)
-            else if(RedDiceRollValue = 2):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice2Value)
-            else if(RedDiceRollValue = 3):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice3Value)
-            else if(RedDiceRollValue = 4):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice4Value)
-            else if(RedDiceRollValue = 5):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice5Value)
-            else if(RedDiceRollValue = 6):
-                if(DiceProp := RedDiceProp[0]):
-                    DiceProp.SetMaterial(Dice6Value)
-        else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
+            if(Red.DiceRollValue = 1):
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueOne)
+            else if(Red.DiceRollValue = 2):
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueTwo)
+            else if(Red.DiceRollValue = 3):
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueThree)
+            else if(Red.DiceRollValue = 4):
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueFour)
+            else if(Red.DiceRollValue = 5):
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueFive)
+            else if(Red.DiceRollValue = 6):
+                Red.Pns.DiceProp.SetMaterial(General.Dice.ValueSix)
+        else if(Blue.Player = option{Agent} and Blue.IsTurn  = true):
             Sleep(1.0)
-            if(BlueDiceRollValue = 1):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice1Value)
-            else if(BlueDiceRollValue = 2):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice2Value)
-            else if(BlueDiceRollValue = 3):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice3Value)
-            else if(BlueDiceRollValue = 4):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice4Value)
-            else if(BlueDiceRollValue = 5):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice5Value)
-            else if(BlueDiceRollValue = 6):
-                if(DiceProp := BlueDiceProp[0]):
-                    DiceProp.SetMaterial(Dice6Value)
-        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
+            if(Blue.DiceRollValue = 1):
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueOne)
+            else if(Blue.DiceRollValue = 2):
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueTwo)
+            else if(Blue.DiceRollValue = 3):
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueThree)
+            else if(Blue.DiceRollValue = 4):
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueFour)
+            else if(Blue.DiceRollValue = 5):
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueFive)
+            else if(Blue.DiceRollValue = 6):
+                Blue.Pns.DiceProp.SetMaterial(General.Dice.ValueSix)
+        else if(Green.Player = option{Agent} and Green.IsTurn  = true):
             Sleep(1.0)
-            if(GreenDiceRollValue = 1):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice1Value)
-            else if(GreenDiceRollValue = 2):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice2Value)
-            else if(GreenDiceRollValue = 3):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice3Value)
-            else if(GreenDiceRollValue = 4):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice4Value)
-            else if(GreenDiceRollValue = 5):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice5Value)
-            else if(GreenDiceRollValue = 6):
-                if(DiceProp := GreenDiceProp[0]):
-                    DiceProp.SetMaterial(Dice6Value)
-        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
+            if(Green.DiceRollValue = 1):
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueOne)
+            else if(Green.DiceRollValue = 2):
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueTwo)
+            else if(Green.DiceRollValue = 3):
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueThree)
+            else if(Green.DiceRollValue = 4):
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueFour)
+            else if(Green.DiceRollValue = 5):
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueFive)
+            else if(Green.DiceRollValue = 6):
+                Green.Pns.DiceProp.SetMaterial(General.Dice.ValueSix)
+        else if(Yellow.Player = option{Agent} and Yellow.IsTurn  = true):
             Sleep(1.0)
-            if(YellowDiceRollValue = 1):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice1Value)
-            else if(YellowDiceRollValue = 2):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice2Value)
-            else if(YellowDiceRollValue = 3):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice3Value)
-            else if(YellowDiceRollValue = 4):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice4Value)
-            else if(YellowDiceRollValue = 5):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice5Value)
-            else if(YellowDiceRollValue = 6):
-                if(DiceProp := YellowDiceProp[0]):
-                    DiceProp.SetMaterial(Dice6Value)
+            if(Yellow.DiceRollValue = 1):
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueOne)
+            else if(Yellow.DiceRollValue = 2):
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueTwo)
+            else if(Yellow.DiceRollValue = 3):
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueThree)
+            else if(Yellow.DiceRollValue = 4):
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueFour)
+            else if(Yellow.DiceRollValue = 5):
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueFive)
+            else if(Yellow.DiceRollValue = 6):
+                Yellow.Pns.DiceProp.SetMaterial(General.Dice.ValueSix)
     )
 
-
-
     ResetAllHighlights(Agent:agent):void=(
-        if(RedPlayer = option{Agent}):
-            set RedZeroHighlight.HIghlightIntensity = 0.0
-            RedPawn.SetMaterial(RedZeroHighlight)
-            set RedOneHighlight.HIghlightIntensity = 0.0
-            RedPawnOne.SetMaterial(RedOneHighlight)
-            set RedTwoHighlight.HIghlightIntensity = 0.0
-            RedPawnTwo.SetMaterial(RedTwoHighlight)
-            set RedThreeHighlight.HIghlightIntensity = 0.0
-            RedPawnThree.SetMaterial(RedThreeHighlight)
-        if(BluePlayer = option{Agent}):
-            set BlueZeroHighlight.HIghlightIntensity = 0.0
-            BluePawn.SetMaterial(BlueZeroHighlight)
-            set BlueOneHighlight.HIghlightIntensity = 0.0
-            BluePawnOne.SetMaterial(BlueOneHighlight)
-            set BlueTwoHighlight.HIghlightIntensity = 0.0
-            BluePawnTwo.SetMaterial(BlueTwoHighlight)
-            set BlueThreeHighlight.HIghlightIntensity = 0.0
-            BluePawnThree.SetMaterial(BlueThreeHighlight)
-        if(GreenPlayer = option{Agent}):
-            set GreenZeroHighlight.HIghlightIntensity = 0.0
-            GreenPawn.SetMaterial(GreenZeroHighlight)
-            set GreenOneHighlight.HIghlightIntensity = 0.0
-            GreenPawnOne.SetMaterial(GreenOneHighlight)
-            set GreenTwoHighlight.HIghlightIntensity = 0.0
-            GreenPawnTwo.SetMaterial(GreenTwoHighlight)
-            set GreenThreeHighlight.HIghlightIntensity = 0.0
-            GreenPawnThree.SetMaterial(GreenThreeHighlight)
-        if(YellowPlayer = option{Agent}):
-            set YellowZeroHighlight.HIghlightIntensity = 0.0
-            YellowPawn.SetMaterial(YellowZeroHighlight)
-            set YellowOneHighlight.HIghlightIntensity = 0.0
-            YellowPawnOne.SetMaterial(YellowOneHighlight)
-            set YellowTwoHighlight.HIghlightIntensity = 0.0
-            YellowPawnTwo.SetMaterial(YellowTwoHighlight)
-            set YellowThreeHighlight.HIghlightIntensity = 0.0
-            YellowPawnThree.SetMaterial(YellowThreeHighlight)
+        if(Red.Player = option{Agent}):
+            Red.Pns.Pawn.SetMaterial(General.Materials.Red)
+            Red.Pns.PawnOne.SetMaterial(General.Materials.Red)
+            Red.Pns.PawnTwo.SetMaterial(General.Materials.Red)
+            Red.Pns.PawnThree.SetMaterial(General.Materials.Red)
+        if(Blue.Player = option{Agent}):
+            Blue.Pns.Pawn.SetMaterial(General.Materials.Blue)
+            Blue.Pns.PawnOne.SetMaterial(General.Materials.Blue)
+            Blue.Pns.PawnTwo.SetMaterial(General.Materials.Blue)
+            Blue.Pns.PawnThree.SetMaterial(General.Materials.Blue)
+        if(Green.Player = option{Agent}):
+            Green.Pns.Pawn.SetMaterial(General.Materials.Green)
+            Green.Pns.PawnOne.SetMaterial(General.Materials.Green)
+            Green.Pns.PawnTwo.SetMaterial(General.Materials.Green)
+            Green.Pns.PawnThree.SetMaterial(General.Materials.Green)
+        if(Yellow.Player = option{Agent}):
+            Yellow.Pns.Pawn.SetMaterial(General.Materials.Yellow)
+            Yellow.Pns.PawnOne.SetMaterial(General.Materials.Yellow)
+            Yellow.Pns.PawnTwo.SetMaterial(General.Materials.Yellow)
+            Yellow.Pns.PawnThree.SetMaterial(General.Materials.Yellow)
     )
 
     SelectZeroPressed(Agent : agent) : void = (
         var Attempts:int = 0
         
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true  and ConfirmFlag = false): #removes else if from this function for PlayTesting
+        if(Red.Player = option{Agent} and Red.IsTurn  = true ): #removes else if from this function for PlayTesting
             loop:
                 if(Attempts >= 4):
                     break
-                if (RollerForRed = 0 and RedFinished = false):
+                if (Red.Roller= 0 and Red.PawnFinished = false):
                     ResetAllHighlights(Agent)
-                    set RedZeroHighlight.HIghlightIntensity = 20.0
-                    RedPawn.SetMaterial(RedZeroHighlight)
-                    set RollerForRed += 1
-                    APHighlight.Play(Agent)
+                    Red.Pns.Pawn.SetMaterial(General.Materials.RedHigh)
+                    set Red.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     Print("Higlidhting Red Pawn 0")
                     break
-                else if (RollerForRed = 1 and RedOneFinished = false):
+                else if (Red.Roller = 1 and Red.PawnOneFinished = false):
                     ResetAllHighlights(Agent)
-                    set RedOneHighlight.HIghlightIntensity = 20.0
-                    RedPawnOne.SetMaterial(RedOneHighlight)
-                    set RollerForRed += 1
-                    APHighlight.Play(Agent)
+                    Red.Pns.PawnOne.SetMaterial(General.Materials.RedHigh)
+                    set Red.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if (RollerForRed = 2 and RedTwoFinished = false):
+                else if (Red.Roller = 2 and Red.PawnTwoFinished = false):
                     ResetAllHighlights(Agent)
-                    set RedTwoHighlight.HIghlightIntensity = 20.0
-                    RedPawnTwo.SetMaterial(RedTwoHighlight)
-                    set RollerForRed += 1
-                    APHighlight.Play(Agent)
+                    Red.Pns.PawnTwo.SetMaterial(General.Materials.RedHigh)
+                    set Red.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if ( RollerForRed = 3 and RedThreeFinished = false):
+                else if ( Red.Roller = 3 and Red.PawnFinished = false):
                     ResetAllHighlights(Agent)
-                    set RedThreeHighlight.HIghlightIntensity = 20.0
-                    RedPawnThree.SetMaterial(RedThreeHighlight)
-                    set RollerForRed = 0
-                    APHighlight.Play(Agent)
+                    Red.Pns.PawnThree.SetMaterial(General.Materials.RedHigh)
+                    set Red.Roller = 0
+                    General.Audio.Highlight.Play(Agent)
                     break
                 else:
-                    if(RollerForRed = 0 and RedFinished = true):
-                        set RollerForRed = 1
-                    else if(RollerForRed = 1 and RedOneFinished = true):
-                        set RollerForRed = 2
-                    else if(RollerForRed = 2 and RedTwoFinished = true):
-                        set RollerForRed = 3
-                    else if(RollerForRed = 3 and RedThreeFinished = true):
-                        set RollerForRed = 0
+                    if(Red.Roller = 0 and Red.PawnFinished = true):
+                        set Red.Roller = 1
+                    else if(Red.Roller = 1 and Red.PawnOneFinished = true):
+                        set Red.Roller = 2
+                    else if(Red.Roller = 2 and Red.PawnTwoFinished = true):
+                        set Red.Roller = 3
+                    else if(Red.Roller = 3 and Red.PawnThreeFinished = true):
+                        set Red.Roller = 0
                     set Attempts += 1
         
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true and ConfirmFlag = false ):
+        if(Blue.Player = option{Agent} and Blue.IsTurn = true ):
             loop:
                 if(Attempts >= 4):
                     break
-                if(RollerForBlue = 0 and BlueFinished = false):
+                if(Blue.Roller = 0 and Blue.PawnFinished = false):
                     ResetAllHighlights(Agent)
-                    set BlueZeroHighlight.HIghlightIntensity = 20.0
-                    BluePawn.SetMaterial(BlueZeroHighlight)
-                    set RollerForBlue += 1
-                    APHighlight.Play(Agent)
+                    Blue.Pns.Pawn.SetMaterial(General.Materials.BlueHigh)
+                    set Blue.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if(RollerForBlue = 1 and BlueOneFinished = false):
+                else if(Blue.Roller = 1 and Blue.PawnOneFinished = false):
                     ResetAllHighlights(Agent)
-                    set BlueOneHighlight.HIghlightIntensity = 20.0
-                    BluePawnOne.SetMaterial(BlueOneHighlight)
-                    set RollerForBlue += 1
-                    APHighlight.Play(Agent)
+                    Blue.Pns.PawnOne.SetMaterial(General.Materials.BlueHigh)
+                    set Blue.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if(RollerForBlue = 2 and BlueTwoFinished = false):
+                else if(Blue.Roller = 2 and Blue.PawnTwoFinished = false):
                     ResetAllHighlights(Agent)
-                    set BlueTwoHighlight.HIghlightIntensity = 20.0
-                    BluePawnTwo.SetMaterial(BlueTwoHighlight)
-                    set RollerForBlue += 1
-                    APHighlight.Play(Agent)
+                    Blue.Pns.PawnTwo.SetMaterial(General.Materials.BlueHigh)
+                    set Blue.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if(RollerForBlue = 3 and BlueThreeFinished = false):
+                else if(Blue.Roller = 3 and Blue.PawnThreeFinished = false):
                     ResetAllHighlights(Agent)
-                    set BlueThreeHighlight.HIghlightIntensity = 20.0
-                    BluePawnThree.SetMaterial(BlueThreeHighlight)
-                    set RollerForBlue = 0
-                    APHighlight.Play(Agent)
+                    Blue.Pns.PawnThree.SetMaterial(General.Materials.BlueHigh)
+                    set Blue.Roller = 0
+                    General.Audio.Highlight.Play(Agent)
                     break
                 else:
-                    if(RollerForBlue = 0 and BlueFinished = true):
-                        set RollerForBlue = 1
-                    else if(RollerForBlue = 1 and BlueOneFinished = true):
-                        set RollerForBlue = 2
-                    else if(RollerForBlue = 2 and BlueTwoFinished = true):
-                        set RollerForBlue = 3
-                    else if(RollerForBlue = 3 and BlueThreeFinished = true):
-                        set RollerForBlue = 0 
+                    if(Blue.Roller = 0 and Blue.PawnFinished = true):
+                        set Blue.Roller = 1
+                    else if(Blue.Roller = 1 and Blue.PawnOneFinished = true):
+                        set Blue.Roller = 2
+                    else if(Blue.Roller = 2 and Blue.PawnTwoFinished = true):
+                        set Blue.Roller = 3
+                    else if(Blue.Roller = 3 and Blue.PawnThreeFinished = true):
+                        set Blue.Roller = 0 
                     set Attempts += 1
 
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and ConfirmFlag = false):
+        if(Yellow.Player = option{Agent} and Yellow.IsTurn  = true):
             loop:
                 if(Attempts >= 4):
                     break
-                if(RollerForYellow = 0 and YellowFinished = false):
+                if(Yellow.Roller = 0 and Yellow.PawnFinished = false):
                     ResetAllHighlights(Agent)
-                    set YellowZeroHighlight.HIghlightIntensity = 20.0
-                    YellowPawn.SetMaterial(YellowZeroHighlight)
-                    set RollerForYellow += 1
-                    APHighlight.Play(Agent)
+                    Yellow.Pns.Pawn.SetMaterial(General.Materials.YellowHigh)
+                    set Yellow.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if(RollerForYellow = 1 and YellowOneFinished = false):
+                else if(Yellow.Roller = 1 and Yellow.PawnOneFinished = false):
                     ResetAllHighlights(Agent)
-                    set YellowOneHighlight.HIghlightIntensity = 20.0
-                    YellowPawnOne.SetMaterial(YellowOneHighlight)
-                    set RollerForYellow += 1
-                    APHighlight.Play(Agent)
+                    Yellow.Pns.PawnOne.SetMaterial(General.Materials.YellowHigh)
+                    set Yellow.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if(RollerForYellow = 2 and YellowTwoFinished = false):
+                else if(Yellow.Roller = 2 and Yellow.PawnTwoFinished = false):
                      ResetAllHighlights(Agent)
                     ResetAllHighlights(Agent)
-                    set YellowTwoHighlight.HIghlightIntensity = 20.0
-                    YellowPawnTwo.SetMaterial(YellowTwoHighlight)
-                    set RollerForYellow += 1
-                    APHighlight.Play(Agent)
+                    Yellow.Pns.PawnTwo.SetMaterial(General.Materials.YellowHigh)
+                    set Yellow.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if(RollerForYellow = 3 and YellowThreeFinished = false):
+                else if(Yellow.Roller = 3 and Yellow.PawnThreeFinished = false):
                     ResetAllHighlights(Agent)
-                    set YellowThreeHighlight.HIghlightIntensity = 20.0
-                    YellowPawnThree.SetMaterial(YellowThreeHighlight)
-                    set RollerForYellow = 0
-                    APHighlight.Play(Agent)
+                    Yellow.Pns.PawnThree.SetMaterial(General.Materials.YellowHigh)
+                    set Yellow.Roller = 0
+                    General.Audio.Highlight.Play(Agent)
                     break
                 else:
-                    if(RollerForYellow = 0 and YellowFinished = true ):
-                        set RollerForYellow = 1
-                    else if(RollerForYellow = 1 and YellowOneFinished = true):
-                        set RollerForYellow = 2
-                    else if(RollerForYellow = 2 and YellowTwoFinished = true):
-                        set RollerForYellow = 3
-                    else if(RollerForYellow = 3 and YellowThreeFinished = true):
-                        set RollerForYellow = 0
+                    if(Yellow.Roller = 0 and Yellow.PawnFinished = true ):
+                        set Yellow.Roller = 1
+                    else if(Yellow.Roller = 1 and Yellow.PawnOneFinished = true):
+                        set Yellow.Roller = 2
+                    else if(Yellow.Roller = 2 and Yellow.PawnTwoFinished = true):
+                        set Yellow.Roller = 3
+                    else if(Yellow.Roller = 3 and Yellow.PawnThreeFinished = true):
+                        set Yellow.Roller = 0
                     
                     set Attempts += 1
 
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and ConfirmFlag = false  ):
+        if(Green.Player = option{Agent} and Green.IsTurn  = true):
             loop:
                 if(Attempts >= 4):
                     break     
-                if(RollerForGreen = 0 and GreenFinished = false):
+                if(Green.Roller = 0 and Green.PawnFinished = false):
                     ResetAllHighlights(Agent)
-                    set GreenZeroHighlight.HIghlightIntensity = 20.0
-                    GreenPawn.SetMaterial(GreenZeroHighlight)
-                    set RollerForGreen += 1
-                    APHighlight.Play(Agent)
+                    Green.Pns.Pawn.SetMaterial(General.Materials.GreenHigh)
+                    set Green.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if(RollerForGreen = 1 and GreenOneFinished = false):
+                else if(Green.Roller = 1 and Green.PawnOneFinished = false):
                     ResetAllHighlights(Agent)
-                    set GreenOneHighlight.HIghlightIntensity = 20.0
-                    GreenPawnOne.SetMaterial(GreenOneHighlight)
-                    set RollerForGreen += 1
-                    APHighlight.Play(Agent)
+                    Green.Pns.PawnOne.SetMaterial(General.Materials.GreenHigh)
+                    set Green.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if(RollerForGreen = 2 and GreenTwoFinished = false):
+                else if(Green.Roller = 2 and Green.PawnTwoFinished = false):
                     ResetAllHighlights(Agent)
-                    set GreenTwoHighlight.HIghlightIntensity = 20.0
-                    GreenPawnTwo.SetMaterial(GreenTwoHighlight)
-                    set RollerForGreen += 1
-                    APHighlight.Play(Agent)
+                    Green.Pns.PawnTwo.SetMaterial(General.Materials.GreenHigh)
+                    set Green.Roller += 1
+                    General.Audio.Highlight.Play(Agent)
                     break
-                else if(RollerForGreen = 3 and GreenThreeFinished = false):
+                else if(Green.Roller = 3 and Green.PawnThreeFinished = false):
                     ResetAllHighlights(Agent)
-                    set GreenThreeHighlight.HIghlightIntensity = 20.0
-                    GreenPawnThree.SetMaterial(GreenThreeHighlight)
-                    set RollerForGreen = 0
-                    APHighlight.Play(Agent)
+                    Green.Pns.PawnThree.SetMaterial(General.Materials.GreenHigh)
+                    set Green.Roller = 0
+                    General.Audio.Highlight.Play(Agent)
                     break
                 else:
-                    if(RollerForGreen = 0 and GreenFinished = true):
-                        set RollerForGreen = 1
-                    else if(RollerForGreen = 1 and GreenOneFinished = true):
-                        set RollerForGreen = 2
-                    else if(RollerForGreen = 2 and GreenTwoFinished = true):
-                        set RollerForGreen = 3
-                    else if(RollerForGreen = 3 and GreenThreeFinished = true):
-                        set RollerForGreen = 0
+                    if(Green.Roller = 0 and Green.PawnFinished = true):
+                        set Green.Roller = 1
+                    else if(Green.Roller = 1 and Green.PawnOneFinished = true):
+                        set Green.Roller = 2
+                    else if(Green.Roller = 2 and Green.PawnTwoFinished = true):
+                        set Green.Roller = 3
+                    else if(Green.Roller = 3 and Green.PawnThreeFinished = true):
+                        set Green.Roller = 0
                     
                     set Attempts += 1
     )
    
     ConfirmInputPressed(Agent:agent):void= (
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true and RedDiceRollValue > 0):
-            if (RedZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawn, RedPawnIndex, Agent)}
-            else if (RedOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawnOne, RedPawnOneIndex, Agent)}
-            else if (RedTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawnTwo, RedPawnTwoIndex, Agent)}
-            else if (RedThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnRed(RedPawnThree, RedPawnThreeIndex, Agent)}
-        if(BluePlayer = option{Agent} and BluePlayerTurn = true and BlueDiceRollValue > 0):
-            if (BlueZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawn, BluePawnIndex, Agent)}
-            else if (BlueOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawnOne, BluePawnOneIndex, Agent)}
-            else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawnTwo, BluePawnTwoIndex, Agent)}
-            else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnBlue(BluePawnThree, BluePawnThreeIndex, Agent)}
-        if(YellowPlayer = option{Agent} and YellowPlayerTurn = true and YellowDiceRollValue > 0):
-            if (YellowZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawn, YellowPawnIndex, Agent)}
-            else if (YellowOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawnOne, YellowPawnOneIndex, Agent)}
-            else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawnTwo, YellowPawnTwoIndex, Agent)}
-            else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnYellow(YellowPawnThree, YellowPawnThreeIndex, Agent)}
-        if(GreenPlayer = option{Agent} and GreenPlayerTurn = true and GreenDiceRollValue > 0):
-            if (GreenZeroHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawn, GreenPawnIndex, Agent)}
-            else if (GreenOneHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawnOne, GreenPawnOneIndex, Agent)}
-            else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawnTwo, GreenPawnTwoIndex, Agent)}
-            else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
-                spawn{MovePawnGreen(GreenPawnThree, GreenPawnThreeIndex, Agent)}
+        if(Red.Player = option{Agent} and Red.IsTurn  = true and Red.DiceRollValue > 0):
+            if (Red.Roller = 0):
+                spawn{MovePawnRed(Red.Pns.Pawn, Red.PawnIndex, Agent, 0)}
+            else if (Red.Roller = 1):
+                spawn{MovePawnRed(Red.Pns.PawnOne, Red.PawnOneIndex, Agent, 1)}
+            else if (Red.Roller = 2):
+                spawn{MovePawnRed(Red.Pns.PawnTwo, Red.PawnTwoIndex, Agent, 2)}
+            else if (Red.Roller = 3):
+                spawn{MovePawnRed(Red.Pns.PawnThree, Red.PawnThreeIndex, Agent, 3)}
+        if(Blue.Player = option{Agent} and Blue.IsTurn  = true and Blue.DiceRollValue > 0):
+            if (Blue.Roller = 0):
+                spawn{MovePawnBlue(Blue.Pns.Pawn, Blue.PawnIndex, Agent, 0)}
+            else if (Blue.Roller = 1):
+                spawn{MovePawnBlue(Blue.Pns.PawnOne, Blue.PawnOneIndex, Agent, 1)}
+            else if (Blue.Roller = 2):
+                spawn{MovePawnBlue(Blue.Pns.PawnTwo, Blue.PawnTwoIndex, Agent, 2)}
+            else if (Blue.Roller = 3):
+                spawn{MovePawnBlue(Blue.Pns.PawnThree, Blue.PawnThreeIndex, Agent, 3)}
+        if(Yellow.Player = option{Agent} and Yellow.IsTurn  = true and Yellow.DiceRollValue > 0):
+            if (Yellow.Roller = 0):
+                spawn{MovePawnYellow(Yellow.Pns.Pawn, Yellow.PawnIndex, Agent, 0)}
+            else if (Yellow.Roller = 1):
+                spawn{MovePawnYellow(Yellow.Pns.PawnOne, Yellow.PawnOneIndex, Agent, 1)}
+            else if (Yellow.Roller = 2):
+                spawn{MovePawnYellow(Yellow.Pns.PawnTwo, Yellow.PawnTwoIndex, Agent, 2)}
+            else if (Yellow.Roller = 3):
+                spawn{MovePawnYellow(Yellow.Pns.PawnThree, Yellow.PawnThreeIndex, Agent, 3)}
+        if(Green.Player = option{Agent} and Green.IsTurn  = true and Green.DiceRollValue > 0):
+            if (Green.Roller = 0):
+                spawn{MovePawnGreen(Green.Pns.Pawn, Green.PawnIndex, Agent, 0)}
+            else if (Green.Roller = 1):
+                spawn{MovePawnGreen(Green.Pns.PawnOne, Green.PawnOneIndex, Agent, 1)}
+            else if (Green.Roller = 2):
+                spawn{MovePawnGreen(Green.Pns.PawnTwo, Green.PawnTwoIndex, Agent, 2)}
+            else if (Green.Roller = 3):
+                spawn{MovePawnGreen(Green.Pns.PawnThree, Green.PawnThreeIndex, Agent, 3)}
     )
     
     TurnChanger(Turn:int):void=(
         if(Turn = 1): #1 red false , 2 blue false and so on
-            set RedPlayerTurn = false
-            if(BluePlayer?):
-                set BluePlayerTurn = true
-            else if(YellowPlayer?):
-                set YellowPlayerTurn = true
-            else if(GreenPlayer?):
-                set GreenPlayerTurn = true
+            set Red.IsTurn  = false
+            if(Blue.Player?):
+                set Blue.IsTurn = true
+            else if(Yellow.Player?):
+                set Yellow.IsTurn  = true
+            else if(Green.Player?):
+                set Green.IsTurn  = true
             spawn . HelperPlayerProfileTurn()
         else if(Turn = 2):
-            set BluePlayerTurn = false
-            if(YellowPlayer?):
-                set YellowPlayerTurn = true
-            else if(GreenPlayer?):
-                set GreenPlayerTurn = true
-            else if(RedPlayer?):
-                set RedPlayerTurn = true
+            set Blue.IsTurn  = false
+            if(Yellow.Player?):
+                set Yellow.IsTurn  = true
+            else if(Green.Player?):
+                set Green.IsTurn = true
+            else if(Red.Player?):
+                set Red.IsTurn = true
             spawn . HelperPlayerProfileTurn()
         else if(Turn = 3):
-            set YellowPlayerTurn = false
-            if(GreenPlayer?):
-                set GreenPlayerTurn = true
-            else if(RedPlayer?):
-                set RedPlayerTurn = true
-            else if(BluePlayer?):
-                set BluePlayerTurn = true
+            set Yellow.IsTurn = false
+            if(Green.Player?):
+                set Green.IsTurn = true
+            else if(Red.Player?):
+                set Red.IsTurn = true
+            else if(Blue.Player?):
+                set Blue.IsTurn = true
             spawn. HelperPlayerProfileTurn()
         else if(Turn = 4):
-            set GreenPlayerTurn = false
-            if(RedPlayer?):
-                set RedPlayerTurn = true
-            else if(BluePlayer?):
-                set BluePlayerTurn = true
-            else if(YellowPlayer?):
-                set YellowPlayerTurn = true
+            set Green.IsTurn = false
+            if(Red.Player?):
+                set Red.IsTurn = true
+            else if(Blue.Player?):
+                set Blue.IsTurn = true
+            else if(Yellow.Player?):
+                set Yellow.IsTurn = true
             spawn. HelperPlayerProfileTurn()
     )
 
@@ -1332,442 +984,400 @@ LudoManager := class(creative_device):
     PossibleMoveChecker(Agent:agent)<suspends>:void=(
         ###after a dice roll, for perticular player check if the player can make a move with any of its pawn, 
         ##if not then switch the turm to the next player###
-        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
-        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
-        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
-        var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
+        var RedPawnIndices : []int = Red.GetIndex()
+        var BluePawnIndices : []int = Blue.GetIndex()
+        var YellowPawnIndices : []int = Yellow.GetIndex()
+        var GreenPawnIndices : []int = Green.GetIndex()
         var CanMove : logic = false
-        PathLenght := RedPaths.Length #same number for each
+        PathLenght := Red.Pns.Paths.Length #same number for each
         
-        if(RedPlayer = option{Agent} and RedPlayerTurn = true):
+        if(Red.Player = option{Agent} and Red.IsTurn = true):
             for(PawnIdx : RedPawnIndices):
-                if(PawnIdx = -1 and RedDiceRollValue = 6):
+                if(PawnIdx = -1 and Red.DiceRollValue = 6):
                     set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + RedDiceRollValue < PathLenght):
+                else if(PawnIdx >= 0 and PawnIdx + Red.DiceRollValue < PathLenght):
                     set CanMove = true
                 
             if(CanMove = true):
                 Print("nothing to do stay as it is")
-                if(RedPlayerTurn = true):
+                if(Red.IsTurn = true):
                     spawn{CheckTimerForRed()}
             else:
                 Sleep(1.0)
                 TurnChanger(1)
-                set DoubleRollFlagRed = false
-                set ConfirmFlag = false
+                set Red.DoubleRollFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
-        else if(BluePlayer = option{Agent} and BluePlayerTurn = true):
+        else if(Blue.Player = option{Agent} and Blue.IsTurn = true):
             for(PawnIdx : BluePawnIndices):
-                if(PawnIdx = -1 and BlueDiceRollValue = 6):
+                if(PawnIdx = -1 and Blue.DiceRollValue = 6):
                     set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + BlueDiceRollValue < PathLenght):
+                else if(PawnIdx >= 0 and PawnIdx + Blue.DiceRollValue < PathLenght):
                     set CanMove = true
 
             if(CanMove = true):
                 Print("nothing to do stay as it is")
-                if(BluePlayerTurn = true):
+                if(Blue.IsTurn = true):
                     spawn{CheckTimerForBlue()}
             else:
                 Sleep(1.0)
                 TurnChanger(2)
-                set DoubleRollFlagBlue = false
-                set ConfirmFlag = false
+                set Blue.DoubleRollFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
-        else if(YellowPlayer = option{Agent} and YellowPlayerTurn = true):
+        else if(Yellow.Player = option{Agent} and Yellow.IsTurn = true):
             for(PawnIdx : YellowPawnIndices):
-                if(PawnIdx = -1 and YellowDiceRollValue = 6):
+                if(PawnIdx = -1 and Yellow.DiceRollValue = 6):
                     set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + YellowDiceRollValue < PathLenght):
+                else if(PawnIdx >= 0 and PawnIdx + Yellow.DiceRollValue < PathLenght):
                     set CanMove = true
 
             if(CanMove = true):
                 Print("nothing to do stay as it is")
-                if(YellowPlayerTurn = true):
+                if(Yellow.IsTurn = true):
                     spawn{CheckTimerForYellow()}
             else:
                 Sleep(1.0)
                 TurnChanger(3)
-                set DoubleRollFlagYellow = false
-                set ConfirmFlag = false
+                set Yellow.DoubleRollFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
-        else if(GreenPlayer = option{Agent} and GreenPlayerTurn = true):
+        else if(Green.Player = option{Agent} and Green.IsTurn = true):
             for(PawnIdx : GreenPawnIndices):
-                if(PawnIdx = -1 and GreenDiceRollValue = 6):
+                if(PawnIdx = -1 and Green.DiceRollValue = 6):
                     set CanMove = true
-                else if(PawnIdx >= 0 and PawnIdx + GreenDiceRollValue < PathLenght):
+                else if(PawnIdx >= 0 and PawnIdx + Green.DiceRollValue < PathLenght):
                     set CanMove = true
 
             if(CanMove = true):
                 Print("nothing to do stay as it is")
-                if(GreenPlayerTurn = true):
+                if(Green.IsTurn = true):
                     spawn{CheckTimerForGreen()}
             else:
                 Sleep(1.0)
                 TurnChanger(4)
-                set DoubleRollFlagGreen = false
-                set ConfirmFlag = false
+                set Green.DoubleRollFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
         
     )
     
-    SoundPlayMove()<suspends>:void=(
-        APMove.Play() 
-        Print("move playing")
-    )
 
-    MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void= ( #mentioned in confirm input pressed function
+    MovePawnRed(Pawn:creative_prop, Index:int, Agent:agent, PawnNumber : int)<suspends>:void= ( #mentioned in confirm input pressed function
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
-        var WhichPawn : int = -1
-        set ConfirmFlag = true
 
-        if(CurrentIndex = -1 and RedDiceRollValue = 6):
-            if(Path := RedPaths[0]):
+        if(CurrentIndex = -1 and Red.DiceRollValue = 6):
+            if(Path := Red.Pns.Paths[0]):
                 PathTransform:= Path.GetTransform()
                 PathTranslation:= PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                APMove.Play()
+                AudioPlayerMain(General.Audio.Move)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set RedConsecutiveSixes += 1
-                    if(RedConsecutiveSixes >= 3):
+                    set Red.ConsecutiveSixes += 1
+                    if(Red.ConsecutiveSixes >= 3):
                         TurnChanger(1)
-                        set RedConsecutiveSixes = 0
+                        set Red.ConsecutiveSixes = 0
                     # else keep turn
-                    set RedDiceRollValue = 0
-                    set DoubleRollFlagRed = false
+                    set Red.DiceRollValue = 0
+                    set Red.DoubleRollFlag = false
 
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + RedDiceRollValue
-            RemainingPaths := RedPaths.Length - CurrentIndex - 1
-            if(RedDiceRollValue <= RemainingPaths):
-                if(TargetIndex < RedPaths.Length):
-                    for (Step := 1..RedDiceRollValue):
+            TargetIndex := CurrentIndex + Red.DiceRollValue
+            RemainingPaths := Red.Pns.Paths.Length - CurrentIndex - 1
+            if(Red.DiceRollValue <= RemainingPaths):
+                if(TargetIndex < Red.Pns.Paths.Length):
+                    for (Step := 1..Red.DiceRollValue):
                         NextIndex := CurrentIndex + Step
                         Print("Step {Step}: NextIndex = {NextIndex}")
-                        if(Path := RedPaths[NextIndex]):
+                        if(Path := Red.Pns.Paths[NextIndex]):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            APMove.Play()
+                            AudioPlayerMain(General.Audio.Move)
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(RedDiceRollValue = 6):
-                        set RedConsecutiveSixes += 1
-                        if(RedConsecutiveSixes >= 3):
+                    if(Red.DiceRollValue = 6):
+                        set Red.ConsecutiveSixes += 1
+                        if(Red.ConsecutiveSixes >= 3):
                             TurnChanger(1)
-                            set RedConsecutiveSixes = 0
+                            set Red.ConsecutiveSixes = 0
                         # else keep turn
                     else:
-                        set RedConsecutiveSixes = 0
+                        set Red.ConsecutiveSixes = 0
                         TurnChanger(1)
-                    set RedDiceRollValue = 0
-                    set DoubleRollFlagRed = false
+                    set Red.DiceRollValue = 0
+                    set Red.DoubleRollFlag = false
 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
 
         
-        set WhichColorElim = 0
-        if (RedZeroHighlight.HIghlightIntensity = 20.0):
-            set RedPawnIndex = CurrentIndex
-            set WhichPawn = 0
-            spawn{PossibleElimChecker(RedPawnIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (RedOneHighlight.HIghlightIntensity = 20.0):
-            set WhichPawn = 1
-            set RedPawnOneIndex = CurrentIndex
-            spawn{PossibleElimChecker(RedPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (RedTwoHighlight.HIghlightIntensity = 20.0):
-            set RedPawnTwoIndex = CurrentIndex
-            set WhichPawn = 2
-            spawn{PossibleElimChecker(RedPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (RedThreeHighlight.HIghlightIntensity = 20.0):
-            set RedPawnThreeIndex = CurrentIndex
-            set WhichPawn = 3
-            spawn{PossibleElimChecker(RedPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+        if (PawnNumber = 0):
+            set Red.PawnIndex = CurrentIndex
+            spawn{PossibleElimChecker(Red.PawnIndex, PawnNumber, 0, Agent)}
+        else if (PawnNumber = 1):
+            set Red.PawnOneIndex = CurrentIndex
+            spawn{PossibleElimChecker(Red.PawnOneIndex, PawnNumber, 0, Agent)}
+        else if (PawnNumber = 2):
+            set Red.PawnTwoIndex = CurrentIndex
+            spawn{PossibleElimChecker(Red.PawnTwoIndex, PawnNumber, 0, Agent)}
+        else if (PawnNumber = 3):
+            set Red.PawnThreeIndex = CurrentIndex
+            spawn{PossibleElimChecker(Red.PawnThreeIndex, PawnNumber, 0, Agent)}
         
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
-        set ConfirmFlag = false
     )
 
-    MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+    MovePawnBlue(Pawn:creative_prop, Index:int, Agent:agent, PawnNumber : int)<suspends>:void=(
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
-        var WhichPawn : int = -1
-        set ConfirmFlag = true
         
-        if(CurrentIndex = -1 and BlueDiceRollValue = 6):
-            if(Path := BluePaths[0]):
+        if(CurrentIndex = -1 and Blue.DiceRollValue = 6):
+            if(Path := Blue.Pns.Paths[0]):
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                APMove.Play()
+                AudioPlayerMain(General.Audio.Move)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):   
                     set CurrentIndex = 0
-                    set BlueConsecutiveSixes += 1
-                    if(BlueConsecutiveSixes >= 3):
+                    set Blue.ConsecutiveSixes += 1
+                    if(Blue.ConsecutiveSixes >= 3):
                         TurnChanger(2)
-                        set BlueConsecutiveSixes = 0
+                        set Blue.ConsecutiveSixes = 0
                     # else keep turn
-                    set BlueDiceRollValue = 0
-                    set DoubleRollFlagBlue = false
+                    set Blue.DiceRollValue = 0
+                    set Blue.DoubleRollFlag = false
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + BlueDiceRollValue
-            RemainingPaths := BluePaths.Length - CurrentIndex - 1
-            if(BlueDiceRollValue <= RemainingPaths):
-                if(TargetIndex < BluePaths.Length):
-                    for (Step := 1..BlueDiceRollValue):
+            TargetIndex := CurrentIndex + Blue.DiceRollValue
+            RemainingPaths := Blue.Pns.Paths.Length - CurrentIndex - 1
+            if(Blue.DiceRollValue <= RemainingPaths):
+                if(TargetIndex < Blue.Pns.Paths.Length):
+                    for (Step := 1..Blue.DiceRollValue):
                         NextIndex := CurrentIndex + Step
                         Print("Step {Step}: NextIndex = {NextIndex}")
-                        if(Path := BluePaths[NextIndex]):
+                        if(Path := Blue.Pns.Paths[NextIndex]):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            APMove.Play()
+                            AudioPlayerMain(General.Audio.Move)
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(BlueDiceRollValue = 6):
-                        set BlueConsecutiveSixes += 1
-                        if(BlueConsecutiveSixes >= 3):
+                    if(Blue.DiceRollValue = 6):
+                        set Blue.ConsecutiveSixes += 1
+                        if(Blue.ConsecutiveSixes >= 3):
                             # Switch to Green turn, reset counter
                             TurnChanger(2)
-                            set BlueConsecutiveSixes = 0
+                            set Blue.ConsecutiveSixes = 0
                         else:
                             # Keep turn
-                            set BluePlayerTurn = true
+                            set Blue.IsTurn = true
                     else:
-                        set BlueConsecutiveSixes = 0
+                        set Blue.ConsecutiveSixes = 0
                         TurnChanger(2)
-                    set BlueDiceRollValue = 0
-                    set DoubleRollFlagBlue = false
+                    set Blue.DiceRollValue = 0
+                    set Blue.DoubleRollFlag = false
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
-        set WhichColorElim = 1
-        if (BlueZeroHighlight.HIghlightIntensity = 20.0):
-            set BluePawnIndex = CurrentIndex
-            set WhichPawn = 0
-            spawn{PossibleElimChecker(BluePawnIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (BlueOneHighlight.HIghlightIntensity = 20.0):
-            set BluePawnOneIndex = CurrentIndex
-            set WhichPawn = 1
-            spawn{PossibleElimChecker(BluePawnOneIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (BlueTwoHighlight.HIghlightIntensity = 20.0):
-            set BluePawnTwoIndex = CurrentIndex
-            set WhichPawn = 2
-            spawn{PossibleElimChecker(BluePawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (BlueThreeHighlight.HIghlightIntensity = 20.0):
-            set BluePawnThreeIndex = CurrentIndex
-            set WhichPawn = 3
-            spawn{PossibleElimChecker(BluePawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+        if (PawnNumber = 0):
+            set Blue.PawnIndex = CurrentIndex
+            spawn{PossibleElimChecker(Blue.PawnIndex, PawnNumber , 1, Agent)}
+        else if (PawnNumber = 1):
+            set Blue.PawnOneIndex = CurrentIndex
+            spawn{PossibleElimChecker(Blue.PawnOneIndex, PawnNumber, 1, Agent)}
+        else if (PawnNumber = 2):
+            set Blue.PawnTwoIndex = CurrentIndex
+            spawn{PossibleElimChecker(Blue.PawnTwoIndex, PawnNumber, 1, Agent)}
+        else if (PawnNumber = 3):
+            set Blue.PawnThreeIndex = CurrentIndex
+            spawn{PossibleElimChecker(Blue.PawnThreeIndex, PawnNumber, 1, Agent)}
 
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
-        set ConfirmFlag = false
     )
 
-    MovePawnYellow(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+    MovePawnYellow(Pawn:creative_prop, Index:int, Agent:agent, PawnNumber : int)<suspends>:void=(
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
-        var WhichPawn : int = -1
-        set ConfirmFlag = true
 
-        if(CurrentIndex = -1 and YellowDiceRollValue = 6):
-            if(Path := YellowPaths[0]):
+        if(CurrentIndex = -1 and Yellow.DiceRollValue = 6):
+            if(Path := Yellow.Pns.Paths[0]):
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                APMove.Play()
+                AudioPlayerMain(General.Audio.Move)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set YellowConsecutiveSixes += 1
-                    if(YellowConsecutiveSixes >= 3):
+                    set Yellow.ConsecutiveSixes += 1
+                    if(Yellow.ConsecutiveSixes >= 3):
                         TurnChanger(3)
-                        set YellowConsecutiveSixes = 0
+                        set Yellow.ConsecutiveSixes = 0
                     # else keep turn
-                    set YellowDiceRollValue = 0
-                    set DoubleRollFlagYellow = false
+                    set Yellow.DiceRollValue = 0
+                    set Yellow.DoubleRollFlag = false
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + YellowDiceRollValue
-            RemainingPaths := YellowPaths.Length - CurrentIndex - 1
-            if(YellowDiceRollValue <= RemainingPaths):
-                if(TargetIndex < YellowPaths.Length):
-                    for (Step := 1..YellowDiceRollValue):
+            TargetIndex := CurrentIndex + Yellow.DiceRollValue
+            RemainingPaths := Yellow.Pns.Paths.Length - CurrentIndex - 1
+            if(Yellow.DiceRollValue <= RemainingPaths):
+                if(TargetIndex < Yellow.Pns.Paths.Length):
+                    for (Step := 1..Yellow.DiceRollValue):
                         NextIndex := CurrentIndex + Step
                         Print("Step {Step}: NextIndex = {NextIndex}")
-                        if(Path := YellowPaths[NextIndex]):
+                        if(Path := Yellow.Pns.Paths[NextIndex]):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            APMove.Play()
+                            AudioPlayerMain(General.Audio.Move)
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(YellowDiceRollValue = 6):
-                        set YellowConsecutiveSixes += 1
-                        if(YellowConsecutiveSixes >= 3):
+                    if(Yellow.DiceRollValue = 6):
+                        set Yellow.ConsecutiveSixes += 1
+                        if(Yellow.ConsecutiveSixes >= 3):
                             # Switch to Red turn, reset counter
                             TurnChanger(3)
-                            set YellowConsecutiveSixes = 0
+                            set Yellow.ConsecutiveSixes = 0
                         else:
                             # Keep turn
-                            set YellowPlayerTurn = true
+                            set Yellow.IsTurn = true
                     else:
-                        set YellowConsecutiveSixes = 0
+                        set Yellow.ConsecutiveSixes = 0
                         TurnChanger(3)
-                    set YellowDiceRollValue = 0
-                    set DoubleRollFlagYellow = false
+                    set Yellow.DiceRollValue = 0
+                    set Yellow.DoubleRollFlag = false
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
         
-        set WhichColorElim = 2
-        if (YellowZeroHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnIndex = CurrentIndex
-            set WhichPawn = 0
-            spawn{PossibleElimChecker(YellowPawnIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (YellowOneHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnOneIndex = CurrentIndex
-            set WhichPawn = 1
-            spawn{PossibleElimChecker(YellowPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (YellowTwoHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnTwoIndex = CurrentIndex
-            set WhichPawn = 2
-            spawn{PossibleElimChecker(YellowPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (YellowThreeHighlight.HIghlightIntensity = 20.0):
-            set YellowPawnThreeIndex = CurrentIndex
-            set WhichPawn = 3
-            spawn{PossibleElimChecker(YellowPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+        if (PawnNumber = 0):
+            set Yellow.PawnIndex = CurrentIndex
+            spawn{PossibleElimChecker(Yellow.PawnIndex, PawnNumber, 2, Agent)}
+        else if (PawnNumber = 1):
+            set Yellow.PawnOneIndex = CurrentIndex
+            spawn{PossibleElimChecker(Yellow.PawnOneIndex, PawnNumber, 2, Agent)}
+        else if (PawnNumber = 2):
+            set Yellow.PawnTwoIndex = CurrentIndex
+            spawn{PossibleElimChecker(Yellow.PawnTwoIndex, PawnNumber, 2, Agent)}
+        else if (PawnNumber = 3):
+            set Yellow.PawnThreeIndex = CurrentIndex
+            spawn{PossibleElimChecker(Yellow.PawnThreeIndex, PawnNumber, 2, Agent)}
         
         spawn{HelperPlayerProfileTurn()}
         ResetAllHighlights(Agent)
         spawn{CheckTimerForGreen()}
-        set ConfirmFlag = false
     )
 
-    MovePawnGreen(Pawn:creative_prop, Index:int, Agent:agent)<suspends>:void=(
+    MovePawnGreen(Pawn:creative_prop, Index:int, Agent:agent, PawnNumber : int)<suspends>:void=(
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
-        var WhichPawn :int = -1
-        set ConfirmFlag = true
 
-        if(CurrentIndex = -1 and GreenDiceRollValue = 6):
-            if(Path := GreenPaths[0]):
+        if(CurrentIndex = -1 and Green.DiceRollValue = 6):
+            if(Path := Green.Pns.Paths[0]):
                 PathTransform := Path.GetTransform()
                 PathTranslation := PathTransform.Translation
                 NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                APMove.Play()
+                AudioPlayerMain(General.Audio.Move)
                 if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                     set CurrentIndex = 0
-                    set GreenConsecutiveSixes += 1
-                    if(GreenConsecutiveSixes >= 3):
+                    set Green.ConsecutiveSixes += 1
+                    if(Green.ConsecutiveSixes >= 3):
                         TurnChanger(4)
-                        set GreenConsecutiveSixes = 0
+                        set Green.ConsecutiveSixes = 0
 
-                    set GreenDiceRollValue = 0
-                    set DoubleRollFlagGreen = false
-                set ConfirmFlag = false
+                    set Green.DiceRollValue = 0
+                    set Green.DoubleRollFlag = false
 
 
         else if(CurrentIndex >= 0):
             Print("Stepwise movement, starting at index {CurrentIndex}")
-            TargetIndex := CurrentIndex + GreenDiceRollValue
-            RemainingPaths := GreenPaths.Length - CurrentIndex - 1
-            if(GreenDiceRollValue <= RemainingPaths):
-                if(TargetIndex < GreenPaths.Length):
-                    for (Step := 1..GreenDiceRollValue):
+            TargetIndex := CurrentIndex + Green.DiceRollValue
+            RemainingPaths := Green.Pns.Paths.Length - CurrentIndex - 1
+            if(Green.DiceRollValue <= RemainingPaths):
+                if(TargetIndex < Green.Pns.Paths.Length):
+                    for (Step := 1..Green.DiceRollValue):
                         NextIndex := CurrentIndex + Step
                         Print("Step {Step}: NextIndex = {NextIndex}")
-                        if(Path := GreenPaths[NextIndex]):
+                        if(Path := Green.Pns.Paths[NextIndex]):
                             PathTransform := Path.GetTransform()
                             PathTranslation := PathTransform.Translation
                             NewPos := vector3{X := PathTranslation.X, Y := PathTranslation.Y, Z := PawnZ}
-                            APMove.Play()
+                            AudioPlayerMain(General.Audio.Move)
                             if(Pawn.TeleportTo[NewPos, PawnTransform.Rotation]):
                                 Sleep(0.4)
                     set CurrentIndex = TargetIndex
-                    if(GreenDiceRollValue = 6):
-                        set GreenConsecutiveSixes += 1
-                        if(GreenConsecutiveSixes >= 3):
+                    if(Green.DiceRollValue = 6):
+                        set Green.ConsecutiveSixes += 1
+                        if(Green.ConsecutiveSixes >= 3):
                             # Switch to Red turn, reset counter
                             TurnChanger(4)
-                            set GreenConsecutiveSixes = 0
+                            set Green.ConsecutiveSixes = 0
                         else:
                             # Keep turn
-                            set GreenPlayerTurn = true
+                            set Green.IsTurn = true
                     else:
-                        set GreenConsecutiveSixes = 0
+                        set Green.ConsecutiveSixes = 0
                         TurnChanger(4)
-                    set GreenDiceRollValue = 0
-                    set DoubleRollFlagGreen = false
-                set ConfirmFlag = false
+                    set Green.DiceRollValue = 0
+                    set Green.DoubleRollFlag = false
                                 
             else:
                 Print("Not enough remaining path for the dice roll. Move is invalid.")
-        
-        set WhichColorElim = 3
-        if (GreenZeroHighlight.HIghlightIntensity = 20.0):
-            set GreenPawnIndex = CurrentIndex
-            set WhichPawn = 0
-            spawn{PossibleElimChecker(GreenPawnIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (GreenOneHighlight.HIghlightIntensity = 20.0):
-            set GreenPawnOneIndex = CurrentIndex
-            set WhichPawn = 1
-            spawn{PossibleElimChecker(GreenPawnOneIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (GreenTwoHighlight.HIghlightIntensity = 20.0):
-            set GreenPawnTwoIndex = CurrentIndex
-            set WhichPawn = 2
-            spawn{PossibleElimChecker(GreenPawnTwoIndex, WhichPawn, WhichColorElim, Agent)}
-        else if (GreenThreeHighlight.HIghlightIntensity = 20.0):
-            set GreenPawnThreeIndex = CurrentIndex
-            set WhichPawn = 3
-            spawn{PossibleElimChecker(GreenPawnThreeIndex, WhichPawn, WhichColorElim, Agent)}
+
+        if (PawnNumber = 0):
+            set Green.PawnIndex = CurrentIndex
+            spawn{PossibleElimChecker(Green.PawnIndex, PawnNumber, 3, Agent)}
+        else if (PawnNumber = 1):
+            set Green.PawnOneIndex = CurrentIndex
+            spawn{PossibleElimChecker(Green.PawnOneIndex, PawnNumber, 3, Agent)}
+        else if (PawnNumber = 2):
+            set Green.PawnTwoIndex = CurrentIndex
+            spawn{PossibleElimChecker(Green.PawnTwoIndex, PawnNumber, 3, Agent)}
+        else if (PawnNumber = 3):
+            set Green.PawnThreeIndex = CurrentIndex
+            spawn{PossibleElimChecker(Green.PawnThreeIndex, PawnNumber, 3, Agent)}
 
         spawn{HelperPlayerProfileTurn()} #keep this dont remove
         ResetAllHighlights(Agent)
         TimerCheckerHelper()
-        set ConfirmFlag = false
     )
 
     PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int, Agent:agent)<suspends>:void=( #move pawn red and else
         #1 -- color. 2 -- which pawn from that color. 3. Position that pawns position index. All int Yes.
         #0  - red. 1. -- Blue . 2 -- Yellow. 3 --- Green.
         
-        RedPawns : []creative_prop = array{RedPawn, RedPawnOne, RedPawnTwo, RedPawnThree}
-        BluePawns : []creative_prop = array{BluePawn, BluePawnOne, BluePawnTwo, BluePawnThree}
-        YellowPawns : []creative_prop = array{YellowPawn, YellowPawnOne, YellowPawnTwo, YellowPawnThree}
-        GreenPawns : []creative_prop = array{GreenPawn, GreenPawnOne, GreenPawnTwo, GreenPawnThree}
+        RedPawns : []creative_prop = Red.GetPawn()
+        BluePawns : []creative_prop = Blue.GetPawn()
+        YellowPawns : []creative_prop = Yellow.GetPawn()
+        GreenPawns : []creative_prop = Green.GetPawn()
 
-        var RedPawnIndices : []int = array{RedPawnIndex, RedPawnOneIndex, RedPawnTwoIndex, RedPawnThreeIndex}
-        var BluePawnIndices : []int = array{BluePawnIndex, BluePawnOneIndex, BluePawnTwoIndex, BluePawnThreeIndex}
-        var YellowPawnIndices : []int = array{YellowPawnIndex, YellowPawnOneIndex, YellowPawnTwoIndex, YellowPawnThreeIndex}
-        var GreenPawnIndices : []int = array{GreenPawnIndex, GreenPawnOneIndex, GreenPawnTwoIndex, GreenPawnThreeIndex}
+        var RedPawnIndices : []int = Red.GetIndex()
+        var BluePawnIndices : []int = Blue.GetIndex()
+        var YellowPawnIndices : []int = Yellow.GetIndex()
+        var GreenPawnIndices : []int = Green.GetIndex()
         
-        RedPawnTransforms : []transform = array{RedPawnInitialTransform, RedPawnOneInitialTransform, RedPawnTwoInitialTransform, RedPawnThreeInitialTransform}
-        BluePawnTransforms : []transform = array{BluePawnInitialTransform, BluePawnOneInitialTransform, BluePawnTwoInitialTransform, BluePawnThreeInitialTransform}
-        YellowPawnTransforms : []transform = array{YellowPawnInitialTransform, YellowPawnOneInitialTransform, YellowPawnTwoInitialTransform, YellowPawnThreeInitialTransform}
-        GreenPawnTransforms : []transform = array{GreenPawnInitialTransform, GreenPawnOneInitialTransform, GreenPawnTwoInitialTransform, GreenPawnThreeInitialTransform}
+        RedPawnTransforms : []transform = Red.GetTransforms()
+        BluePawnTransforms : []transform = Blue.GetTransforms()
+        YellowPawnTransforms : []transform = Yellow.GetTransforms()
+        GreenPawnTransforms : []transform = Green.GetTransforms()
 
         SafeSpots : []int = array{0, 8, 13, 21, 26, 34, 39, 47}
         SafeSpotsY :[]int = array{0, 21, 26, 47}
@@ -1796,28 +1406,25 @@ LudoManager := class(creative_device):
                     NewLocX := PawnTranslation + Offset
                         if(RedPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
-                set RedEnd += 1
+                set Red.FinishedPawnCount += 1
                 if(Pawn = 0):
-                    set RedFinished = true
+                    set Red.PawnFinished = true
                 else if(Pawn = 1):
-                    set RedOneFinished = true
+                    set Red.PawnOneFinished = true
                 else if(Pawn = 2):
-                    set RedTwoFinished = true
+                    set Red.PawnTwoFinished = true
                 else if(Pawn = 3):
-                    set RedThreeFinished = true
+                    set Red.PawnThreeFinished = true
                 #------------------------------------------------------
-                if(RedEnd = 1):
-                    set MInbRed.HowManyNumbers = 1.0
-                    if(NumbersProp[0].SetMaterial(MInbRed)):
-                else if(RedEnd = 2):
-                    set MInbRed.HowManyNumbers = 2.0
-                    if(NumbersProp[0].SetMaterial(MInbRed)):
-                else if(RedEnd = 3):
-                    set MInbRed.HowManyNumbers = 3.0
-                    if(NumbersProp[0].SetMaterial(MInbRed)):
-                else if(RedEnd >= 4):
-                    if(NumbersProp[0].SetMaterial(MIInv)):
-                APEnd.Play()
+                if(Red.FinishedPawnCount = 1):
+                    Red.Device.NumberProp.SetMaterial(General.Materials.NumberOne)
+                else if(Red.FinishedPawnCount = 2):
+                    Red.Device.NumberProp.SetMaterial(General.Materials.NumberTwo)
+                else if(Red.FinishedPawnCount = 3):
+                    Red.Device.NumberProp.SetMaterial(General.Materials.NumberThree)
+                else if(Red.FinishedPawnCount >= 4):
+                    Red.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+                AudioPlayerMain(General.Audio.End)
 
         else if(Color = 1): # Blue
             set DynamicOffset = OffsetResToBlue
@@ -1832,28 +1439,25 @@ LudoManager := class(creative_device):
                     NewLocX := PawnTranslation + Offset
                         if(BluePawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
-                set BlueEnd += 1
+                set Blue.FinishedPawnCount += 1
                 if(Pawn = 0):
-                    set BlueFinished = true
+                    set Blue.PawnFinished = true
                 else if(Pawn = 1):
-                    set BlueOneFinished = true
+                    set Blue.PawnOneFinished = true
                 else if(Pawn = 2):
-                    set BlueTwoFinished = true
+                    set Blue.PawnTwoFinished = true
                 else if(Pawn = 3):
-                    set BlueThreeFinished = true
+                    set Blue.PawnThreeFinished = true
                 #------------------------------------------------------    
-                if(BlueEnd = 1):
-                    set MInbBlue.HowManyNumbers = 1.0
-                    if(NumbersProp[1].SetMaterial(MInbBlue)):
-                else if(BlueEnd = 2):
-                    set MInbBlue.HowManyNumbers = 2.0
-                    if(NumbersProp[1].SetMaterial(MInbBlue)):
-                else if(BlueEnd = 3):
-                    set MInbBlue.HowManyNumbers = 3.0
-                    if(NumbersProp[1].SetMaterial(MInbBlue)):
-                else if(BlueEnd >= 4):
-                    if(NumbersProp[1].SetMaterial(MIInv)):
-                APEnd.Play()
+                if(Blue.FinishedPawnCount = 1):
+                    Blue.Device.NumberProp.SetMaterial(General.Materials.NumberOne)
+                else if(Blue.FinishedPawnCount = 2):
+                    Blue.Device.NumberProp.SetMaterial(General.Materials.NumberTwo)
+                else if(Blue.FinishedPawnCount = 3):
+                    Blue.Device.NumberProp.SetMaterial(General.Materials.NumberThree)
+                else if(Blue.FinishedPawnCount >= 4):
+                    Blue.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+                AudioPlayerMain(General.Audio.End)
 
         else if(Color = 2): #Yellow
             set DynamicOffset = OffsetResToYellow
@@ -1868,28 +1472,25 @@ LudoManager := class(creative_device):
                     NewLocX := PawnTranslation + Offset
                         if(YellowPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
-                set YellowEnd += 1
+                set Yellow.FinishedPawnCount += 1
                 if(Pawn = 0):
-                    set YellowFinished = true
+                    set Yellow.PawnFinished = true
                 else if(Pawn = 1):
-                    set YellowOneFinished = true
+                    set Yellow.PawnOneFinished = true
                 else if(Pawn = 2):
-                    set YellowTwoFinished = true
+                    set Yellow.PawnTwoFinished = true
                 else if(Pawn = 3):
-                    set YellowThreeFinished = true
+                    set Yellow.PawnThreeFinished = true
                 #------------------------------------------------------
-                if(YellowEnd = 1):
-                    set MInbYellow.HowManyNumbers = 1.0
-                    if(NumbersProp[2].SetMaterial(MInbYellow)):
-                else if(YellowEnd = 2):
-                    set MInbYellow.HowManyNumbers = 2.0
-                    if(NumbersProp[2].SetMaterial(MInbYellow)):
-                else if(YellowEnd = 3):
-                    set MInbYellow.HowManyNumbers = 3.0
-                    if(NumbersProp[2].SetMaterial(MInbYellow)):
-                else if(YellowEnd >= 4):
-                    if(NumbersProp[2].SetMaterial(MIInv)):
-                APEnd.Play()
+                if(Yellow.FinishedPawnCount = 1):
+                    Yellow.Device.NumberProp.SetMaterial(General.Materials.NumberOne)
+                else if(Yellow.FinishedPawnCount = 2):
+                    Yellow.Device.NumberProp.SetMaterial(General.Materials.NumberTwo)
+                else if(Yellow.FinishedPawnCount = 3):
+                    Yellow.Device.NumberProp.SetMaterial(General.Materials.NumberThree)
+                else if(Yellow.FinishedPawnCount >= 4):
+                    Yellow.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+                AudioPlayerMain(General.Audio.End)
 
         else if(Color = 3): # Green
             set DynamicOffset = OffsetResToGreen
@@ -1904,28 +1505,25 @@ LudoManager := class(creative_device):
                     NewLocX := PawnTranslation + Offset
                         if(GreenPawns[Pawn].TeleportTo[NewLocX, IdentityRotation()]):
             if(PawnPosition >= 56):
-                set GreenEnd += 1
+                set Green.FinishedPawnCount += 1
                 if(Pawn = 0):
-                    set GreenFinished = true
+                    set Green.PawnFinished = true
                 else if(Pawn = 1):
-                    set GreenOneFinished = true
+                    set Green.PawnOneFinished = true
                 else if(Pawn = 2):
-                    set GreenTwoFinished = true
+                    set Green.PawnTwoFinished = true
                 else if(Pawn = 3):
-                    set GreenThreeFinished = true
+                    set Green.PawnThreeFinished = true
                 #------------------------------------------------------
-                if(GreenEnd = 1):
-                    set MInbGreen.HowManyNumbers = 1.0
-                    if(NumbersProp[3].SetMaterial(MInbGreen)):
-                else if(GreenEnd = 2):
-                    set MInbGreen.HowManyNumbers = 2.0
-                    if(NumbersProp[3].SetMaterial(MInbGreen)):
-                else if(GreenEnd = 3):
-                    set MInbGreen.HowManyNumbers = 3.0
-                    if(NumbersProp[3].SetMaterial(MInbGreen)):
-                else if(GreenEnd >= 4):
-                    if(NumbersProp[3].SetMaterial(MIInv)):
-                APEnd.Play()
+                if(Green.FinishedPawnCount = 1):
+                    Green.Device.NumberProp.SetMaterial(General.Materials.NumberOne)
+                else if(Green.FinishedPawnCount = 2):
+                    Green.Device.NumberProp.SetMaterial(General.Materials.NumberTwo)
+                else if(Green.FinishedPawnCount = 3):
+                    Green.Device.NumberProp.SetMaterial(General.Materials.NumberThree)
+                else if(Green.FinishedPawnCount >= 4):
+                    Green.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+                AudioPlayerMain(General.Audio.End)
         
         #Formula newIndex=(index−targetOffset+52)mod52
         #for ELim
@@ -1934,15 +1532,15 @@ LudoManager := class(creative_device):
                 for(PawnIdx := 0..RedPawnIndices.Length -1):
                     if(X = RedPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(RedPawns[PawnIdx].TeleportTo[RedPawnTransforms[PawnIdx]]):
-                            APEliminated.Play()
+                            AudioPlayerMain(General.Audio.Eliminated)
                             if(PawnIdx = 0):
-                                set RedPawnIndex = -1
+                                set Red.PawnIndex = -1
                             else if(PawnIdx = 1):
-                                set RedPawnOneIndex = -1
+                                set Red.PawnOneIndex = -1
                             else if(PawnIdx = 2):
-                                set RedPawnTwoIndex = -1
+                                set Red.PawnTwoIndex = -1
                             else if(PawnIdx = 3):
-                                set RedPawnThreeIndex = -1
+                                set Red.PawnThreeIndex = -1
                             set EliminationOccured = true
                             Print("Red ELiminated by someone")
                                 
@@ -1951,15 +1549,15 @@ LudoManager := class(creative_device):
                 for(PawnIdx := 0..BluePawnIndices.Length - 1):
                     if(X = BluePawnIndices[PawnIdx] and EliminationOccured = false):
                         if(BluePawns[PawnIdx].TeleportTo[BluePawnTransforms[PawnIdx]]):
-                            APEliminated.Play()
+                            AudioPlayerMain(General.Audio.Eliminated)
                             if(PawnIdx = 0):
-                                set BluePawnIndex = -1
+                                set Blue.PawnIndex = -1
                             else if(PawnIdx = 1):
-                                set BluePawnOneIndex = -1
+                                set Blue.PawnOneIndex = -1
                             else if(PawnIdx = 2):
-                                set BluePawnTwoIndex = -1
+                                set Blue.PawnTwoIndex = -1
                             else if(PawnIdx = 3):
-                                set BluePawnThreeIndex = -1
+                                set Blue.PawnThreeIndex = -1
                             set EliminationOccured = true
                             Print("Blue Eliminated by someone")
 
@@ -1968,15 +1566,15 @@ LudoManager := class(creative_device):
                 for(PawnIdx := 0..YellowPawnIndices.Length -1):
                     if(X = YellowPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(YellowPawns[PawnIdx].TeleportTo[YellowPawnTransforms[PawnIdx]]):
-                            APEliminated.Play()
+                            AudioPlayerMain(General.Audio.Eliminated)
                             if(PawnIdx = 0):
-                                set YellowPawnIndex = -1
+                                set Yellow.PawnIndex = -1
                             else if(PawnIdx = 1):
-                                set YellowPawnOneIndex = -1
+                                set Yellow.PawnOneIndex = -1
                             else if(PawnIdx = 2):
-                                set YellowPawnTwoIndex = -1
+                                set Yellow.PawnTwoIndex = -1
                             else if(PawnIdx = 3):
-                                set YellowPawnThreeIndex = -1
+                                set Yellow.PawnThreeIndex = -1
                             set EliminationOccured = true
                             Print("Yellow Eliminated")
             
@@ -1985,29 +1583,29 @@ LudoManager := class(creative_device):
                 for(PawnIdx := 0..GreenPawnIndices.Length - 1):
                     if(X = GreenPawnIndices[PawnIdx] and EliminationOccured = false):
                         if(GreenPawns[PawnIdx].TeleportTo[GreenPawnTransforms[PawnIdx]]):
-                            APEliminated.Play()
+                            AudioPlayerMain(General.Audio.Eliminated)
                             if(PawnIdx = 0):
-                                set GreenPawnIndex = -1
+                                set Green.PawnIndex = -1
                             else if(PawnIdx = 1):
-                                set GreenPawnOneIndex = -1
+                                set Green.PawnOneIndex = -1
                             else if(PawnIdx = 2):
-                                set GreenPawnTwoIndex = -1
+                                set Green.PawnTwoIndex = -1
                             else if(PawnIdx = 3):
-                                set GreenPawnThreeIndex = -1
+                                set Green.PawnThreeIndex = -1
                             set EliminationOccured = true
                             Print("Green Eliminated")
 
 
         if(EliminationOccured = true):
             FalsingPlayerTurn()
-            if(Color = 0 and RedPlayer?):
-                set RedPlayerTurn = true
-            else if(Color = 1 and BluePlayer?):
-                set BluePlayerTurn = true
-            else if(Color = 2 and YellowPlayer?):
-                set YellowPlayerTurn = true
-            else if(Color = 3 and GreenPlayer?):
-                set GreenPlayerTurn = true
+            if(Color = 0 and Red.Player?):
+                set Red.IsTurn = true
+            else if(Color = 1 and Blue.Player?):
+                set Blue.IsTurn = true
+            else if(Color = 2 and Yellow.Player?):
+                set Yellow.IsTurn = true
+            else if(Color = 3 and Green.Player?):
+                set Green.IsTurn = true
             spawn{HelperPlayerProfileTurn()}
             TimerCheckerHelper()
         else:
@@ -2018,126 +1616,122 @@ LudoManager := class(creative_device):
 
     IsItTheEnd(Agent:agent):void=( #mention in possible elim Checker
         
-        if(RedEnd >= 4 and RedPlayer = option{Agent}):
+        if(Red.FinishedPawnCount >= 4 and Red.Player = option{Agent}):
             if(Player := player[Agent]):
                 if(not FinishedOrder.Find[0]):
                     set FinishedOrder += array{0}
                     Print("rank {FinishedOrder.Length}")
-                    if(RedVictoryProp := VictoryProps[0]):
                         if(FinishedOrder.Length = 1):
-                            RedVictoryProp.SetMaterial(MICrownOne)
+                            Red.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                             Accolade1.Award(Player)
                             GameRewardGranter(Player, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
-                            RedVictoryProp.SetMaterial(MICrownTwo)
+                            Red.Device.CrownProp.SetMaterial(General.Materials.CrownTwo)
                             Accolade2.Award(Player)
                             GameRewardGranter(Player, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
-                            RedVictoryProp.SetMaterial(MICrownThree)
+                            Red.Device.CrownProp.SetMaterial(General.Materials.CrownThree)
                             Accolade3.Award(Player)
                             GameRewardGranter(Player, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
-                        APVic.Play()
-                        set tempRedPlayer = RedPlayer
-                        set RedPlayer = false
+                        AudioPlayerMain(General.Audio.Victory)
+                        set Red.TempPlayer = Red.Player
+                        set Red.Player = false
 
-        if(BlueEnd >= 4 and BluePlayer = option{Agent}):
+        if(Blue.FinishedPawnCount >= 4 and Blue.Player = option{Agent}):
             if(Player := player[Agent]):
                 if(not FinishedOrder.Find[1]):
                     set FinishedOrder += array{1}
                     Print("rank {FinishedOrder.Length}")
-                    if(BlueVictoryProp := VictoryProps[1]):
                         if(FinishedOrder.Length = 1):
-                            BlueVictoryProp.SetMaterial(MICrownOne)
+                            Blue.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                             Accolade1.Award(Player)
                             GameRewardGranter(Player, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
-                            BlueVictoryProp.SetMaterial(MICrownTwo)
+                            Blue.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                             Accolade2.Award(Player)
                             GameRewardGranter(Player, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
-                            BlueVictoryProp.SetMaterial(MICrownThree)
+                            Blue.Device.CrownProp.SetMaterial(General.Materials.CrownThree)
                             Accolade3.Award(Player)
                             GameRewardGranter(Player, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
-                        APVic.Play()
-                        set tempBluePlayer = BluePlayer
-                        set BluePlayer = false
+                        AudioPlayerMain(General.Audio.Victory)
+                        set Blue.TempPlayer = Blue.Player
+                        set Blue.Player = false
 
-        if(YellowEnd >= 4 and YellowPlayer = option{Agent}):
+        if(Yellow.FinishedPawnCount >= 4 and Yellow.Player = option{Agent}):
             if(Player := player[Agent]):
                 if(not FinishedOrder.Find[2]):
                     set  FinishedOrder += array{2}
                     Print("rank {FinishedOrder.Length}")
-                    if(YellowVictoryProp := VictoryProps[2]):
                             if(FinishedOrder.Length = 1):
-                                YellowVictoryProp.SetMaterial(MICrownOne)
+                                Yellow.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                                 Accolade1.Award(Player)
                                 GameRewardGranter(Player, 1)
                                 if(PRF := PlayerReferences[0]):
                                     PRF.Register(Agent)
                             else if(FinishedOrder.Length = 2):
-                                YellowVictoryProp.SetMaterial(MICrownTwo)
+                                Yellow.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                                 Accolade2.Award(Player)
                                 GameRewardGranter(Player, 2)
                                 if(PRF := PlayerReferences[1]):
                                     PRF.Register(Agent)
                             else if(FinishedOrder.Length = 3):
-                                YellowVictoryProp.SetMaterial(MICrownThree)
+                                Yellow.Device.CrownProp.SetMaterial(General.Materials.CrownThree)
                                 Accolade3.Award(Player)
                                 GameRewardGranter(Player, 3)
                                 if(PRF := PlayerReferences[2]):
                                     PRF.Register(Agent)
-                            APVic.Play()
-                            set tempYellowPlayer = YellowPlayer
-                            set YellowPlayer = false
+                            AudioPlayerMain(General.Audio.Victory)
+                            set Yellow.TempPlayer = Yellow.Player
+                            set Yellow.Player = false
 
-        if(GreenEnd >= 4 and GreenPlayer = option{Agent}):
+        if(Green.FinishedPawnCount >= 4 and Green.Player = option{Agent}):
             if(Player := player[Agent]):
                 if(not FinishedOrder.Find[3]):
                     set FinishedOrder += array{3}
                     Print("rank {FinishedOrder.Length}")
-                    if(GreenVictoryProp := VictoryProps[3]):
                         if(FinishedOrder.Length = 1):
-                            GreenVictoryProp.SetMaterial(MICrownOne)
+                            Green.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                             Accolade1.Award(Player)
                             GameRewardGranter(Player, 1)
                             if(PRF := PlayerReferences[0]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 2):
-                            GreenVictoryProp.SetMaterial(MICrownTwo)
+                            Green.Device.CrownProp.SetMaterial(General.Materials.CrownOne)
                             Accolade2.Award(Player)
                             GameRewardGranter(Player, 2)
                             if(PRF := PlayerReferences[1]):
                                 PRF.Register(Agent)
                         else if(FinishedOrder.Length = 3):
-                            GreenVictoryProp.SetMaterial(MICrownThree)
+                            Green.Device.CrownProp.SetMaterial(General.Materials.CrownThree)
                             Accolade3.Award(Player)
                             GameRewardGranter(Player, 3)
                             if(PRF := PlayerReferences[2]):
                                 PRF.Register(Agent)
-                        APVic.Play()
-                        set tempGreenPlayer = GreenPlayer
-                        set GreenPlayer = false
+                        AudioPlayerMain(General.Audio.Victory)
+                        set Green.TempPlayer = Green.Player
+                        set Green.Player = false
 
         if(FinishedOrder.Length = ActivePlayerCount - 1):
-            if(not FinishedOrder.Find[0] and RedPlayer?):
+            if(not FinishedOrder.Find[0] and Red.Player?):
                 set FinishedOrder += array{0}
-            if(not FinishedOrder.Find[1] and BluePlayer?):
+            if(not FinishedOrder.Find[1] and Blue.Player?):
                 set FinishedOrder += array{1}
-            if(not FinishedOrder.Find[2] and YellowPlayer?):
+            if(not FinishedOrder.Find[2] and Yellow.Player?):
                 set FinishedOrder += array{2}
-            if(not FinishedOrder.Find[3] and GreenPlayer?):
+            if(not FinishedOrder.Find[3] and Green.Player?):
                 set FinishedOrder += array{3}
             Print("Game Over")
             
@@ -2147,149 +1741,82 @@ LudoManager := class(creative_device):
 
     GameOverReset(T : int)<suspends>:void=(
         Sleep(7.0)
-        APInGame.Stop()
-        for(Music : APEnvOg):
-            Music.Stop()
+        General.Audio.InGame.Stop()
+        #General.Audio.Ambiant.Play()
         set GameStarted = false
         set ActivePlayerCount = 0
         set FinishedOrder = array{}
         FalsingPlayerTurn()
         
         
-        if(RedAgent := tempRedPlayer?):
+        if(RedAgent := Red.TempPlayer?):
             spawn{LeaveWidget(RedAgent)}
-            RedCamera.RemoveFrom(RedAgent)
-            RedTp2.Teleport(RedAgent)
+            Red.Device.Camera.RemoveFrom(RedAgent)
+            Red.Device.ExitTp.Teleport(RedAgent)
 
-        if(BlueAgent := tempBluePlayer?):
+        if(BlueAgent := Blue.TempPlayer?):
             spawn{LeaveWidget(BlueAgent)}
-            BlueCamera.RemoveFrom(BlueAgent)
-            BlueTp2.Teleport(BlueAgent)
+            Blue.Device.Camera.RemoveFrom(BlueAgent)
+            Blue.Device.ExitTp.Teleport(BlueAgent)
 
-        if(YellowAgent := tempYellowPlayer?):
+        if(YellowAgent := Yellow.TempPlayer?):
             spawn{LeaveWidget(YellowAgent)}
-            YellowCamera.RemoveFrom(YellowAgent)
-            YellowTp2.Teleport(YellowAgent)
+            Yellow.Device.Camera.RemoveFrom(YellowAgent)
+            Yellow.Device.ExitTp.Teleport(YellowAgent)
 
-        if(GreenAgent := tempGreenPlayer?):
+        if(GreenAgent := Green.TempPlayer?):
             spawn{LeaveWidget(GreenAgent)}
-            GreenCamera.RemoveFrom(GreenAgent)
-            GreenTp2.Teleport(GreenAgent)
+            Green.Device.Camera.RemoveFrom(GreenAgent)
+            Green.Device.ExitTp.Teleport(GreenAgent)
 
-        if(RedAgent := RedPlayer?): #got it the player that has not reached the end was not setting up to templayer hence it was not working
+        if(RedAgent := Red.Player?): #got it the player that has not reached the end was not setting up to templayer hence it was not working
             spawn{LeaveWidget(RedAgent)}
-            RedCamera.RemoveFrom(RedAgent)
-            RedTp2.Teleport(RedAgent)
+            Red.Device.Camera.RemoveFrom(RedAgent)
+            Red.Device.ExitTp.Teleport(RedAgent)
 
-        if(BlueAgent := BluePlayer?):
+        if(BlueAgent := Blue.Player?):
             spawn{LeaveWidget(BlueAgent)}
-            BlueCamera.RemoveFrom(BlueAgent)
-            BlueTp2.Teleport(BlueAgent)
+            Blue.Device.Camera.RemoveFrom(BlueAgent)
+            Blue.Device.ExitTp.Teleport(BlueAgent)
 
-        if(YellowAgent := YellowPlayer?):
+        if(YellowAgent := Yellow.Player?):
             spawn{LeaveWidget(YellowAgent)}
-            YellowCamera.RemoveFrom(YellowAgent)
-            YellowTp2.Teleport(YellowAgent)
+            Yellow.Device.Camera.RemoveFrom(YellowAgent)
+            Yellow.Device.ExitTp.Teleport(YellowAgent)
 
-        if(GreenAgent := GreenPlayer?):
+        if(GreenAgent := Green.Player?):
             spawn{LeaveWidget(GreenAgent)}
-            GreenCamera.RemoveFrom(GreenAgent)
-            GreenTp2.Teleport(GreenAgent)
+            Green.Device.Camera.RemoveFrom(GreenAgent)
+            Green.Device.ExitTp.Teleport(GreenAgent)
 
-        
-
-
-        RedChair.EnableExit()
-        BlueChair.EnableExit()
-        YellowChair.EnableExit()
-        GreenChair.EnableExit()
+        Red.Device.Chair.EnableExit()
+        Blue.Device.Chair.EnableExit()
+        Yellow.Device.Chair.EnableExit()
+        Green.Device.Chair.EnableExit()
         
         spawn{CameraDisEn()}
 
         DefaultAvSetter()
 
-        set RedDiceRollValue = 0
-        set BlueDiceRollValue = 0
-        set YellowDiceRollValue = 0
-        set GreenDiceRollValue = 0
-
-        set RedConsecutiveSixes = 0
-        set BlueConsecutiveSixes = 0
-        set YellowConsecutiveSixes = 0
-        set GreenConsecutiveSixes = 0
-
-        set RollerForRed = 0
-        set RollerForBlue = 0
-        set RollerForYellow = 0
-        set RollerForGreen = 0
-        
-        set DoubleRollFlagRed = false
-        set DoubleRollFlagBlue = false
-        set DoubleRollFlagYellow = false
-        set DoubleRollFlagGreen = false
-
-        set RedEnd = 0
-        set BlueEnd = 0
-        set YellowEnd = 0
-        set GreenEnd = 0
-        
-        RedIndexInitialSetter()
-        BlueIndexInitialSetter()
-        YellowIndexInitialSetter()
-        GreenIndexInitialSetter()
-
-        set WhichColorElim = -1
-
-
-        if(RedPawn.TeleportTo[RedPawnInitialTransform]):
-        if(RedPawnOne.TeleportTo[RedPawnOneInitialTransform]):
-        if(RedPawnTwo.TeleportTo[RedPawnTwoInitialTransform]):
-        if(RedPawnThree.TeleportTo[RedPawnThreeInitialTransform]):
-
-        if(BluePawn.TeleportTo[BluePawnInitialTransform]):
-        if(BluePawnOne.TeleportTo[BluePawnOneInitialTransform]):
-        if(BluePawnTwo.TeleportTo[BluePawnTwoInitialTransform]):
-        if(BluePawnThree.TeleportTo[BluePawnThreeInitialTransform]):
-
-        if(YellowPawn.TeleportTo[YellowPawnInitialTransform]):
-        if(YellowPawnOne.TeleportTo[YellowPawnOneInitialTransform]):
-        if(YellowPawnTwo.TeleportTo[YellowPawnTwoInitialTransform]):
-        if(YellowPawnThree.TeleportTo[YellowPawnThreeInitialTransform]):
-
-        if(GreenPawn.TeleportTo[GreenPawnInitialTransform]):
-        if(GreenPawnOne.TeleportTo[GreenPawnOneInitialTransform]):
-        if(GreenPawnTwo.TeleportTo[GreenPawnTwoInitialTransform]):
-        if(GreenPawnThree.TeleportTo[GreenPawnThreeInitialTransform]):
-
-        for(PlayerPawn : AllPlayersPawns):
+        for(PlayerPawn : AllPlayersPawns): 
             PlayerPawn.Hide()
 
-        if(NumRed := NumbersProp[0]):
-            NumRed.SetMaterial(MIInv)
-        if(NumBlue := NumbersProp[1]):
-            NumBlue.SetMaterial(MIInv)
-        if(NumYellow := NumbersProp[2]):
-            NumYellow.SetMaterial(MIInv)
-        if(NumGreen := NumbersProp[3]):
-            NumGreen.SetMaterial(MIInv)
+        Red.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+        Blue.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+        Yellow.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+        Green.Device.NumberProp.SetMaterial(General.Materials.Invisible)
+    
+        Red.Device.CrownProp.SetMaterial(General.Materials.Invisible)
+        Blue.Device.CrownProp.SetMaterial(General.Materials.Invisible)
+        Yellow.Device.CrownProp.SetMaterial(General.Materials.Invisible)
+        Green.Device.CrownProp.SetMaterial(General.Materials.Invisible)
         
-        if(RedVictoryProp := VictoryProps[0]):
-            RedVictoryProp.SetMaterial(MIInv)
-        if(BlueVictoryProp := VictoryProps[1]):
-            BlueVictoryProp.SetMaterial(MIInv)
-        if(YellowVictoryProp := VictoryProps[2]):
-            YellowVictoryProp.SetMaterial(MIInv)
-        if(GreenVictoryProp := VictoryProps[3]):
-            GreenVictoryProp.SetMaterial(MIInv)
         
-        set MInbRed.HowManyNumbers = 0.0
-        set MInbBlue.HowManyNumbers = 0.0   
-        set MInbYellow.HowManyNumbers = 0.0
-        set MInbGreen.HowManyNumbers = 0.0
-        
-        FalsingTempPlayerandNormalPlayers()
-        PawnFinishStateResetter()
         ResetPlayerDrainerProfile()
+        Red.ResetRuntimeState()
+        Blue.ResetRuntimeState()
+        Yellow.ResetRuntimeState()
+        Green.ResetRuntimeState()
 
         if(T = 0):
             Sleep(7.0)
@@ -2305,122 +1832,56 @@ LudoManager := class(creative_device):
     
 
     DefaultAvSetter():void=(
-
-        
-        set RedPlayerIcon.TexParam = NormAv
-        set BluePlayerIcon.TexParam = NormAv
-        set YellowPlayerIcon.TexParam = NormAv
-        set GreenPlayerIcon.TexParam = NormAv
-        RedAvProp.SetMaterial(RedPlayerIcon)
-        BlueAvProp.SetMaterial(BluePlayerIcon)
-        YellowAvProp.SetMaterial(YellowPlayerIcon)
-        GreenAvProp.SetMaterial(GreenPlayerIcon)
+        set RedPlayerIcon.TexParam = General.DefaultAv
+        set BluePlayerIcon.TexParam = General.DefaultAv
+        set YellowPlayerIcon.TexParam = General.DefaultAv
+        set GreenPlayerIcon.TexParam = General.DefaultAv
+        Red.Device.AvatarProp.SetMaterial(RedPlayerIcon)
+        Blue.Device.AvatarProp.SetMaterial(BluePlayerIcon)
+        Yellow.Device.AvatarProp.SetMaterial(YellowPlayerIcon)
+        Green.Device.AvatarProp.SetMaterial(GreenPlayerIcon)
     )
 
     CameraDisEn()<suspends>:void=(
-        RedChair.Disable()
-        BlueChair.Disable()
-        YellowChair.Disable()
-        GreenChair.Disable()
+        Red.Device.Chair.Disable()
+        Blue.Device.Chair.Disable()
+        Yellow.Device.Chair.Disable()
+        Green.Device.Chair.Disable()
 
-        RedCamera.Disable()
-        BlueCamera.Disable()    
-        YellowCamera.Disable()
-        GreenCamera.Disable()
-
-        
+        Red.Device.Camera.Disable()
+        Blue.Device.Camera.Disable()    
+        Yellow.Device.Camera.Disable()
+        Green.Device.Camera.Disable()
     )
     
-    PawnFinishStateResetter():void=(
-        set RedFinished = false
-        set RedOneFinished = false
-        set RedTwoFinished = false
-        set RedThreeFinished = false
-
-        set BlueFinished = false
-        set BlueOneFinished = false
-        set BlueTwoFinished = false
-        set BlueThreeFinished = false
-
-        set YellowFinished = false
-        set YellowOneFinished = false
-        set YellowTwoFinished = false
-        set YellowThreeFinished = false
-
-        set GreenFinished = false
-        set GreenOneFinished = false
-        set GreenTwoFinished = false
-        set GreenThreeFinished = false
-    )
-
     FalsingDoubleRollFlags():void=(
-        set DoubleRollFlagRed = false
-        set DoubleRollFlagBlue = false
-        set DoubleRollFlagYellow = false
-        set DoubleRollFlagGreen = false
+        set Red.DoubleRollFlag = false
+        set Blue.DoubleRollFlag = false
+        set Yellow.DoubleRollFlag = false
+        set Green.DoubleRollFlag = false
     )
 
     FalsingPlayerTurn():void=(
-        set RedPlayerTurn = false
-        set BluePlayerTurn= false
-        set GreenPlayerTurn = false
-        set YellowPlayerTurn = false
-    )
-
-    FalsingTempPlayerandNormalPlayers():void=(
-        set tempRedPlayer = false
-        set tempBluePlayer = false
-        set tempYellowPlayer = false
-        set tempGreenPlayer = false
-
-        set RedPlayer = false
-        set BluePlayer = false
-        set YellowPlayer = false
-        set GreenPlayer = false
-    )
-
-    RedIndexInitialSetter():void=( #will add sturct later if better
-        set RedPawnIndex = -1
-        set RedPawnOneIndex = -1
-        set RedPawnTwoIndex = -1
-        set RedPawnThreeIndex = -1
-    )
-
-    BlueIndexInitialSetter():void=(
-        set BluePawnIndex = -1
-        set BluePawnOneIndex = -1
-        set BluePawnTwoIndex = -1
-        set BluePawnThreeIndex = -1     
-    )
-
-    YellowIndexInitialSetter():void=(
-        set YellowPawnIndex = -1
-        set YellowPawnOneIndex = -1
-        set YellowPawnTwoIndex = -1
-        set YellowPawnThreeIndex = -1
-    )
-
-    GreenIndexInitialSetter():void=(
-        set GreenPawnIndex = -1
-        set GreenPawnOneIndex = -1
-        set GreenPawnTwoIndex = -1
-        set GreenPawnThreeIndex = -1
+        set Red.IsTurn = false
+        set Blue.IsTurn= false
+        set Green.IsTurn = false
+        set Yellow.IsTurn = false
     )
 
     AudioPlayerMain(Aud:audio_player_device):void=(
-        Agents : []?agent = array{RedPlayer, BluePlayer, YellowPlayer, GreenPlayer}
+        Agents : []?agent = array{Red.Player, Blue.Player, Yellow.Player, Green.Player}
         for(MaybeAgent: Agents, ValidAgent := MaybeAgent?):
             Aud.Play(ValidAgent)
     )
 
     GameCostDeductor():void=
-        if(RedAgent := RedPlayer?):
+        if(RedAgent := Red.Player?):
             CurrencySystem.GrantCurrency(RedAgent, currency_type.Coins, -PerGameCost)
-        if(BlueAgent := BluePlayer?):
+        if(BlueAgent := Blue.Player?):
             CurrencySystem.GrantCurrency(BlueAgent, currency_type.Coins, -PerGameCost)
-        if(YellowAgent := YellowPlayer?):
+        if(YellowAgent := Yellow.Player?):
             CurrencySystem.GrantCurrency(YellowAgent, currency_type.Coins, -PerGameCost)
-        if(GreenAgent := GreenPlayer?):
+        if(GreenAgent := Green.Player?):
             CurrencySystem.GrantCurrency(GreenAgent, currency_type.Coins, -PerGameCost)
 
 
