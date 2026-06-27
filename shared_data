@@ -142,7 +142,20 @@ shared_game_data<public> := class<concrete>:
         set PawnTwoInitialTransform = Pns.PawnTwo.GetTransform()
         set PawnThreeInitialTransform = Pns.PawnThree.GetTransform()
 
+    GetTransforms():[]transform=
+        array{PawnInitialTransform, PawnOneInitialTransform, PawnTwoInitialTransform, PawnThreeInitialTransform}
+
+    GetIndex():[]int= 
+        array{PawnIndex, PawnOneIndex, PawnTwoIndex, PawnThreeIndex}
+
     ResetPawnState():void=
+        HidePawns()
+
+        if(Pns.Pawn.TeleportTo[PawnInitialTransform]):
+        if(Pns.PawnOne.TeleportTo[PawnOneInitialTransform]):
+        if(Pns.PawnTwo.TeleportTo[PawnTwoInitialTransform]):
+        if(Pns.PawnTwo.TeleportTo[PawnThreeInitialTransform]):
+
         set PawnIndex = -1
         set PawnOneIndex = -1
         set PawnTwoIndex = -1
@@ -155,11 +168,17 @@ shared_game_data<public> := class<concrete>:
 
         set FinishedPawnCount = 0
 
+    HidePawns():void=
+        Pns.Pawn.Hide()
+        Pns.PawnOne.Hide()
+        Pns.PawnTwo.Hide()
+        Pns.PawnThree.Hide()
+
     ResetTurnState():void= #or can be useful in turn change
         set IsTurn = false
         set DiceRollValue = 0
         set ConsecutiveSixes = 0
-        #set Roller = 0   #maybe not
+        set Roller = 0   #maybe not
         set DoubleRollFlag = false
 
     ClearPlayers():void= #only do when left and game reset 
