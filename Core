@@ -117,7 +117,7 @@ LudoManager := class(creative_device):
         if(OnePlayerSwitch.GetCurrentState[]):
             if(PlayerCount = 1):
                 set GameStarted = true
-                RedTurnSetter()
+                TurnChanger(1, true)
                 set ActivePlayerCount = PlayerCount
                 spawn{HelperPlayerProfileTurn()}
                 
@@ -125,7 +125,7 @@ LudoManager := class(creative_device):
             if(PlayerCount = 2):
                 CamChairGranter()
                 set GameStarted = true
-                RedTurnSetter()
+                TurnChanger(1, true)
                 set ActivePlayerCount = PlayerCount
                 set GameFormat = 2
                 spawn{HelperPlayerProfileTurn()}
@@ -135,7 +135,7 @@ LudoManager := class(creative_device):
             if(PlayerCount = 3):
                 CamChairGranter()
                 set GameStarted = true
-                RedTurnSetter()
+                TurnChanger(1, true)
                 set ActivePlayerCount = PlayerCount
                 set GameFormat = 3
                 spawn{HelperPlayerProfileTurn()}
@@ -145,7 +145,7 @@ LudoManager := class(creative_device):
             if(PlayerCount = 4):
                 CamChairGranter()
                 set GameStarted = true
-                RedTurnSetter()
+                TurnChanger(1, true)
                 set ActivePlayerCount = PlayerCount
                 set GameFormat = 4
                 spawn{HelperPlayerProfileTurn()}
@@ -156,16 +156,6 @@ LudoManager := class(creative_device):
             AudioPlayerMain(General.Audio.InGame)
     )
     
-    RedTurnSetter():void=(
-        if(Red.Player?):
-            set Red.IsTurn = true
-        else if(Blue.Player?):
-            set Blue.IsTurn = true
-        else if(Yellow.Player?):
-            set Yellow.IsTurn = true
-        else if(Green.Player?):
-            set Green.IsTurn = true
-    )
 
     CamChairGranter():void= #probably should just disable exit always
         if(RedAgent := Red.Player?):
