@@ -13,7 +13,7 @@ using {F_WIdget}
 using {PawnMInstance}
 using {Pawn2MInstance}
 
-RedPlayerTip<localizes>:message = "Red Player"
+PlayerTip<localizes>:message = "Players"
 #UNR = unnecessary.. Just tryping random shii for fun
 
     # Examples showing how old variables map to the new class:
@@ -41,10 +41,10 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     @editable General : general_game_data = general_game_data{}
 
-    @editable {Categories := array{RedPlayerTip}} Red : shared_game_data = shared_game_data{}
-    @editable Blue : shared_game_data = shared_game_data{}
-    @editable Yellow : shared_game_data = shared_game_data{}
-    @editable Green : shared_game_data = shared_game_data{}
+    @editable {Categories := array{PlayerTip}} Red : shared_game_data = shared_game_data{}
+    @editable {Categories := array{PlayerTip}} Blue : shared_game_data = shared_game_data{}
+    @editable {Categories := array{PlayerTip}} Yellow : shared_game_data = shared_game_data{}
+    @editable {Categories := array{PlayerTip}} Green : shared_game_data = shared_game_data{}
 
     #Input
     @editable {Categories := array{InputTip}}
@@ -74,7 +74,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
     var FinishedOrder :[]int =array{} 
     var ActivePlayerCount : int = 0
-    var ConfirmFlag : logic = false
     #var GameFormat : int = 0 always 4 or none
 
     # Runs when the device is started in a running game
@@ -141,7 +140,7 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
     SelectPressed(Agent:agent):void=(
         var Attempts:int = 0
         
-        if(Red.Player = option{Agent} and Red.IsTurn = true  and ConfirmFlag = false):
+        if(Red.Player = option{Agent} and Red.IsTurn = true):
             loop:
                 if(Attempts >= 4):
                     break
@@ -193,7 +192,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                     spawn{HelperDiceRoll(Agent)}
                     spawn{PossibleMoveChecker()}
                 set Red.DoubleRollFlag = true
-                set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue}")
 
         
@@ -481,7 +479,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 Sleep(1.0)
                 TurnChanger(1, false)
                 set Red.DoubleRollFlag = false
-                set ConfirmFlag = false
                 TimerCheckerHelper()
                 Print("False cant move")
 
@@ -623,7 +620,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 Blue.Pns.DiceProp.SetMaterial(General.Dice.Rolling)
                     spawn{HelperDiceRollForBots()}
                     spawn{PossibleMoveChecker()}
-                set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue} ")
 
         else if(Color = "Yellow"):
@@ -635,7 +631,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 Yellow.Pns.DiceProp.SetMaterial(General.Dice.Rolling)
                     spawn{HelperDiceRollForBots()}
                     spawn{PossibleMoveChecker()}
-                set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue} ")
 
         else if(Color = "Green"):
@@ -646,7 +641,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
                 Green.Pns.DiceProp.SetMaterial(General.Dice.Rolling)
                     spawn{HelperDiceRollForBots()}
                     spawn{PossibleMoveChecker()}
-                set ConfirmFlag = false
                 Print("Dice Rolled: {RollValue} ")
         else:
             Print("bruhh")
@@ -671,7 +665,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         var MoveCompleted : logic = false
         var ThirdSix : logic = false
         var KeepTurn : logic = false
-        set ConfirmFlag = true
 
         if(CurrentIndex = -1 and Red.DiceRollValue = 6):
             if(Path := Red.Pns.Paths[0]):
@@ -738,7 +731,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
         ResetAllHighlights()
         TimerCheckerHelper()
-        set ConfirmFlag = true
     )
 
     BotMovePawnBlue(Pawn:creative_prop, Index:int, PawnNumber : int)<suspends>:void=(
@@ -747,7 +739,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         PawnZ := PawnTransform.Translation.Z
         var MoveCompleted : logic = false
         var ThirdSix : logic = false
-        set ConfirmFlag = true
         var KeepCurrentTurn :logic = false
 
         if(CurrentIndex = -1 and Blue.DiceRollValue = 6):
@@ -816,14 +807,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
         ResetAllHighlights()
         TimerCheckerHelper()
-        set ConfirmFlag = false
     )
 
     BotMovePawnGreen(Pawn:creative_prop, Index:int, PawnNumber:int)<suspends>:void=(
        var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
-        set ConfirmFlag = true
         var KeepTurn : logic = false
         var ThirdSix : logic = false
         var MoveCompleted : logic = false
@@ -891,14 +880,12 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
 
         ResetAllHighlights()
         TimerCheckerHelper()
-        set ConfirmFlag = false 
     )
 
     BotMovePawnYellow(Pawn:creative_prop, Index:int, PawnNumber : int)<suspends>:void=(
         var CurrentIndex : int = Index
         PawnTransform := Pawn.GetTransform()
         PawnZ := PawnTransform.Translation.Z
-        set ConfirmFlag = true
         var MoveCompleted : logic = false
         var ThirdSix : logic = false
         var KeepTurn : logic = false
@@ -965,7 +952,6 @@ LudoManagerAi := class(creative_device): #call dice roll for ais in turnchanger
         
         ResetAllHighlights()
         TimerCheckerHelper()
-        set ConfirmFlag = false
     )
 
     PossibleElimChecker(PawnPosition:int, Pawn:int, Color:int)<suspends>:logic=(
